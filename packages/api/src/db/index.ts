@@ -1,0 +1,21 @@
+import { Kysely, ParseJSONResultsPlugin, PostgresDialect } from "kysely"
+import pg from "pg"
+import env from "../env.ts"
+import type { Database } from "./schemas.ts"
+
+const { Pool } = pg
+
+export const dialect = new PostgresDialect({
+  pool: new Pool({
+    user: env.POSTGRES_USER,
+    host: env.POSTGRES_HOST,
+    database: env.POSTGRES_DB,
+    password: env.POSTGRES_PASSWORD,
+    port: Number(env.POSTGRES_PORT),
+  }),
+})
+
+export const db = new Kysely<Database>({
+  dialect,
+  plugins: [new ParseJSONResultsPlugin()],
+})
