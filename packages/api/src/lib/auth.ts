@@ -9,6 +9,7 @@ export const auth = betterAuth({
     dialect,
     type: "postgres",
   },
+  basePath: "/auth",
   advanced: {
     defaultCookieAttributes: {
       sameSite: "none",
@@ -21,5 +22,9 @@ export const auth = betterAuth({
     minPasswordLength: 8,
     maxPasswordLength: 25,
   },
-  plugins: [openAPI()],
+  plugins: [
+    openAPI({
+      path: "/reference",
+    }),
+  ],
 })
