@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "noEmit": true,
+    "noErrorTruncation": true,
+    "esModuleInterop": true,
+    "paths": {
+      "@lootopia/api/*": ["./packages/api/src/*"]
+    },
+    "strict": true,
+    "strictNullChecks": true
+  }
+}

@@ -1,6 +1,6 @@
 import { Kysely, ParseJSONResultsPlugin, PostgresDialect } from "kysely"
 import pg from "pg"
-import env from "../env.ts"
+import env from "../env"
 import type { Database } from "./schemas.ts"
 
 const { Pool } = pg

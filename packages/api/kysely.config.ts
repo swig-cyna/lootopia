@@ -1,5 +1,5 @@
 import { defineConfig } from "kysely-ctl"
-import { dialect } from "./src/db/index.ts"
+import { dialect } from "./src/db"
 
 export default defineConfig({
   dialect,

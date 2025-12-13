@@ -1,22 +1,13 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
     "target": "ESNext",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "allowImportingTsExtensions": true,
-    "verbatimModuleSyntax": true,
+    "module": "ESNext",
+    "types": ["node"],
+    "moduleResolution": "bundler",
     "strict": true,
     "skipLibCheck": true,
-    "noEmit": true,
-    "types": ["node"],
-
-    "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx",
-
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    "noEmit": true
   },
   "exclude": ["node_modules"]
 }

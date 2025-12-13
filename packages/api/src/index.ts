@@ -1,14 +1,16 @@
-import env from "@/env.ts"
-import { auth } from "@/lib/auth.ts"
-import router from "@/routes/route.ts"
 import { serve } from "@hono/node-server"
 import { OpenAPIHono } from "@hono/zod-openapi"
+import env from "@lootopia/api/env"
+import { auth } from "@lootopia/api/lib/auth"
+import { HonoContext } from "@lootopia/api/lib/hono"
+import { authMiddleware } from "@lootopia/api/middlewares/auth.middlewares"
+import router from "@lootopia/api/routes/route"
 import { Scalar } from "@scalar/hono-api-reference"
 import { cors } from "hono/cors"
 import { logger } from "hono/logger"
 import { notFound, onError } from "stoker/middlewares"
 
-const app = new OpenAPIHono()
+const app = new OpenAPIHono<HonoContext>()
 
 app.use(
   cors({
@@ -16,7 +18,7 @@ app.use(
     credentials: true,
   })
 )
-
+app.use(authMiddleware)
 app.use(logger())
 
 app.onError(onError)

@@ -1,8 +1,10 @@
 import { OpenAPIHono, z } from "@hono/zod-openapi"
+import { HonoContext } from "@lootopia/api/lib/hono"
+import { loggedInMiddleware } from "@lootopia/api/middlewares/auth.middlewares"
 import * as StatusCodes from "stoker/http-status-codes"
 import { jsonContent } from "stoker/openapi/helpers"
 
-const testRouter = new OpenAPIHono()
+const testRouter = new OpenAPIHono<HonoContext>()
 
 testRouter
   .openapi(
@@ -19,13 +21,16 @@ testRouter
       },
     },
     (c) => {
-      return c.json({ message: "Main test route" })
+      return c.json({
+        message: `Main test route`,
+      })
     }
   )
   .openapi(
     {
       method: "get",
       path: "/example",
+      middleware: loggedInMiddleware,
       responses: {
         [StatusCodes.OK]: jsonContent(
           z.object({
@@ -42,12 +47,8 @@ testRouter
       },
     },
     (c) => {
-      if (c.req.header("Authorization") === "Bearer test") {
-        return c.json({ message: "Test example route" }, StatusCodes.OK)
-      }
-
       return c.json(
-        { message: "Test unauthorized example route" },
+        { message: `Hello ${c.var.user?.name} !` },
         StatusCodes.UNAUTHORIZED
       )
     }

@@ -9,6 +9,10 @@ export interface UserTable {
   emailVerified: Generated<boolean>
   image: string | null
   bio: string | null
+  role: string
+  banned: boolean
+  banReason: string | null
+  banExpires: bigint | null
   createdAt: Generated<Timestamp>
   updatedAt: Generated<Timestamp>
 }
@@ -22,6 +26,7 @@ export interface SessionTable {
   ipAddress: string | null
   userAgent: string | null
   userId: string
+  impersonatedBy: string | null
 }
 
 export interface AccountTable {

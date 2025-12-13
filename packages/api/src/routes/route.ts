@@ -1,7 +1,8 @@
 import { OpenAPIHono } from "@hono/zod-openapi"
-import testRouter from "./test/route.ts"
+import testRouter from "@lootopia/api/routes/test/route"
+import { HonoContext } from "../lib/hono"
 
-const router = new OpenAPIHono()
+const router = new OpenAPIHono<HonoContext>()
 
 router.get("/", (c) => {
   return c.text("API Route")
