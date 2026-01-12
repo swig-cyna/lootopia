@@ -1,0 +1,56 @@
+erDiagram
+    user ||--o{ session : "has"
+    user ||--o{ account : "has"
+    user ||--o| session : "impersonates"
+
+    user {
+        string id PK
+        string name
+        string email
+        boolean emailVerified
+        string image
+        string bio
+        string role
+        boolean banned
+        string banReason
+        bigint banExpires
+        timestamp createdAt
+        timestamp updatedAt
+    }
+
+    session {
+        string id PK
+        timestamp expiresAt
+        string token
+        timestamp createdAt
+        timestamp updatedAt
+        string ipAddress
+        string userAgent
+        string userId FK
+        string impersonatedBy FK
+    }
+
+    account {
+        string id PK
+        string accountId
+        string providerId
+        string userId FK
+        string accessToken
+        string refreshToken
+        string idToken
+        timestamp accessTokenExpiresAt
+        timestamp refreshTokenExpiresAt
+        string scope
+        string password
+        timestamp createdAt
+        timestamp updatedAt
+    }
+
+    verification {
+        string id PK
+        string identifier
+        string value
+        timestamp expiresAt
+        timestamp createdAt
+        timestamp updatedAt
+    }

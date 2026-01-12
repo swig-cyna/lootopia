@@ -1,7 +1,7 @@
+import type { Database } from "@lootopia/api/db/schema.ts"
+import env from "@lootopia/api/env"
 import { Kysely, ParseJSONResultsPlugin, PostgresDialect } from "kysely"
 import pg from "pg"
-import env from "../env"
-import type { Database } from "./schemas.ts"
 
 const { Pool } = pg
 

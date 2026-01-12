@@ -1,6 +1,6 @@
 import { OpenAPIHono } from "@hono/zod-openapi"
+import { HonoContext } from "@lootopia/api/lib/hono"
 import testRouter from "@lootopia/api/routes/test/route"
-import { HonoContext } from "../lib/hono"
 
 const router = new OpenAPIHono<HonoContext>()
 
