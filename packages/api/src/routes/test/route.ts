@@ -5,14 +5,14 @@ import * as StatusCodes from "stoker/http-status-codes"
 
 const testRouter = new OpenAPIHono<HonoContext>()
 
-testRouter.openapi(mainTestRoute, (c) => {
-  return c.json({
+testRouter.openapi(mainTestRoute, (c) =>
+  c.json({
     message: `Main test route`,
   })
-})
+)
 
-testRouter.openapi(exampleTestRoute, (c) => {
-  return c.json({ message: `Hello ${c.var.user?.name} !` }, StatusCodes.OK)
-})
+testRouter.openapi(exampleTestRoute, (c) =>
+  c.json({ message: `Hello ${c.var.user?.name} !` }, StatusCodes.OK)
+)
 
 export default testRouter

@@ -24,8 +24,7 @@ export const loggedInMiddleware: MiddlewareHandler = async (c, next) => {
   return await next()
 }
 
-export const requireRoles = (allowedRoles: Role[]): MiddlewareHandler => {
-  return async (c, next) => {
+export const requireRoles = (allowedRoles: Role[]): MiddlewareHandler => async (c, next) => {
     if (!c.var.user) {
       return c.json(
         { error: StatusPhrases.UNAUTHORIZED },
@@ -45,4 +44,3 @@ export const requireRoles = (allowedRoles: Role[]): MiddlewareHandler => {
 
     return await next()
   }
-}

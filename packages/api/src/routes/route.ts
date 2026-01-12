@@ -4,9 +4,7 @@ import testRouter from "@lootopia/api/routes/test/route"
 
 const router = new OpenAPIHono<HonoContext>()
 
-router.get("/", (c) => {
-  return c.text("API Route")
-})
+router.get("/", (c) => c.text("API Route"))
 
 router.route("/test", testRouter)
 

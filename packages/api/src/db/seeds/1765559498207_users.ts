@@ -1,7 +1,8 @@
+/* eslint-disable no-unused-vars */
 import { auth } from "@lootopia/api/lib/auth"
 import { Kysely } from "kysely"
 
-export async function seed(db: Kysely<any>): Promise<void> {
+export async function seed(_db: Kysely<any>): Promise<void> {
   try {
     const admin = await auth.api.createUser({
       body: {
@@ -13,7 +14,7 @@ export async function seed(db: Kysely<any>): Promise<void> {
     })
 
     console.log("Admin user created:", admin.user.id)
-  } catch (error) {
+  } catch (_error) {
     console.log("Admin user already exists")
   }
 
@@ -28,7 +29,7 @@ export async function seed(db: Kysely<any>): Promise<void> {
     })
 
     console.log("Partner user created:", partner.user.id)
-  } catch (error) {
+  } catch (_error) {
     console.log("Partner user already exists")
   }
 
@@ -43,7 +44,7 @@ export async function seed(db: Kysely<any>): Promise<void> {
     })
 
     console.log("User user created:", user.user.id)
-  } catch (error) {
+  } catch (_error) {
     console.log("User user already exists")
   }
 }
