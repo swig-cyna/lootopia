@@ -9,27 +9,28 @@
     "kysely": "kysely"
   },
   "dependencies": {
-    "@hono/node-server": "^1.19.6",
-    "@hono/zod-openapi": "^1.1.5",
-    "@scalar/hono-api-reference": "^0.9.27",
-    "@t3-oss/env-core": "^0.13.8",
-    "better-auth": "^1.4.6",
-    "hono": "^4.10.8",
-    "kysely": "^0.28.8",
+    "@hono/node-server": "^1.19.8",
+    "@hono/zod-openapi": "^1.2.0",
+    "@scalar/hono-api-reference": "^0.9.32",
+    "@t3-oss/env-core": "^0.13.10",
+    "better-auth": "^1.4.12",
+    "hono": "^4.11.4",
+    "kysely": "^0.28.9",
     "pg": "^8.16.3",
     "stoker": "^2.0.1",
-    "zod": "^4.1.13"
+    "zod": "^4.3.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
-    "@types/node": "^20.11.17",
-    "@types/pg": "^8.15.6",
+    "@types/node": "^25.0.7",
+    "@types/pg": "^8.16.0",
     "esbuild": "^0.27.2",
     "eslint": "^9.39.2",
     "globals": "^17.0.0",
-    "kysely-ctl": "^0.19.0",
-    "tsx": "^4.7.1",
-    "typescript": "^5.8.3",
+    "kysely-ctl": "^0.20.0",
+    "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
     "typescript-eslint": "^8.53.0"
   }
 }
