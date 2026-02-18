@@ -4,6 +4,7 @@ import { jsonContent } from "stoker/openapi/helpers"
 
 export const errorResponseSchema = z.object({
   error: z.string(),
+  details: z.unknown().optional(),
 })
 
 export const successResponseSchema = z.object({

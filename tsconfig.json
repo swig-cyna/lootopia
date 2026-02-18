@@ -5,7 +5,11 @@
     "noErrorTruncation": true,
     "esModuleInterop": true,
     "paths": {
-      "@lootopia/api/*": ["./packages/api/src/*"]
+      "@lootopia/api/*": ["./packages/api/src/*"],
+      "@lootopia/db": ["./packages/db/src/index"],
+      "@lootopia/db/*": ["./packages/db/src/*"],
+      "@lootopia/auth": ["./packages/auth/src/index"],
+      "@lootopia/auth/*": ["./packages/auth/src/*"]
     },
     "strict": true,
     "strictNullChecks": true

@@ -1,5 +1,5 @@
-import { dialect } from "@lootopia/api/db"
-import env from "@lootopia/api/env"
+import { dialect } from "@lootopia/db"
+import env from "@lootopia/auth/env"
 import { betterAuth } from "better-auth"
 import { admin, openAPI } from "better-auth/plugins"
 import { createAccessControl } from "better-auth/plugins/access"
@@ -12,10 +12,10 @@ const statement = {
 export const ac = createAccessControl(statement)
 
 const permissions = {
-  user: ac.newRole({
+  player: ac.newRole({
     user: [],
   }),
-  partner: ac.newRole({
+  organizer: ac.newRole({
     user: [],
   }),
   admin: ac.newRole({
@@ -44,11 +44,11 @@ export const auth = betterAuth({
   },
   plugins: [
     admin({
-      defaultRole: "user",
+      defaultRole: "player",
       ac,
       roles: {
-        user: permissions.user,
-        partner: permissions.partner,
+        player: permissions.player,
+        organizer: permissions.organizer,
         admin: permissions.admin,
       },
       adminRoles: ["admin"],

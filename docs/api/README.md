@@ -14,7 +14,8 @@ Complete guide for developing with the API.
 ### Development
 
 - API runs on [http://localhost:3001](http://localhost:3001)
-- OpenAPI documentation at [http://localhost:3001/docs](http://localhost:3001/docs)
+- OpenAPI spec at [http://localhost:3001/doc](http://localhost:3001/doc)
+- Scalar API explorer at [http://localhost:3001/reference](http://localhost:3001/reference)
 
 ### Route Structure
 
@@ -31,15 +32,15 @@ packages/api/src/routes/your-route/
 
 #### Authentication
 
-- `loggedInMiddleware` - Requires user to be authenticated
-- `requireRoles([...])` - Requires specific roles
-- Bearer token auth in OpenAPI: `security: [{ bearerAuth: [] }]`
+- `requireAuth` - Requires user to be authenticated (401 if not)
+- `requireRoles([...])` - Requires specific roles (403 if wrong role, admin bypasses all)
+- `createAuthResponses()` - Auto-adds 401/403 to OpenAPI spec for protected routes
 
-#### Roles
+#### Roles (from `@lootopia/auth`)
 
-- `ROLES.USER` - Standard user
-- `ROLES.PARTNER` - Partner
-- `ROLES.ADMIN` - Administrator (access to everything)
+- `ROLES.PLAYER` - Standard player
+- `ROLES.ORGANIZER` - Organizer
+- `ROLES.ADMIN` - Administrator (bypasses all role checks)
 
 #### Request Validation
 

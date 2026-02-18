@@ -1,4 +1,4 @@
-import { auth } from "@lootopia/api/lib/auth"
+import { auth } from "@lootopia/auth/server"
 
 export type HonoContext = {
   Variables: {

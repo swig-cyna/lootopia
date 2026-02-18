@@ -21,10 +21,10 @@ Complete guide for implementing authentication and role-based access control in 
 
 ### Available Roles
 
-Roles defined in `utils/constants.ts`:
-- `ROLES.USER` - Standard user
-- `ROLES.PARTNER` - Partner
-- `ROLES.ADMIN` - Administrator (has access to everything)
+Roles defined in `@lootopia/auth` (`packages/auth/src/constants.ts`):
+- `ROLES.PLAYER` - Standard player
+- `ROLES.ORGANIZER` - Organizer
+- `ROLES.ADMIN` - Administrator (bypasses all role checks)
 
 ### Role Hierarchy
 
@@ -37,7 +37,7 @@ The `requireRoles` middleware implements a simple hierarchy:
 For custom logic in a handler:
 
 ```typescript
-import { ROLES } from "@lootopia/api/utils/constants"
+import { ROLES } from "@lootopia/auth"
 
 router.openapi(someRoute, async (c) => {
   const user = c.var.user
@@ -95,7 +95,7 @@ This automatically adds:
 ```typescript
 import { createRoute } from "@hono/zod-openapi"
 import { requireRoles } from "@lootopia/api/middlewares/auth.middlewares"
-import { ROLES } from "@lootopia/api/utils/constants"
+import { ROLES } from "@lootopia/auth"
 import { errorResponseSchema } from "@lootopia/api/utils/responses"
 import * as StatusCodes from "stoker/http-status-codes"
 import { jsonContent } from "stoker/openapi/helpers"
@@ -120,7 +120,7 @@ export const deleteItemRoute = createRoute({
 ```typescript
 import { createRoute } from "@hono/zod-openapi"
 import { requireRoles } from "@lootopia/api/middlewares/auth.middlewares"
-import { ROLES } from "@lootopia/api/utils/constants"
+import { ROLES } from "@lootopia/auth"
 import { createAuthResponses } from "@lootopia/api/utils/responses"
 import * as StatusCodes from "stoker/http-status-codes"
 import { jsonContent } from "stoker/openapi/helpers"
@@ -162,7 +162,7 @@ The helper maintains full TypeScript type safety. All response schemas are prope
 ### When to Use
 
 Use `createAuthResponses` for any route with:
-- `middleware: [loggedInMiddleware]`
+- `middleware: [requireAuth]`
 - `middleware: [requireRoles([...])]`
 - `security: [{ bearerAuth: [] }]`
 

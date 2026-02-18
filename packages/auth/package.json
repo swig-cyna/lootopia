@@ -1,0 +1,20 @@
+{
+  "name": "@lootopia/auth",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts"
+  },
+  "dependencies": {
+    "@lootopia/db": "workspace:*",
+    "@t3-oss/env-core": "^0.13.10",
+    "better-auth": "^1.4.12",
+    "zod": "^4.3.5"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.7",
+    "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}

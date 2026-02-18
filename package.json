@@ -8,7 +8,7 @@
     "start": "dotenv -e .env -- pnpm -r --parallel run start",
     "clean": "pnpm -r exec rm -rf dist node_modules",
     "lint": "pnpm -r run lint",
-    "kysely": "dotenv -e .env -- pnpm --filter api kysely",
+    "kysely": "dotenv -e .env -- pnpm --filter db kysely",
     "s3:create": "dotenv -e .env -- node scripts/create-bucket.mjs"
   },
   "devDependencies": {

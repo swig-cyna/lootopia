@@ -1,13 +1,13 @@
 import { defineConfig } from "kysely-ctl"
 import "tsconfig-paths/register"
-import { dialect } from "./src/db"
+import { dialect } from "@lootopia/db"
 
 export default defineConfig({
   dialect,
   migrations: {
-    migrationFolder: "./src/db/migrations",
+    migrationFolder: "./src/migrations",
   },
   seeds: {
-    seedFolder: "./src/db/seeds",
+    seedFolder: "./src/seeds",
   },
 })
