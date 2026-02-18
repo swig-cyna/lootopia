@@ -1,6 +1,6 @@
 import * as Minio from "minio"
 
-async function main() {
+const main = async () => {
   const s3Client = new Minio.Client({
     endPoint: process.env.S3_ENDPOINT,
     port: process.env.S3_PORT ? Number(process.env.S3_PORT) : undefined,
@@ -39,9 +39,11 @@ async function main() {
     await s3Client.setBucketPolicy(process.env.S3_NAME, policy)
 
     console.log(`Bucket ${process.env.S3_NAME} created.`)
-  } else {
-    console.log(`Bucket ${process.env.S3_NAME} already exists.`)
+
+    return
   }
+
+  console.log(`Bucket ${process.env.S3_NAME} already exists.`)
 }
 
 main()

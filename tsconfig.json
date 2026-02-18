@@ -9,7 +9,8 @@
       "@lootopia/db": ["./packages/db/src/index"],
       "@lootopia/db/*": ["./packages/db/src/*"],
       "@lootopia/auth": ["./packages/auth/src/index"],
-      "@lootopia/auth/*": ["./packages/auth/src/*"]
+      "@lootopia/auth/*": ["./packages/auth/src/*"],
+      "@lootopia/eslint-config/*": ["./packages/eslint-config/*"]
     },
     "strict": true,
     "strictNullChecks": true

@@ -10,8 +10,11 @@ const hashPassword = (password: string): Promise<string> =>
       64,
       { N: 16384, r: 16, p: 1, maxmem: 128 * 16384 * 16 * 2 },
       (err, key) => {
-        if (err) reject(err)
-        else resolve(`${salt}:${key.toString("hex")}`)
+        if (err) {
+          reject(err)
+        }
+
+        resolve(`${salt}:${key.toString("hex")}`)
       },
     )
   })
@@ -92,12 +95,19 @@ export async function seed(db: Kysely<any>): Promise<void> {
     },
   ]
 
-  for (const user of users) {
-    try {
-      await createUser(db, user)
+  const results = await Promise.allSettled(
+    users.map((user) => createUser(db, user)),
+  )
+
+  results.forEach((result, index) => {
+    const user = users[index]
+
+    if (result.status === "fulfilled") {
       console.log(`${user.name} created: ${user.email}`)
-    } catch (_error) {
-      console.log(`${user.name} already exists`)
+
+      return
     }
-  }
+
+    console.log(`${user.name} already exists`)
+  })
 }

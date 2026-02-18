@@ -23,6 +23,8 @@ const app = new OpenAPIHono<HonoContext>({
         StatusCodes.BAD_REQUEST,
       )
     }
+
+    return result
   },
 })
 
@@ -41,6 +43,7 @@ app.onError((err, c) => {
   }
 
   console.error(err)
+
   return c.json(
     { error: StatusPhrases.INTERNAL_SERVER_ERROR },
     StatusCodes.INTERNAL_SERVER_ERROR,

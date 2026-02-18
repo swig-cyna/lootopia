@@ -6,6 +6,7 @@
     "./*": "./src/*.ts"
   },
   "scripts": {
+    "lint": "eslint --fix",
     "kysely": "kysely"
   },
   "dependencies": {
@@ -15,8 +16,10 @@
     "zod": "^4.3.5"
   },
   "devDependencies": {
+    "@lootopia/eslint-config": "workspace:*",
     "@types/node": "^25.0.7",
     "@types/pg": "^8.16.0",
+    "eslint": "^9.39.2",
     "kysely-ctl": "^0.20.0",
     "tsconfig-paths": "^4.2.0",
     "tsx": "^4.21.0",
