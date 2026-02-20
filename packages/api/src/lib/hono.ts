@@ -17,12 +17,12 @@ export type AuthenticatedContext = HonoContext & {
   }
 }
 
-const defaultHook: Hook<any, any, any, any> = (result, c) => {
+const defaultHook: Hook<any, any, any, any> = (result, { json }) => {
   if (result.success) {
     return result
   }
 
-  return c.json(
+  return json(
     { error: "Validation error", details: result.error.issues },
     StatusCodes.BAD_REQUEST,
   )

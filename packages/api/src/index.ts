@@ -22,21 +22,21 @@ app.use(
 app.use(authMiddleware)
 app.use(logger())
 
-app.onError((err, c) => {
+app.onError((err, { json }) => {
   if (err instanceof HTTPException) {
-    return c.json({ error: err.message }, err.status)
+    return json({ error: err.message }, err.status)
   }
 
   console.error(err)
 
-  return c.json(
+  return json(
     { error: StatusPhrases.INTERNAL_SERVER_ERROR },
     StatusCodes.INTERNAL_SERVER_ERROR,
   )
 })
 
-app.notFound((c) =>
-  c.json({ error: StatusPhrases.NOT_FOUND }, StatusCodes.NOT_FOUND),
+app.notFound(({ json }) =>
+  json({ error: StatusPhrases.NOT_FOUND }, StatusCodes.NOT_FOUND),
 )
 
 app.doc("/doc", {

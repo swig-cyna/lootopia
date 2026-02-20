@@ -3,7 +3,7 @@ import huntsRouter from "@lootopia/api/routes/hunts/route"
 
 const router = createRouter()
 
-router.get("/", (c) => c.text("API Route"))
+router.get("/", ({ text }) => text("API Route"))
 router.route("/hunts", huntsRouter)
 
 export default router

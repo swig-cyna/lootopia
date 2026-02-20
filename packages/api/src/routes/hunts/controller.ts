@@ -10,7 +10,7 @@ import type {
   getHuntRoute,
   listHuntsRoute,
   updateHuntRoute,
-} from "./doc"
+} from "@lootopia/api/routes/hunts/doc"
 
 export const createHuntController: RouteHandler<
   typeof createHuntRoute,
