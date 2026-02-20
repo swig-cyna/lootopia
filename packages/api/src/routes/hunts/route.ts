@@ -1,5 +1,4 @@
-import { OpenAPIHono } from "@hono/zod-openapi"
-import { type AuthenticatedContext } from "@lootopia/api/lib/hono"
+import { createRouter, type AuthenticatedContext } from "@lootopia/api/lib/hono"
 
 import {
   createHuntController,
@@ -16,7 +15,7 @@ import {
   updateHuntRoute,
 } from "@lootopia/api/routes/hunts/doc"
 
-const huntsRouter = new OpenAPIHono<AuthenticatedContext>()
+const huntsRouter = createRouter<AuthenticatedContext>()
   .openapi(createHuntRoute, createHuntController)
   .openapi(listHuntsRoute, listHuntsController)
   .openapi(getHuntRoute, getHuntController)

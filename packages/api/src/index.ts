@@ -1,7 +1,6 @@
 import { serve } from "@hono/node-server"
-import { OpenAPIHono } from "@hono/zod-openapi"
 import env from "@lootopia/api/env"
-import { HonoContext } from "@lootopia/api/lib/hono"
+import { createRouter } from "@lootopia/api/lib/hono"
 import { authMiddleware } from "@lootopia/api/middlewares/auth.middlewares"
 import router from "@lootopia/api/routes/route"
 import { auth } from "@lootopia/auth/server"
@@ -12,21 +11,7 @@ import { logger } from "hono/logger"
 import * as StatusCodes from "stoker/http-status-codes"
 import * as StatusPhrases from "stoker/http-status-phrases"
 
-const app = new OpenAPIHono<HonoContext>({
-  defaultHook: (result, c) => {
-    if (!result.success) {
-      return c.json(
-        {
-          error: "Validation error",
-          details: result.error.issues,
-        },
-        StatusCodes.BAD_REQUEST,
-      )
-    }
-
-    return result
-  },
-})
+const app = createRouter()
 
 app.use(
   cors({
