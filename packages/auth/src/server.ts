@@ -1,5 +1,5 @@
-import { dialect } from "@lootopia/db"
 import env from "@lootopia/auth/env"
+import { dialect } from "@lootopia/db"
 import { betterAuth } from "better-auth"
 import { admin, openAPI } from "better-auth/plugins"
 import { createAccessControl } from "better-auth/plugins/access"
@@ -24,6 +24,7 @@ const permissions = {
 }
 
 export const auth = betterAuth({
+  baseURL: env.WEB_BASE_URL,
   trustedOrigins: env.WEB_ORIGINS.split(","),
   database: {
     dialect,
