@@ -1,7 +1,6 @@
 import { db } from "@lootopia/db/index"
 import type { HuntTable } from "@lootopia/db/models/hunt"
-import type { Insertable, Selectable, Updateable } from "kysely"
-import { sql } from "kysely"
+import { sql, type Insertable, type Selectable, type Updateable } from "kysely"
 
 export type Hunt = Selectable<HuntTable>
 export type NewHunt = Insertable<HuntTable>

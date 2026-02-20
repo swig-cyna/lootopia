@@ -1,4 +1,3 @@
-import { randomUUID } from "crypto"
 import type { Kysely } from "kysely"
 
 export async function seed(db: Kysely<any>): Promise<void> {
@@ -10,29 +9,23 @@ export async function seed(db: Kysely<any>): Promise<void> {
 
   if (!organizer) {
     console.log("Organizer not found, skipping hunts seed")
-    return
-  }
 
-  const now = new Date()
+    
+return
+  }
 
   const hunts = [
     {
-      id: randomUUID(),
       title: "Old Harbor Treasure Hunt",
       description: "Explore the historic alleys of the old harbor and solve riddles to find the hidden treasure.",
       status: "draft",
       organizerId: organizer.id,
-      createdAt: now,
-      updatedAt: now,
     },
     {
-      id: randomUUID(),
       title: "Central Park Mysteries",
       description: "An outdoor adventure through the central park with AR points and nature-themed quizzes.",
       status: "published",
       organizerId: organizer.id,
-      createdAt: now,
-      updatedAt: now,
     },
   ]
 
@@ -47,7 +40,9 @@ export async function seed(db: Kysely<any>): Promise<void> {
 
     if (result.status === "fulfilled") {
       console.log(`Hunt "${hunt.title}" created for ${organizer.name}`)
-      return
+
+      
+return
     }
 
     console.log(`Hunt "${hunt.title}" already exists or failed`)

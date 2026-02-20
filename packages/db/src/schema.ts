@@ -7,7 +7,7 @@ import type {
   QuizQuestionTable,
 } from "./models/hunt"
 
-export type Timestamp = ColumnType<Date, Date | string, Date | string>
+export type Timestamp = ColumnType<Date, Date | string | undefined, Date | string>
 
 export interface Database {
   user: UserTable

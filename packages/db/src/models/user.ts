@@ -12,16 +12,16 @@ export interface UserTable {
   banned: boolean
   banReason: string | null
   banExpires: bigint | null
-  createdAt: Generated<Timestamp>
-  updatedAt: Generated<Timestamp>
+  createdAt: Timestamp
+  updatedAt: Timestamp
 }
 
 export interface SessionTable {
   id: string
   expiresAt: Timestamp
   token: string
-  createdAt: Generated<Timestamp>
-  updatedAt: Generated<Timestamp>
+  createdAt: Timestamp
+  updatedAt: Timestamp
   ipAddress: string | null
   userAgent: string | null
   userId: string
@@ -40,8 +40,8 @@ export interface AccountTable {
   refreshTokenExpiresAt: Timestamp | null
   scope: string | null
   password: string | null
-  createdAt: Generated<Timestamp>
-  updatedAt: Generated<Timestamp>
+  createdAt: Timestamp
+  updatedAt: Timestamp
 }
 
 export interface VerificationTable {
@@ -49,6 +49,6 @@ export interface VerificationTable {
   identifier: string
   value: string
   expiresAt: Timestamp
-  createdAt: Generated<Timestamp>
-  updatedAt: Generated<Timestamp>
+  createdAt: Timestamp
+  updatedAt: Timestamp
 }
