@@ -1,62 +1,21 @@
-import type { ColumnType, Generated } from "kysely"
+import type { ColumnType } from "kysely"
+import type { AccountTable, SessionTable, UserTable, VerificationTable } from "./models/user"
+import type {
+  HuntPointTable,
+  HuntRewardTable,
+  HuntTable,
+  QuizQuestionTable,
+} from "./models/hunt"
 
 export type Timestamp = ColumnType<Date, Date | string, Date | string>
-
-export interface UserTable {
-  id: string
-  name: string
-  email: string
-  emailVerified: Generated<boolean>
-  image: string | null
-  bio: string | null
-  role: string
-  banned: boolean
-  banReason: string | null
-  banExpires: bigint | null
-  createdAt: Generated<Timestamp>
-  updatedAt: Generated<Timestamp>
-}
-
-export interface SessionTable {
-  id: string
-  expiresAt: Timestamp
-  token: string
-  createdAt: Generated<Timestamp>
-  updatedAt: Generated<Timestamp>
-  ipAddress: string | null
-  userAgent: string | null
-  userId: string
-  impersonatedBy: string | null
-}
-
-export interface AccountTable {
-  id: string
-  accountId: string
-  providerId: string
-  userId: string
-  accessToken: string | null
-  refreshToken: string | null
-  idToken: string | null
-  accessTokenExpiresAt: Timestamp | null
-  refreshTokenExpiresAt: Timestamp | null
-  scope: string | null
-  password: string | null
-  createdAt: Generated<Timestamp>
-  updatedAt: Generated<Timestamp>
-}
-
-export interface VerificationTable {
-  id: string
-  identifier: string
-  value: string
-  expiresAt: Timestamp
-  createdAt: Generated<Timestamp>
-  updatedAt: Generated<Timestamp>
-}
 
 export interface Database {
   user: UserTable
   session: SessionTable
   account: AccountTable
   verification: VerificationTable
+  hunts: HuntTable
+  hunt_points: HuntPointTable
+  hunt_rewards: HuntRewardTable
+  quiz_questions: QuizQuestionTable
 }
