@@ -1,5 +1,5 @@
-import type { Database } from "@lootopia/db/schema"
 import env from "@lootopia/db/env"
+import type { Database } from "@lootopia/db/schema"
 import { Kysely, ParseJSONResultsPlugin, PostgresDialect } from "kysely"
 import pg from "pg"
 

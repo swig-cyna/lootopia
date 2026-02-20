@@ -1,11 +1,9 @@
-import { OpenAPIHono } from "@hono/zod-openapi"
-import { HonoContext } from "@lootopia/api/lib/hono"
-import testRouter from "@lootopia/api/routes/test/route"
+import { createRouter } from "@lootopia/api/lib/hono"
+import huntsRouter from "@lootopia/api/routes/hunts/route"
 
-const router = new OpenAPIHono<HonoContext>()
+const router = createRouter()
 
-router.get("/", (c) => c.text("API Route"))
-
-router.route("/test", testRouter)
+router.get("/", ({ text }) => text("API Route"))
+router.route("/hunts", huntsRouter)
 
 export default router

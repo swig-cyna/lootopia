@@ -2,6 +2,10 @@ erDiagram
     user ||--o{ session : "has"
     user ||--o{ account : "has"
     user ||--o| session : "impersonates"
+    user ||--o{ hunts : "organizes"
+    hunts ||--o{ hunt_points : "has"
+    hunts ||--o| hunt_rewards : "has"
+    hunt_points ||--o| quiz_questions : "has"
 
     user {
         string id PK
@@ -53,4 +57,38 @@ erDiagram
         timestamp expiresAt
         timestamp createdAt
         timestamp updatedAt
+    }
+
+    hunts {
+        string id PK
+        string title
+        string description
+        hunt_status status
+        string organizerId FK
+        timestamp createdAt
+        timestamp updatedAt
+    }
+
+    hunt_points {
+        string id PK
+        string huntId FK
+        float8 latitude
+        float8 longitude
+        string gameType
+        timestamp createdAt
+    }
+
+    hunt_rewards {
+        string id PK
+        string huntId FK
+        integer topX
+        string promoCode
+    }
+
+    quiz_questions {
+        string id PK
+        string huntPointId FK
+        string question
+        jsonb answers
+        integer correctAnswerIndex
     }
