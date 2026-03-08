@@ -13,7 +13,7 @@ import {
   errorResponseSchema,
   idParamSchema,
 } from "@lootopia/api/utils/responses"
-import { ROLES } from "@lootopia/auth"
+import { ROLES } from "@lootopia/auth/constants"
 import * as StatusCodes from "stoker/http-status-codes"
 import * as StatusPhrases from "stoker/http-status-phrases"
 import { jsonContent } from "stoker/openapi/helpers"

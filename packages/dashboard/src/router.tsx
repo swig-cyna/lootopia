@@ -1,24 +1,10 @@
-import { createBrowserRouter, Outlet, RouterProvider } from "react-router"
+import IndexPage from "@lootopia/dashboard/pages/page"
+import { createBrowserRouter, RouterProvider } from "react-router"
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />,
-    children: [
-      {
-        errorElement: <ErrorBoundary />,
-        element: <Outlet />,
-        children: [
-          { index: true, element: <Auth /> },
-          { path: "auth", element: <Auth /> },
-          {
-            path: "guilds",
-            children: [{ path: ":guildId", element: <HomeGuild /> }],
-          },
-          { path: "*", element: <NotFound /> },
-        ],
-      },
-    ],
+    element: <IndexPage />,
   },
 ])
 

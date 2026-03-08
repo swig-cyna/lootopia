@@ -6,23 +6,26 @@
     "./*": "./src/*.ts"
   },
   "scripts": {
-    "lint": "eslint --fix",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix",
     "kysely": "kysely"
   },
   "dependencies": {
     "@t3-oss/env-core": "^0.13.10",
     "kysely": "^0.28.11",
-    "pg": "^8.18.0",
+    "pg": "^8.20.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@lootopia/eslint-config": "workspace:*",
-    "@types/node": "^25.3.0",
-    "@types/pg": "^8.16.0",
-    "eslint": "^10.0.0",
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^25.3.5",
+    "@types/pg": "^8.18.0",
+    "eslint": "^10.0.3",
+    "globals": "^17.4.0",
     "kysely-ctl": "^0.20.0",
     "tsconfig-paths": "^4.2.0",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.56.1"
   }
 }

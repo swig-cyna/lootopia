@@ -2,24 +2,28 @@
   "name": "@lootopia/auth",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts",
+    "./server": "./src/server.ts",
+    "./client": "./src/client.ts",
     "./*": "./src/*.ts"
   },
   "scripts": {
-    "lint": "eslint --fix"
+    "lint": "eslint",
+    "lint:fix": "eslint --fix"
   },
   "dependencies": {
     "@lootopia/db": "workspace:*",
     "@t3-oss/env-core": "^0.13.10",
-    "better-auth": "^1.4.18",
+    "better-auth": "^1.5.4",
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@lootopia/eslint-config": "workspace:*",
-    "@types/node": "^25.3.0",
-    "eslint": "^10.0.0",
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^25.3.5",
+    "eslint": "^10.0.3",
+    "globals": "^17.4.0",
     "tsconfig-paths": "^4.2.0",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.56.1"
   }
 }

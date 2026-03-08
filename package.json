@@ -4,16 +4,18 @@
     "dev": "dotenv -e .env -- pnpm -r --parallel dev",
     "dev:web": "dotenv -e .env -- pnpm --filter web dev",
     "dev:api": "dotenv -e .env -- pnpm --filter api dev",
+    "dev:dashboard": "dotenv -e .env -- pnpm --filter dashboard dev",
     "build": "dotenv -e .env -- pnpm -r run build",
     "start": "dotenv -e .env -- pnpm -r --parallel run start",
     "clean": "pnpm -r exec rm -rf dist node_modules",
     "lint": "pnpm -r --parallel run lint",
+    "lint:fix": "pnpm -r --parallel run lint:fix",
     "kysely": "dotenv -e .env -- pnpm --filter db kysely",
     "s3:create": "dotenv -e .env -- node scripts/create-bucket.mjs"
   },
   "devDependencies": {
     "dotenv-cli": "^11.0.0",
-    "minio": "^8.0.6",
+    "minio": "^8.0.7",
     "typescript": "^5.9.3"
   }
 }

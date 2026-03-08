@@ -1,5 +1,5 @@
+import { type Role, ROLES } from "@lootopia/auth/constants"
 import { auth } from "@lootopia/auth/server"
-import { type Role, ROLES } from "@lootopia/auth"
 import { MiddlewareHandler } from "hono"
 import * as StatusCodes from "stoker/http-status-codes"
 import * as StatusPhrases from "stoker/http-status-phrases"
@@ -17,18 +17,20 @@ export const requireAuth: MiddlewareHandler = async (c, next) => {
   if (!c.var.user) {
     return c.json(
       { error: StatusPhrases.UNAUTHORIZED },
-      StatusCodes.UNAUTHORIZED
+      StatusCodes.UNAUTHORIZED,
     )
   }
 
   return await next()
 }
 
-export const requireRoles = (allowedRoles: Role[]): MiddlewareHandler => async (c, next) => {
+export const requireRoles =
+  (allowedRoles: Role[]): MiddlewareHandler =>
+  async (c, next) => {
     if (!c.var.user) {
       return c.json(
         { error: StatusPhrases.UNAUTHORIZED },
-        StatusCodes.UNAUTHORIZED
+        StatusCodes.UNAUTHORIZED,
       )
     }
 
@@ -39,10 +41,7 @@ export const requireRoles = (allowedRoles: Role[]): MiddlewareHandler => async (
     }
 
     if (!allowedRoles.includes(userRole)) {
-      return c.json(
-        { error: StatusPhrases.FORBIDDEN },
-        StatusCodes.FORBIDDEN
-      )
+      return c.json({ error: StatusPhrases.FORBIDDEN }, StatusCodes.FORBIDDEN)
     }
 
     return await next()

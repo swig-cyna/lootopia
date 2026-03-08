@@ -1,10 +1,20 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.tsx'
+import "@lootopia/dashboard/index.css"
+import queryClient from "@lootopia/dashboard/lib/queryClient"
+import Router from "@lootopia/dashboard/router"
+import { QueryClientProvider } from "@tanstack/react-query"
+import { StrictMode } from "react"
+import { createRoot } from "react-dom/client"
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-)
+const rootElement = document.getElementById("root")
+
+if (rootElement) {
+  createRoot(rootElement).render(
+    <StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <Router />
+      </QueryClientProvider>
+    </StrictMode>,
+  )
+} else {
+  throw new Error("Root element not found")
+}

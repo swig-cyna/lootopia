@@ -8,20 +8,27 @@ export default defineConfig([
     ignores: ["**/node_modules/**", "**/dist/**"],
   },
   {
-    files: ["**/*.ts"],
+    files: ["**/*.{ts,tsx}"],
     languageOptions: {
       ...js.configs.recommended.languageOptions,
       parser: tseslint.parser,
       parserOptions: {
         projectService: true,
         tsconfigRootDir: import.meta.dirname,
+        ecmaFeatures: { jsx: true },
       },
       globals: {
+        ...globals.browser,
         ...globals.node,
       },
     },
     plugins: {
       "@typescript-eslint": tseslint.plugin,
+    },
+    settings: {
+      react: {
+        version: "detect",
+      },
     },
     rules: {
       ...js.configs.recommended.rules,

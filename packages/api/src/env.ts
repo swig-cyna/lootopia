@@ -3,12 +3,10 @@ import { z } from "zod/v4"
 
 const env = createEnv({
   server: {
-    API_PORT: z.coerce.number().default(3001),
     WEB_ORIGINS: z.string(),
   },
 
   runtimeEnv: {
-    API_PORT: process.env.PORT,
     WEB_ORIGINS: process.env.WEB_ORIGINS,
   },
 })

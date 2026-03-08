@@ -6,12 +6,12 @@
     "esModuleInterop": true,
     "paths": {
       "@lootopia/dashboard": ["./packages/dashboard/src/*"],
+      "@lootopia/dashboard/*": ["./packages/dashboard/src/*"],
       "@lootopia/api/*": ["./packages/api/src/*"],
       "@lootopia/db": ["./packages/db/src/index"],
       "@lootopia/db/*": ["./packages/db/src/*"],
       "@lootopia/auth": ["./packages/auth/src/index"],
-      "@lootopia/auth/*": ["./packages/auth/src/*"],
-      "@lootopia/eslint-config/*": ["./packages/eslint-config/*"]
+      "@lootopia/auth/*": ["./packages/auth/src/*"]
     },
     "strict": true,
     "strictNullChecks": true
