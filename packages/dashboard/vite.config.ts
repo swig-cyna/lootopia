@@ -9,8 +9,11 @@ export default defineConfig({
   resolve: {
     alias: {
       "@lootopia/dashboard": path.resolve(__dirname, "./src"),
-      "@lootopia/api": path.resolve(__dirname, "../../api/src"),
-      "@lootopia/auth/client": path.resolve(__dirname, "../../auth/src/client"),
+      "@lootopia/api": path.resolve(__dirname, "../api/src"),
+      "@lootopia/auth/client": path.resolve(
+        __dirname,
+        "../auth/src/client.ts",
+      ),
     },
   },
   server: {

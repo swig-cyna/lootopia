@@ -1,3 +1,4 @@
+import { TooltipProvider } from "@lootopia/dashboard/components/ui/tooltip"
 import "@lootopia/dashboard/index.css"
 import queryClient from "@lootopia/dashboard/lib/queryClient"
 import Router from "@lootopia/dashboard/router"
@@ -11,7 +12,9 @@ if (rootElement) {
   createRoot(rootElement).render(
     <StrictMode>
       <QueryClientProvider client={queryClient}>
-        <Router />
+        <TooltipProvider>
+          <Router />
+        </TooltipProvider>
       </QueryClientProvider>
     </StrictMode>,
   )
