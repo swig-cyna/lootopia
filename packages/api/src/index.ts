@@ -58,6 +58,8 @@ app.on(["POST", "GET"], "/auth/*", (c) => auth.handler(c.req.raw))
 
 app.route("/", router)
 
+export type AppType = typeof app
+
 serve(
   {
     fetch: app.fetch,
