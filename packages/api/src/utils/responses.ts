@@ -27,7 +27,6 @@ export const paginationParamsSchema = z
       .transform(Number)
       .pipe(z.number().min(1).max(100)),
   })
-  .partial()
 
 export const paginationMetadataSchema = z.object({
   page: z.number(),
