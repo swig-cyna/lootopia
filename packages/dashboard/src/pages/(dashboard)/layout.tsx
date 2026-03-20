@@ -13,7 +13,7 @@ const DashboardLayout = () => (
       <header className="flex h-12 items-center px-4 border-b">
         <SidebarTrigger />
       </header>
-      <main className="flex-1 p-4">
+      <main className="flex flex-1 p-4">
         <Outlet />
       </main>
     </SidebarInset>
