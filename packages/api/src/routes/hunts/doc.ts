@@ -117,3 +117,24 @@ export const deleteHuntRoute = createRoute({
     ),
   }),
 })
+
+export const deleteHuntPointRoute = createRoute({
+  method: "delete",
+  path: "/{huntId}/points/{id}",
+  tags: ["Hunts"],
+  summary: "Delete a hunt point",
+  description:
+    "Delete a hunt point. Only the owner can delete.\n\nRequired roles: organizer",
+  middleware: [requireRoles([ROLES.ORGANIZER]), requireHuntOwner],
+  security: [{ bearerAuth: [] }],
+  request: {
+    params: idParamSchema,
+  },
+  responses: createAuthResponses({
+    [StatusCodes.NO_CONTENT]: { description: "Hunt point deleted" },
+    [StatusCodes.NOT_FOUND]: jsonContent(
+      errorResponseSchema,
+      StatusPhrases.NOT_FOUND,
+    ),
+  }),
+})
