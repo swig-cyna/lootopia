@@ -1,11 +1,12 @@
 import { type RouteHandler } from "@hono/zod-openapi"
 import { type AuthenticatedContext } from "@lootopia/api/lib/hono"
 import { paginate } from "@lootopia/api/utils/responses"
-import { $hunt } from "@lootopia/db/repositories/hunt.repository"
+import { $hunt, $huntPoint } from "@lootopia/db/repositories/hunt.repository"
 import * as StatusCodes from "stoker/http-status-codes"
 
 import type {
   createHuntRoute,
+  deleteHuntPointRoute,
   deleteHuntRoute,
   getHuntRoute,
   listHuntsRoute,
@@ -16,15 +17,18 @@ export const createHuntController: RouteHandler<
   typeof createHuntRoute,
   AuthenticatedContext
 > = async ({ req, json, var: { user } }) => {
-  const body = req.valid("json")
+  const { title, description, points } = req.valid("json")
 
   const hunt = await $hunt.create({
-    title: body.title,
-    description: body.description,
+    title,
+    description,
     organizerId: user.id,
   })
+  const huntPoints = await $huntPoint.create(
+    points.map((point) => ({ ...point, huntId: hunt.id })),
+  )
 
-  return json(hunt, StatusCodes.CREATED)
+  return json({ ...hunt, points: huntPoints }, StatusCodes.CREATED)
 }
 
 export const listHuntsController: RouteHandler<
@@ -38,7 +42,18 @@ export const listHuntsController: RouteHandler<
     $hunt.countByOrganizer(user.id),
   ])
 
-  return json(paginate(hunts, Number(count), page, limit), StatusCodes.OK)
+  const huntIds = hunts.map((hunt) => hunt.id)
+  const huntPoints = await $huntPoint.findByHuntIds(huntIds)
+
+  const huntsWithPoints = hunts.map((hunt) => ({
+    ...hunt,
+    points: huntPoints.filter((point) => point.huntId === hunt.id),
+  }))
+
+  return json(
+    paginate(huntsWithPoints, Number(count), page, limit),
+    StatusCodes.OK,
+  )
 }
 
 export const getHuntController: RouteHandler<
@@ -52,7 +67,9 @@ export const getHuntController: RouteHandler<
     return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
   }
 
-  return json(hunt, StatusCodes.OK)
+  const huntPoints = await $huntPoint.findByHuntIds([hunt.id])
+
+  return json({ ...hunt, points: huntPoints }, StatusCodes.OK)
 }
 
 export const updateHuntController: RouteHandler<
@@ -60,11 +77,21 @@ export const updateHuntController: RouteHandler<
   AuthenticatedContext
 > = async ({ req, json }) => {
   const { id } = req.valid("param")
-  const body = req.valid("json")
+  const { title, description, status, points } = req.valid("json")
 
-  const hunt = await $hunt.update(id, body)
+  const hunt = await $hunt.update(id, { title, description, status })
 
-  return json(hunt!, StatusCodes.OK)
+  if (!hunt) {
+    return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
+  }
+
+  const updatedPoints = (
+    await Promise.all(
+      points?.map((point) => $huntPoint.update(point.id, point)) || [],
+    )
+  ).filter((point) => point !== undefined)
+
+  return json({ ...hunt, points: updatedPoints }, StatusCodes.OK)
 }
 
 export const deleteHuntController: RouteHandler<
@@ -74,6 +101,17 @@ export const deleteHuntController: RouteHandler<
   const { id } = req.valid("param")
 
   await $hunt.delete(id)
+
+  return body(null, StatusCodes.NO_CONTENT)
+}
+
+export const deleteHuntPointController: RouteHandler<
+  typeof deleteHuntPointRoute,
+  AuthenticatedContext
+> = async ({ req, body }) => {
+  const { id } = req.valid("param")
+
+  await $huntPoint.delete(id)
 
   return body(null, StatusCodes.NO_CONTENT)
 }
