@@ -13,6 +13,7 @@ export const huntSchema = z.object({
       latitude: z.number(),
       longitude: z.number(),
       gameType: z.string(),
+      position: z.number().positive(),
     })
     .array()
     .min(1, "At least one point is required"),

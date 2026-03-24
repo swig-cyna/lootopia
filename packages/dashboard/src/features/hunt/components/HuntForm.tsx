@@ -55,10 +55,11 @@ const HuntForm = () => {
   useEffect(() => {
     setValue(
       "points",
-      points.map((p) => ({
+      points.map((p, index) => ({
         latitude: p.lat,
         longitude: p.lng,
         gameType: "default",
+        position: index + 1,
       })),
     )
   }, [points, setValue])
