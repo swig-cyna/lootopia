@@ -12,6 +12,7 @@ export const huntsPointSchema = z.object({
   longitude: z.number(),
   gameType: z.string(),
   createdAt: z.date(),
+  position: z.number(),
 })
 
 export const createHuntPointSchema = z.object({
@@ -19,6 +20,7 @@ export const createHuntPointSchema = z.object({
   latitude: z.number(),
   longitude: z.number(),
   gameType: z.string(),
+  position: z.number(),
 })
 
 export const huntSchema = z.object({

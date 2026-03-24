@@ -28,6 +28,7 @@ export interface HuntPointTable {
   longitude: number
   gameType: string
   createdAt: Timestamp
+  position: number
 }
 
 export interface HuntRewardTable {
