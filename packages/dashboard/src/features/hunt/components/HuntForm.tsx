@@ -21,7 +21,24 @@ import {
   huntSchema,
   type HuntFormValues,
 } from "@lootopia/dashboard/features/hunt/schema/hunt"
-import { MapPin, Trash2 } from "lucide-react"
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core"
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable"
+import { CSS } from "@dnd-kit/utilities"
+import { GripVertical, MapPin, Trash2 } from "lucide-react"
 import mapboxgl from "mapbox-gl"
 import "mapbox-gl/dist/mapbox-gl.css"
 import { useCallback, useEffect, useRef, useState } from "react"
@@ -32,6 +49,75 @@ interface HuntPoint {
   lng: number
   lat: number
   marker: mapboxgl.Marker
+}
+
+interface SortablePointItemProps {
+  point: HuntPoint
+  index: number
+  onRemove: (_id: string) => void
+  onFlyTo: (_p: HuntPoint) => void
+}
+
+const SortablePointItem = ({
+  point,
+  index,
+  onRemove,
+  onFlyTo,
+}: SortablePointItemProps) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: point.id })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  }
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="group flex items-center gap-2 rounded-lg border p-2 text-sm cursor-pointer hover:bg-accent transition-colors"
+      onClick={() => onFlyTo(point)}
+    >
+      <button
+        type="button"
+        className="cursor-grab active:cursor-grabbing shrink-0 text-muted-foreground hover:text-foreground"
+        {...attributes}
+        {...listeners}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <GripVertical className="size-4" />
+      </button>
+      <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-medium">
+        {index + 1}
+      </span>
+      <div className="flex-1 min-w-0">
+        <p className="truncate font-medium">Point {index + 1}</p>
+        <p className="text-xs text-muted-foreground">
+          {point.lat.toFixed(4)}, {point.lng.toFixed(4)}
+        </p>
+      </div>
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        className="size-7 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+        onClick={(e) => {
+          e.stopPropagation()
+          onRemove(point.id)
+        }}
+      >
+        <Trash2 className="size-3.5" />
+      </Button>
+    </div>
+  )
 }
 
 const HuntForm = () => {
@@ -51,6 +137,13 @@ const HuntForm = () => {
   const mapRef = useRef<mapboxgl.Map | null>(null)
   const mapContainerRef = useRef<HTMLDivElement>(null)
   const [points, setPoints] = useState<HuntPoint[]>([])
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  )
 
   useEffect(() => {
     setValue(
@@ -78,6 +171,19 @@ const HuntForm = () => {
       center: [point.lng, point.lat],
       zoom: 14,
     })
+  }, [])
+
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
+    const { active, over } = event
+
+    if (over && active.id !== over.id) {
+      setPoints((prev) => {
+        const oldIndex = prev.findIndex((p) => p.id === active.id)
+        const newIndex = prev.findIndex((p) => p.id === over.id)
+
+        return arrayMove(prev, oldIndex, newIndex)
+      })
+    }
   }, [])
 
   useEffect(() => {
@@ -188,39 +294,28 @@ const HuntForm = () => {
               </div>
             ) : (
               <ScrollArea className="h-full px-4">
-                <div className="flex flex-col gap-2 pr-3">
-                  {points.map((point, index) => (
-                    <div
-                      key={point.id}
-                      className="group flex items-center gap-2 rounded-lg border p-2 text-sm cursor-pointer hover:bg-accent transition-colors"
-                      onClick={() => flyToPoint(point)}
-                    >
-                      <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-medium">
-                        {index + 1}
-                      </span>
-                      <div className="flex-1 min-w-0">
-                        <p className="truncate font-medium">
-                          Point {index + 1}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {point.lat.toFixed(4)}, {point.lng.toFixed(4)}
-                        </p>
-                      </div>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="size-7 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          removePoint(point.id)
-                        }}
-                      >
-                        <Trash2 className="size-3.5" />
-                      </Button>
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleDragEnd}
+                >
+                  <SortableContext
+                    items={points.map((p) => p.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    <div className="flex flex-col gap-2 pr-3">
+                      {points.map((point, index) => (
+                        <SortablePointItem
+                          key={point.id}
+                          point={point}
+                          index={index}
+                          onRemove={removePoint}
+                          onFlyTo={flyToPoint}
+                        />
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </SortableContext>
+                </DndContext>
               </ScrollArea>
             )}
           </CardContent>
