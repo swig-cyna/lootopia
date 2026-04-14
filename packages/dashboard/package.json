@@ -16,6 +16,7 @@
     "@hookform/resolvers": "^5.2.2",
     "@lootopia/api": "workspace:*",
     "@lootopia/auth": "workspace:*",
+    "@mapbox/search-js-react": "^1.5.1",
     "@tailwindcss/vite": "^4.2.1",
     "@tanstack/react-query": "^5.90.21",
     "class-variance-authority": "^0.7.1",

@@ -16,6 +16,7 @@ import {
 } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema"
+import { SearchBox } from "@mapbox/search-js-react"
 import { Badge } from "@lootopia/dashboard/components/ui/badge"
 import { Button } from "@lootopia/dashboard/components/ui/button"
 import {
@@ -137,6 +138,7 @@ const HuntForm = () => {
   const mapRef = useRef<mapboxgl.Map | null>(null)
   const mapContainerRef = useRef<HTMLDivElement>(null)
   const [points, setPoints] = useState<HuntPoint[]>([])
+  const [mapInstance, setMapInstance] = useState<mapboxgl.Map | null>(null)
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -203,8 +205,9 @@ const HuntForm = () => {
       zoom: 5,
     })
     mapRef.current = map
+    setMapInstance(map)
 
-    map.addControl(new mapboxgl.NavigationControl(), "top-left")
+    map.addControl(new mapboxgl.NavigationControl(), "top-right")
 
     map.on("click", (e) => {
       const { lng, lat } = e.lngLat
@@ -271,10 +274,21 @@ const HuntForm = () => {
       <div className="flex flex-1 gap-4 min-h-0">
         <Card className="flex-1 min-h-0">
           <CardContent className="flex-1 h-full p-0">
-            <div
-              ref={mapContainerRef}
-              className="w-full h-full rounded-xl min-h-[400px]"
-            />
+            <div className="relative w-full h-full">
+              <div
+                ref={mapContainerRef}
+                className="w-full h-full rounded-xl min-h-100"
+              />
+              <div className="absolute top-3 left-3 z-10 w-80 max-w-[calc(100%-1.5rem)]">
+                <SearchBox
+                  accessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
+                  map={mapInstance ?? undefined}
+                  mapboxgl={mapboxgl}
+                  marker={false}
+                  placeholder="Rechercher une adresse..."
+                />
+              </div>
+            </div>
           </CardContent>
         </Card>
 
