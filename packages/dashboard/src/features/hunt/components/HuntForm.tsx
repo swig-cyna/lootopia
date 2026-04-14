@@ -1,3 +1,20 @@
+import {
+  closestCenter,
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core"
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable"
+import { CSS } from "@dnd-kit/utilities"
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema"
 import { Badge } from "@lootopia/dashboard/components/ui/badge"
 import { Button } from "@lootopia/dashboard/components/ui/button"
@@ -21,23 +38,6 @@ import {
   huntSchema,
   type HuntFormValues,
 } from "@lootopia/dashboard/features/hunt/schema/hunt"
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  type DragEndEvent,
-} from "@dnd-kit/core"
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable"
-import { CSS } from "@dnd-kit/utilities"
 import { GripVertical, MapPin, Trash2 } from "lucide-react"
 import mapboxgl from "mapbox-gl"
 import "mapbox-gl/dist/mapbox-gl.css"
@@ -146,6 +146,10 @@ const HuntForm = () => {
   )
 
   useEffect(() => {
+    points.forEach((p, index) => {
+      p.marker.getElement().textContent = String(index + 1)
+    })
+
     setValue(
       "points",
       points.map((p, index) => ({
@@ -205,7 +209,11 @@ const HuntForm = () => {
     map.on("click", (e) => {
       const { lng, lat } = e.lngLat
 
-      const marker = new mapboxgl.Marker({ color: "#6366f1" })
+      const el = document.createElement("div")
+      el.className =
+        "flex size-8 items-center justify-center rounded-full border-2 border-white bg-primary text-primary-foreground text-sm font-semibold shadow-md"
+
+      const marker = new mapboxgl.Marker({ element: el })
         .setLngLat([lng, lat])
         .addTo(map)
 
