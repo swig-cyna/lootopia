@@ -172,6 +172,15 @@ const HuntForm = () => {
     })
   }, [])
 
+  const updatePointCoords = useCallback(
+    (id: string, lng: number, lat: number) => {
+      setPoints((prev) =>
+        prev.map((p) => (p.id === id ? { ...p, lng, lat } : p)),
+      )
+    },
+    [],
+  )
+
   const flyToPoint = useCallback((point: HuntPoint) => {
     mapRef.current?.flyTo({
       center: [point.lng, point.lat],
@@ -214,13 +223,18 @@ const HuntForm = () => {
 
       const el = document.createElement("div")
       el.className =
-        "flex size-8 items-center justify-center rounded-full border-2 border-white bg-primary text-primary-foreground text-sm font-semibold shadow-md"
+        "flex size-8 items-center justify-center rounded-full border-2 border-white bg-primary text-primary-foreground text-sm font-semibold shadow-md cursor-grab active:cursor-grabbing"
 
-      const marker = new mapboxgl.Marker({ element: el })
+      const marker = new mapboxgl.Marker({ element: el, draggable: true })
         .setLngLat([lng, lat])
         .addTo(map)
 
       const id = crypto.randomUUID()
+
+      marker.on("dragend", () => {
+        const { lng: newLng, lat: newLat } = marker.getLngLat()
+        updatePointCoords(id, newLng, newLat)
+      })
 
       setPoints((prev) => [...prev, { id, lng, lat, marker }])
     })
