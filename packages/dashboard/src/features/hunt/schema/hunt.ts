@@ -16,7 +16,8 @@ export const huntSchema = z.object({
       position: z.number().positive(),
     })
     .array()
-    .min(1, "At least one point is required"),
+    .min(3, "You must place at least 3 points")
+    .max(5, "You can place at most 5 points"),
 })
 
 export type HuntFormValues = z.infer<typeof huntSchema>

@@ -50,7 +50,10 @@ export const huntSchema = z.object({
 export const createHuntSchema = z.object({
   title: z.string().min(1).max(255),
   description: z.string().min(1),
-  points: z.array(createHuntPointSchema.omit({ huntId: true })),
+  points: z
+    .array(createHuntPointSchema.omit({ huntId: true }))
+    .min(3, "You must place at least 3 points")
+    .max(5, "You can place at most 5 points"),
 })
 
 export const updateHuntSchema = z.object({

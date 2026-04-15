@@ -16,7 +16,6 @@ import {
 } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema"
-import { SearchBox } from "@mapbox/search-js-react"
 import { Badge } from "@lootopia/dashboard/components/ui/badge"
 import { Button } from "@lootopia/dashboard/components/ui/button"
 import {
@@ -39,6 +38,7 @@ import {
   huntSchema,
   type HuntFormValues,
 } from "@lootopia/dashboard/features/hunt/schema/hunt"
+import { SearchBox } from "@mapbox/search-js-react"
 import { GripVertical, MapPin, Trash2 } from "lucide-react"
 import mapboxgl from "mapbox-gl"
 import "mapbox-gl/dist/mapbox-gl.css"
@@ -302,20 +302,15 @@ const HuntForm = () => {
               )}
             </CardTitle>
           </CardHeader>
-          <CardContent className="flex-1 min-h-0 px-0">
+          <CardContent className="flex-1 min-h-0 px-0 flex flex-col gap-2">
             {points.length === 0 ? (
               <div className="px-4">
                 <p className="text-sm text-muted-foreground">
-                  Click on the map to place points.
+                  Click on the map to place between 3 and 5 points.
                 </p>
-                {errors.points && (
-                  <p className="text-sm text-destructive mt-2">
-                    {errors.points.message}
-                  </p>
-                )}
               </div>
             ) : (
-              <ScrollArea className="h-full px-4">
+              <ScrollArea className="flex-1 min-h-0 px-4">
                 <DndContext
                   sensors={sensors}
                   collisionDetection={closestCenter}
@@ -339,6 +334,11 @@ const HuntForm = () => {
                   </SortableContext>
                 </DndContext>
               </ScrollArea>
+            )}
+            {errors.points && (
+              <p className="px-4 text-sm text-destructive">
+                {errors.points.message}
+              </p>
             )}
           </CardContent>
         </Card>
