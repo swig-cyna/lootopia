@@ -1,4 +1,4 @@
-import { HUNT_GAME_TYPE } from "@lootopia/db/models/hunt"
+import { HUNT_GAME_TYPE } from "@lootopia/dashboard/features/hunt/utils/constant.ts"
 import { z } from "zod"
 
 export const huntSchema = z.object({

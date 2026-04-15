@@ -38,7 +38,10 @@ import {
   huntSchema,
   type HuntFormValues,
 } from "@lootopia/dashboard/features/hunt/schema/hunt"
-import { HUNT_GAME_TYPE, type HuntGameType } from "@lootopia/db/models/hunt"
+import {
+  HUNT_GAME_TYPE,
+  type HuntGameType,
+} from "@lootopia/dashboard/features/hunt/utils/constant.ts"
 import { SearchBox } from "@mapbox/search-js-react"
 import { GripVertical, MapPin, Trash2 } from "lucide-react"
 import mapboxgl from "mapbox-gl"
