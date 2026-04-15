@@ -38,6 +38,7 @@ import {
   huntSchema,
   type HuntFormValues,
 } from "@lootopia/dashboard/features/hunt/schema/hunt"
+import { HUNT_GAME_TYPE, type HuntGameType } from "@lootopia/db/models/hunt"
 import { SearchBox } from "@mapbox/search-js-react"
 import { GripVertical, MapPin, Trash2 } from "lucide-react"
 import mapboxgl from "mapbox-gl"
@@ -49,6 +50,7 @@ interface HuntPoint {
   id: string
   lng: number
   lat: number
+  gameType: HuntGameType
   marker: mapboxgl.Marker
 }
 
@@ -57,13 +59,20 @@ interface SortablePointItemProps {
   index: number
   onRemove: (_id: string) => void
   onFlyTo: (_p: HuntPoint) => void
+  onChangeGameType: (_id: string, _gameType: HuntGameType) => void
 }
+
+const GAME_TYPE_OPTIONS: { value: HuntGameType; label: string }[] = [
+  { value: HUNT_GAME_TYPE.QUIZ, label: "Quiz" },
+  { value: HUNT_GAME_TYPE.AR, label: "ar" },
+]
 
 const SortablePointItem = ({
   point,
   index,
   onRemove,
   onFlyTo,
+  onChangeGameType,
 }: SortablePointItemProps) => {
   const {
     attributes,
@@ -84,39 +93,58 @@ const SortablePointItem = ({
     <div
       ref={setNodeRef}
       style={style}
-      className="group flex items-center gap-2 rounded-lg border p-2 text-sm cursor-pointer hover:bg-accent transition-colors"
+      className="group flex flex-col gap-2 rounded-lg border p-2 text-sm cursor-pointer hover:bg-accent transition-colors"
       onClick={() => onFlyTo(point)}
     >
-      <button
-        type="button"
-        className="cursor-grab active:cursor-grabbing shrink-0 text-muted-foreground hover:text-foreground"
-        {...attributes}
-        {...listeners}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <GripVertical className="size-4" />
-      </button>
-      <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-medium">
-        {index + 1}
-      </span>
-      <div className="flex-1 min-w-0">
-        <p className="truncate font-medium">Point {index + 1}</p>
-        <p className="text-xs text-muted-foreground">
-          {point.lat.toFixed(4)}, {point.lng.toFixed(4)}
-        </p>
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          className="cursor-grab active:cursor-grabbing shrink-0 text-muted-foreground hover:text-foreground"
+          {...attributes}
+          {...listeners}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <GripVertical className="size-4" />
+        </button>
+        <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-medium">
+          {index + 1}
+        </span>
+        <div className="flex-1 min-w-0">
+          <p className="truncate font-medium">Point {index + 1}</p>
+          <p className="text-xs text-muted-foreground">
+            {point.lat.toFixed(4)}, {point.lng.toFixed(4)}
+          </p>
+        </div>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          className="size-7 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+          onClick={(e) => {
+            e.stopPropagation()
+            onRemove(point.id)
+          }}
+        >
+          <Trash2 className="size-3.5" />
+        </Button>
       </div>
-      <Button
-        type="button"
-        variant="ghost"
-        size="sm"
-        className="size-7 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-        onClick={(e) => {
-          e.stopPropagation()
-          onRemove(point.id)
-        }}
-      >
-        <Trash2 className="size-3.5" />
-      </Button>
+      <div className="flex gap-1 pl-8">
+        {GAME_TYPE_OPTIONS.map((option) => (
+          <Button
+            key={option.value}
+            type="button"
+            variant={point.gameType === option.value ? "default" : "outline"}
+            size="sm"
+            className="h-7 flex-1 text-xs"
+            onClick={(e) => {
+              e.stopPropagation()
+              onChangeGameType(point.id, option.value)
+            }}
+          >
+            {option.label}
+          </Button>
+        ))}
+      </div>
     </div>
   )
 }
@@ -157,7 +185,7 @@ const HuntForm = () => {
       points.map((p, index) => ({
         latitude: p.lat,
         longitude: p.lng,
-        gameType: "default",
+        gameType: p.gameType,
         position: index + 1,
       })),
     )
@@ -176,6 +204,15 @@ const HuntForm = () => {
     (id: string, lng: number, lat: number) => {
       setPoints((prev) =>
         prev.map((p) => (p.id === id ? { ...p, lng, lat } : p)),
+      )
+    },
+    [],
+  )
+
+  const updatePointGameType = useCallback(
+    (id: string, gameType: HuntGameType) => {
+      setPoints((prev) =>
+        prev.map((p) => (p.id === id ? { ...p, gameType } : p)),
       )
     },
     [],
@@ -236,7 +273,10 @@ const HuntForm = () => {
         updatePointCoords(id, newLng, newLat)
       })
 
-      setPoints((prev) => [...prev, { id, lng, lat, marker }])
+      setPoints((prev) => [
+        ...prev,
+        { id, lng, lat, gameType: HUNT_GAME_TYPE.QUIZ, marker },
+      ])
     })
 
     return () => {
@@ -342,6 +382,7 @@ const HuntForm = () => {
                           index={index}
                           onRemove={removePoint}
                           onFlyTo={flyToPoint}
+                          onChangeGameType={updatePointGameType}
                         />
                       ))}
                     </div>

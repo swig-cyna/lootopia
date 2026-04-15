@@ -11,6 +11,13 @@ export const HUNT_STATUS = {
 
 export type HuntStatus = (typeof HUNT_STATUS)[keyof typeof HUNT_STATUS]
 
+export const HUNT_GAME_TYPE = {
+  QUIZ: "quiz",
+  AR: "ar",
+} as const
+
+export type HuntGameType = (typeof HUNT_GAME_TYPE)[keyof typeof HUNT_GAME_TYPE]
+
 export interface HuntTable {
   id: Generated<string>
   title: string

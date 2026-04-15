@@ -3,14 +3,14 @@ import {
   createPaginatedResponseSchema,
   paginationParamsSchema,
 } from "@lootopia/api/utils/responses"
-import { HUNT_STATUS } from "@lootopia/db/models/hunt"
+import { HUNT_GAME_TYPE, HUNT_STATUS } from "@lootopia/db/models/hunt"
 
 export const huntsPointSchema = z.object({
   id: z.string(),
   huntId: z.string(),
   latitude: z.number(),
   longitude: z.number(),
-  gameType: z.string(),
+  gameType: z.enum([HUNT_GAME_TYPE.QUIZ, HUNT_GAME_TYPE.AR]),
   createdAt: z.date(),
   position: z.number(),
 })
@@ -19,7 +19,7 @@ export const createHuntPointSchema = z.object({
   huntId: z.string(),
   latitude: z.number(),
   longitude: z.number(),
-  gameType: z.string(),
+  gameType: z.enum([HUNT_GAME_TYPE.QUIZ, HUNT_GAME_TYPE.AR]),
   position: z.number(),
 })
 

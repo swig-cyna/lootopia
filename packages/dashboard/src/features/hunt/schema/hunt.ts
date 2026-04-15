@@ -1,3 +1,4 @@
+import { HUNT_GAME_TYPE } from "@lootopia/db/models/hunt"
 import { z } from "zod"
 
 export const huntSchema = z.object({
@@ -12,7 +13,7 @@ export const huntSchema = z.object({
     .object({
       latitude: z.number(),
       longitude: z.number(),
-      gameType: z.string(),
+      gameType: z.enum([HUNT_GAME_TYPE.QUIZ, HUNT_GAME_TYPE.AR]),
       position: z.number().positive(),
     })
     .array()
