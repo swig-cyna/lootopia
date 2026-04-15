@@ -23,6 +23,19 @@ export const createHuntPointSchema = z.object({
   position: z.number(),
 })
 
+export const huntsRewardSchema = z.object({
+  id: z.string(),
+  huntId: z.string(),
+  topX: z.number(),
+  promoCode: z.string(),
+})
+
+export const createHuntRewardSchema = z.object({
+  huntId: z.string(),
+  topX: z.number(),
+  promoCode: z.string(),
+})
+
 export const huntSchema = z.object({
   id: z.string(),
   title: z.string(),
