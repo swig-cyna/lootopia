@@ -49,6 +49,6 @@ export interface QuizQuestionTable {
   id: Generated<string>
   huntPointId: string
   question: string
-  answers: unknown
+  answers: string[]
   correctAnswerIndex: number
 }

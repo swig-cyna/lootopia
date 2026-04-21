@@ -3,6 +3,7 @@ import type {
   HuntPointTable,
   HuntRewardTable,
   HuntTable,
+  QuizQuestionTable,
 } from "@lootopia/db/models/hunt"
 import { sql, type Insertable, type Selectable, type Updateable } from "kysely"
 
@@ -17,6 +18,10 @@ export type HuntPointUpdate = Updateable<HuntPointTable>
 export type HuntReward = Selectable<HuntRewardTable>
 export type NewHuntReward = Insertable<HuntRewardTable>
 export type HuntRewardUpdate = Updateable<HuntRewardTable>
+
+export type QuizQuestion = Selectable<QuizQuestionTable>
+export type NewQuizQuestion = Insertable<QuizQuestionTable>
+export type QuizQuestionUpdate = Updateable<QuizQuestionTable>
 
 export const $hunt = {
   findById: (id: string) =>
@@ -84,7 +89,7 @@ export const $huntPoint = {
     db.deleteFrom("hunt_points").where("id", "=", id).execute(),
 }
 
-export const $huntReword = {
+export const $huntReward = {
   findById: (id: string) =>
     db
       .selectFrom("hunt_rewards")
@@ -112,4 +117,38 @@ export const $huntReword = {
 
   delete: (id: string) =>
     db.deleteFrom("hunt_rewards").where("id", "=", id).execute(),
+}
+
+export const $quizQuestion = {
+  findById: (id: string) =>
+    db
+      .selectFrom("quiz_questions")
+      .selectAll()
+      .where("id", "=", id)
+      .executeTakeFirst(),
+
+  findByHuntPointIds: (huntPointId: string[]) =>
+    db
+      .selectFrom("quiz_questions")
+      .selectAll()
+      .where("huntPointId", "in", huntPointId)
+      .execute(),
+
+  create: (quizQuestion: NewQuizQuestion[]) =>
+    db
+      .insertInto("quiz_questions")
+      .values(quizQuestion)
+      .returningAll()
+      .execute(),
+
+  update: (id: string, quizQuestion: QuizQuestionUpdate) =>
+    db
+      .updateTable("quiz_questions")
+      .set(quizQuestion)
+      .where("id", "in", id)
+      .returningAll()
+      .executeTakeFirst(),
+
+  delete: (id: string) =>
+    db.deleteFrom("quiz_questions").where("id", "=", id).execute(),
 }
