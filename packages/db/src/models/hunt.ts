@@ -1,4 +1,4 @@
-import type { Generated } from "kysely"
+import type { Generated, JSONColumnType } from "kysely"
 import type { Timestamp } from "../schema"
 
 // Use Timestamp directly (not wrapped in Generated) for columns with DB defaults.
@@ -49,6 +49,6 @@ export interface QuizQuestionTable {
   id: Generated<string>
   huntPointId: string
   question: string
-  answers: string[]
+  answers: JSONColumnType<string[]>
   correctAnswerIndex: number
 }

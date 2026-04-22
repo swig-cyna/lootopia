@@ -20,8 +20,15 @@ export type NewHuntReward = Insertable<HuntRewardTable>
 export type HuntRewardUpdate = Updateable<HuntRewardTable>
 
 export type QuizQuestion = Selectable<QuizQuestionTable>
-export type NewQuizQuestion = Insertable<QuizQuestionTable>
-export type QuizQuestionUpdate = Updateable<QuizQuestionTable>
+export type NewQuizQuestion = Omit<Insertable<QuizQuestionTable>, "answers"> & {
+  answers: string[]
+}
+export type QuizQuestionUpdate = Omit<
+  Updateable<QuizQuestionTable>,
+  "answers"
+> & {
+  answers?: string[]
+}
 
 export const $hunt = {
   findById: (id: string) =>
@@ -137,17 +144,28 @@ export const $quizQuestion = {
   create: (quizQuestion: NewQuizQuestion[]) =>
     db
       .insertInto("quiz_questions")
-      .values(quizQuestion)
+      .values(
+        quizQuestion.map(({ answers, ...rest }) => ({
+          ...rest,
+          answers: JSON.stringify(answers),
+        })),
+      )
       .returningAll()
       .execute(),
 
-  update: (id: string, quizQuestion: QuizQuestionUpdate) =>
-    db
+  update: (id: string, quizQuestion: QuizQuestionUpdate) => {
+    const { answers, ...rest } = quizQuestion
+
+    return db
       .updateTable("quiz_questions")
-      .set(quizQuestion)
+      .set({
+        ...rest,
+        ...(answers !== undefined && { answers: JSON.stringify(answers) }),
+      })
       .where("id", "in", id)
       .returningAll()
-      .executeTakeFirst(),
+      .executeTakeFirst()
+  },
 
   delete: (id: string) =>
     db.deleteFrom("quiz_questions").where("id", "=", id).execute(),
