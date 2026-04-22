@@ -3,30 +3,33 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "lint": "eslint --fix",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix",
     "build": "node esbuild.config.ts",
     "start": "node dist/index.cjs"
   },
   "dependencies": {
-    "@hono/node-server": "^1.19.9",
+    "@hono/node-server": "^1.19.11",
     "@hono/zod-openapi": "^1.2.2",
     "@lootopia/auth": "workspace:*",
     "@lootopia/db": "workspace:*",
-    "@scalar/hono-api-reference": "^0.9.44",
+    "@scalar/hono-api-reference": "^0.10.0",
     "@t3-oss/env-core": "^0.13.10",
-    "hono": "^4.12.0",
+    "hono": "^4.12.5",
     "kysely": "^0.28.11",
     "stoker": "^2.0.1",
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@lootopia/eslint-config": "workspace:*",
-    "@types/node": "^25.3.0",
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^25.3.5",
     "esbuild": "^0.27.3",
-    "eslint": "^10.0.0",
+    "eslint": "^10.0.3",
+    "globals": "^17.4.0",
     "kysely-ctl": "^0.20.0",
     "tsconfig-paths": "^4.2.0",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.56.1"
   }
 }

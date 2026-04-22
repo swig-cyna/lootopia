@@ -13,7 +13,7 @@ import {
   errorResponseSchema,
   idParamSchema,
 } from "@lootopia/api/utils/responses"
-import { ROLES } from "@lootopia/auth"
+import { ROLES } from "@lootopia/auth/constants"
 import * as StatusCodes from "stoker/http-status-codes"
 import * as StatusPhrases from "stoker/http-status-phrases"
 import { jsonContent } from "stoker/openapi/helpers"
@@ -111,6 +111,27 @@ export const deleteHuntRoute = createRoute({
   },
   responses: createAuthResponses({
     [StatusCodes.NO_CONTENT]: { description: "Hunt deleted" },
+    [StatusCodes.NOT_FOUND]: jsonContent(
+      errorResponseSchema,
+      StatusPhrases.NOT_FOUND,
+    ),
+  }),
+})
+
+export const deleteHuntPointRoute = createRoute({
+  method: "delete",
+  path: "/{huntId}/points/{id}",
+  tags: ["Hunts"],
+  summary: "Delete a hunt point",
+  description:
+    "Delete a hunt point. Only the owner can delete.\n\nRequired roles: organizer",
+  middleware: [requireRoles([ROLES.ORGANIZER]), requireHuntOwner],
+  security: [{ bearerAuth: [] }],
+  request: {
+    params: idParamSchema,
+  },
+  responses: createAuthResponses({
+    [StatusCodes.NO_CONTENT]: { description: "Hunt point deleted" },
     [StatusCodes.NOT_FOUND]: jsonContent(
       errorResponseSchema,
       StatusPhrases.NOT_FOUND,

@@ -58,10 +58,12 @@ app.on(["POST", "GET"], "/auth/*", (c) => auth.handler(c.req.raw))
 
 app.route("/", router)
 
+export type AppType = typeof app
+
 serve(
   {
     fetch: app.fetch,
-    port: env.API_PORT,
+    port: 3000,
   },
   (info) => {
     console.log(`API is running on http://localhost:${info.port}`)

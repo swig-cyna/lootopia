@@ -1,6 +1,6 @@
 import { OpenAPIHono, type Hook } from "@hono/zod-openapi"
 import { auth } from "@lootopia/auth/server"
-import type { Env } from "hono"
+import type { Env, Schema } from "hono"
 import * as StatusCodes from "stoker/http-status-codes"
 
 export type HonoContext = {
@@ -28,5 +28,7 @@ const defaultHook: Hook<any, any, any, any> = (result, { json }) => {
   )
 }
 
-export const createRouter = <E extends Env = HonoContext>() =>
-  new OpenAPIHono<E>({ defaultHook })
+export const createRouter = <
+  E extends Env = HonoContext,
+  S extends Schema = {},
+>() => new OpenAPIHono<E, S>({ defaultHook })

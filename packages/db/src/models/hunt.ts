@@ -1,4 +1,4 @@
-import type { Generated } from "kysely"
+import type { Generated, JSONColumnType } from "kysely"
 import type { Timestamp } from "../schema"
 
 // Use Timestamp directly (not wrapped in Generated) for columns with DB defaults.
@@ -10,6 +10,13 @@ export const HUNT_STATUS = {
 } as const
 
 export type HuntStatus = (typeof HUNT_STATUS)[keyof typeof HUNT_STATUS]
+
+export const HUNT_GAME_TYPE = {
+  QUIZ: "quiz",
+  AR: "ar",
+} as const
+
+export type HuntGameType = (typeof HUNT_GAME_TYPE)[keyof typeof HUNT_GAME_TYPE]
 
 export interface HuntTable {
   id: Generated<string>
@@ -26,8 +33,9 @@ export interface HuntPointTable {
   huntId: string
   latitude: number
   longitude: number
-  gameType: string
+  gameType: HuntGameType
   createdAt: Timestamp
+  position: number
 }
 
 export interface HuntRewardTable {
@@ -41,6 +49,6 @@ export interface QuizQuestionTable {
   id: Generated<string>
   huntPointId: string
   question: string
-  answers: unknown
+  answers: JSONColumnType<string[]>
   correctAnswerIndex: number
 }

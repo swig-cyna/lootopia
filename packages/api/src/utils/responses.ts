@@ -12,20 +12,21 @@ export const successResponseSchema = z.object({
   message: z.string().optional(),
 })
 
-export const paginationParamsSchema = z.object({
-  page: z
-    .string()
-    .optional()
-    .default("1")
-    .transform(Number)
-    .pipe(z.number().min(1)),
-  limit: z
-    .string()
-    .optional()
-    .default("20")
-    .transform(Number)
-    .pipe(z.number().min(1).max(100)),
-})
+export const paginationParamsSchema = z
+  .object({
+    page: z
+      .string()
+      .optional()
+      .default("1")
+      .transform(Number)
+      .pipe(z.number().min(1)),
+    limit: z
+      .string()
+      .optional()
+      .default("20")
+      .transform(Number)
+      .pipe(z.number().min(1).max(100)),
+  })
 
 export const paginationMetadataSchema = z.object({
   page: z.number(),
