@@ -33,6 +33,9 @@ import {
 import { Input } from "@lootopia/dashboard/components/ui/input"
 import { ScrollArea } from "@lootopia/dashboard/components/ui/scroll-area"
 import { Textarea } from "@lootopia/dashboard/components/ui/textarea"
+import QuizQuestionDialog, {
+  type QuizQuestionValues,
+} from "@lootopia/dashboard/features/hunt/components/QuizQuestionDialog"
 import { useAddHunt } from "@lootopia/dashboard/features/hunt/hooks/useHunt"
 import {
   huntSchema,
@@ -43,10 +46,10 @@ import {
   type HuntGameType,
 } from "@lootopia/dashboard/features/hunt/utils/constant.ts"
 import { SearchBox } from "@mapbox/search-js-react"
-import { GripVertical, MapPin, Trash2 } from "lucide-react"
+import { CheckCircle2, GripVertical, MapPin, Pencil, Trash2 } from "lucide-react"
 import mapboxgl from "mapbox-gl"
 import "mapbox-gl/dist/mapbox-gl.css"
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 
 interface HuntPoint {
@@ -54,6 +57,7 @@ interface HuntPoint {
   lng: number
   lat: number
   gameType: HuntGameType
+  quizQuestion?: QuizQuestionValues
   marker: mapboxgl.Marker
 }
 
@@ -63,6 +67,7 @@ interface SortablePointItemProps {
   onRemove: (_id: string) => void
   onFlyTo: (_p: HuntPoint) => void
   onChangeGameType: (_id: string, _gameType: HuntGameType) => void
+  onEditQuiz: (_id: string) => void
 }
 
 const GAME_TYPE_OPTIONS: { value: HuntGameType; label: string }[] = [
@@ -76,6 +81,7 @@ const SortablePointItem = ({
   onRemove,
   onFlyTo,
   onChangeGameType,
+  onEditQuiz,
 }: SortablePointItemProps) => {
   const {
     attributes,
@@ -148,6 +154,38 @@ const SortablePointItem = ({
           </Button>
         ))}
       </div>
+      {point.gameType === HUNT_GAME_TYPE.QUIZ && (
+        <div className="flex items-center gap-2 pl-8">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="h-7 flex-1 text-xs"
+            onClick={(e) => {
+              e.stopPropagation()
+              onEditQuiz(point.id)
+            }}
+          >
+            {point.quizQuestion ? (
+              <>
+                <Pencil />
+                Edit quiz
+              </>
+            ) : (
+              <>
+                <Pencil />
+                Configure quiz
+              </>
+            )}
+          </Button>
+          {point.quizQuestion && (
+            <CheckCircle2
+              className="size-4 shrink-0 text-emerald-500"
+              aria-label="Quiz configured"
+            />
+          )}
+        </div>
+      )}
     </div>
   )
 }
@@ -170,6 +208,21 @@ const HuntForm = () => {
   const mapContainerRef = useRef<HTMLDivElement>(null)
   const [points, setPoints] = useState<HuntPoint[]>([])
   const [mapInstance, setMapInstance] = useState<mapboxgl.Map | null>(null)
+  const [editingQuizPointId, setEditingQuizPointId] = useState<string | null>(
+    null,
+  )
+
+  const editingPoint = useMemo(
+    () => points.find((p) => p.id === editingQuizPointId) ?? null,
+    [points, editingQuizPointId],
+  )
+  const editingPointIndex = useMemo(
+    () =>
+      editingQuizPointId
+        ? points.findIndex((p) => p.id === editingQuizPointId)
+        : -1,
+    [points, editingQuizPointId],
+  )
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -190,6 +243,8 @@ const HuntForm = () => {
         longitude: p.lng,
         gameType: p.gameType,
         position: index + 1,
+        quizQuestion:
+          p.gameType === HUNT_GAME_TYPE.QUIZ ? p.quizQuestion : undefined,
       })),
     )
   }, [points, setValue])
@@ -215,10 +270,38 @@ const HuntForm = () => {
   const updatePointGameType = useCallback(
     (id: string, gameType: HuntGameType) => {
       setPoints((prev) =>
-        prev.map((p) => (p.id === id ? { ...p, gameType } : p)),
+        prev.map((p) =>
+          p.id === id
+            ? {
+                ...p,
+                gameType,
+                quizQuestion:
+                  gameType === HUNT_GAME_TYPE.QUIZ ? p.quizQuestion : undefined,
+              }
+            : p,
+        ),
       )
     },
     [],
+  )
+
+  const openQuizEditor = useCallback((id: string) => {
+    setEditingQuizPointId(id)
+  }, [])
+
+  const saveQuizQuestion = useCallback(
+    (quiz: QuizQuestionValues) => {
+      if (!editingQuizPointId) {
+        return
+      }
+
+      setPoints((prev) =>
+        prev.map((p) =>
+          p.id === editingQuizPointId ? { ...p, quizQuestion: quiz } : p,
+        ),
+      )
+    },
+    [editingQuizPointId],
   )
 
   const flyToPoint = useCallback((point: HuntPoint) => {
@@ -386,6 +469,7 @@ const HuntForm = () => {
                           onRemove={removePoint}
                           onFlyTo={flyToPoint}
                           onChangeGameType={updatePointGameType}
+                          onEditQuiz={openQuizEditor}
                         />
                       ))}
                     </div>
@@ -401,6 +485,20 @@ const HuntForm = () => {
           </CardContent>
         </Card>
       </div>
+
+      <QuizQuestionDialog
+        open={editingQuizPointId !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setEditingQuizPointId(null)
+          }
+        }}
+        pointLabel={
+          editingPointIndex >= 0 ? `Point ${editingPointIndex + 1}` : ""
+        }
+        initialValue={editingPoint?.quizQuestion}
+        onSave={saveQuizQuestion}
+      />
     </div>
   )
 }

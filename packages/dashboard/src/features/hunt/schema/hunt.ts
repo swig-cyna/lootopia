@@ -15,6 +15,15 @@ export const huntSchema = z.object({
       longitude: z.number(),
       gameType: z.enum([HUNT_GAME_TYPE.QUIZ, HUNT_GAME_TYPE.AR]),
       position: z.number().positive(),
+      quizQuestion: z
+        .object({
+          question: z.string().min(1, "Question is required"),
+          answers: z
+            .array(z.string().min(1, "Answer cannot be empty"))
+            .min(2, "There must be at least 2 answers"),
+          correctAnswerIndex: z.number().min(0),
+        })
+        .optional(),
     })
     .array()
     .min(3, "You must place at least 3 points")
