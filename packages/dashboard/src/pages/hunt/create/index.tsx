@@ -1,9 +1,9 @@
 import HuntForm from "@lootopia/dashboard/features/hunt/components/HuntForm"
 
-const HuntPage = () => {
+const HuntCreatePage = () => {
   console.log("hunt page ")
 
   return <HuntForm />
 }
 
-export default HuntPage
+export default HuntCreatePage
