@@ -1,7 +1,11 @@
 import { type RouteHandler } from "@hono/zod-openapi"
 import { type AuthenticatedContext } from "@lootopia/api/lib/hono"
 import { paginate } from "@lootopia/api/utils/responses"
-import { $hunt, $huntPoint } from "@lootopia/db/repositories/hunt.repository"
+import {
+  $hunt,
+  $huntPoint,
+  $quizQuestion,
+} from "@lootopia/db/repositories/hunt.repository"
 import * as StatusCodes from "stoker/http-status-codes"
 
 import type {
@@ -25,10 +29,32 @@ export const createHuntController: RouteHandler<
     organizerId: user.id,
   })
   const huntPoints = await $huntPoint.create(
-    points.map((point) => ({ ...point, huntId: hunt.id })),
+    points.map(({ quizQuestion: _, ...point }) => ({
+      ...point,
+      huntId: hunt.id,
+    })),
   )
 
-  return json({ ...hunt, points: huntPoints }, StatusCodes.CREATED)
+  const pointsWithQuiz = points
+    .map((point, i) => ({ point, huntPoint: huntPoints[i] }))
+    .filter(({ point }) => point.quizQuestion !== undefined)
+
+  const quizQuestions =
+    pointsWithQuiz.length > 0
+      ? await $quizQuestion.create(
+          pointsWithQuiz.map(({ point, huntPoint }) => ({
+            ...point.quizQuestion!,
+            huntPointId: huntPoint.id,
+          })),
+        )
+      : []
+
+  const huntPointsWithQuiz = huntPoints.map((huntPoint) => ({
+    ...huntPoint,
+    quizQuestion: quizQuestions.find((q) => q.huntPointId === huntPoint.id),
+  }))
+
+  return json({ ...hunt, points: huntPointsWithQuiz }, StatusCodes.CREATED)
 }
 
 export const listHuntsController: RouteHandler<
@@ -69,7 +95,16 @@ export const getHuntController: RouteHandler<
 
   const huntPoints = await $huntPoint.findByHuntIds([hunt.id])
 
-  return json({ ...hunt, points: huntPoints }, StatusCodes.OK)
+  const quizQuestions = await $quizQuestion.findByHuntPointIds(
+    huntPoints.map((point) => point.id),
+  )
+
+  const huntPointsWithQuiz = huntPoints.map((point) => ({
+    ...point,
+    quizQuestion: quizQuestions.find((q) => q.huntPointId === point.id),
+  }))
+
+  return json({ ...hunt, points: huntPointsWithQuiz }, StatusCodes.OK)
 }
 
 export const updateHuntController: RouteHandler<

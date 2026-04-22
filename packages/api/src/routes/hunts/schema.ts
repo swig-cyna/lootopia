@@ -5,6 +5,21 @@ import {
 } from "@lootopia/api/utils/responses"
 import { HUNT_GAME_TYPE, HUNT_STATUS } from "@lootopia/db/models/hunt"
 
+export const quizQuestionSchema = z.object({
+  id: z.string(),
+  huntPointId: z.string(),
+  question: z.string(),
+  answers: z.array(z.string()),
+  correctAnswerIndex: z.number(),
+})
+
+export const createQuizQuestionSchema = z.object({
+  huntPointId: z.string(),
+  question: z.string(),
+  answers: z.array(z.string()).min(2, "There must be at least 2 answers"),
+  correctAnswerIndex: z.number().min(0),
+})
+
 export const huntsPointSchema = z.object({
   id: z.string(),
   huntId: z.string(),
@@ -13,6 +28,7 @@ export const huntsPointSchema = z.object({
   gameType: z.enum([HUNT_GAME_TYPE.QUIZ, HUNT_GAME_TYPE.AR]),
   createdAt: z.date(),
   position: z.number(),
+  quizQuestion: createQuizQuestionSchema.optional(),
 })
 
 export const createHuntPointSchema = z.object({
@@ -21,6 +37,7 @@ export const createHuntPointSchema = z.object({
   longitude: z.number(),
   gameType: z.enum([HUNT_GAME_TYPE.QUIZ, HUNT_GAME_TYPE.AR]),
   position: z.number(),
+  quizQuestion: createQuizQuestionSchema.omit({ huntPointId: true }).optional(),
 })
 
 export const huntsRewardSchema = z.object({
