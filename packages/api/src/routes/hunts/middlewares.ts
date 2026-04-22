@@ -1,4 +1,4 @@
-import { AuthenticatedContext } from "@lootopia/api/lib/hono"
+import type { AuthenticatedContext } from "@lootopia/api/lib/hono"
 import { type Hunt, $hunt } from "@lootopia/db/repositories/hunt.repository"
 import type { MiddlewareHandler } from "hono"
 import * as StatusCodes from "stoker/http-status-codes"

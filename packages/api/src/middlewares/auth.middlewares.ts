@@ -1,6 +1,6 @@
 import { type Role, ROLES } from "@lootopia/auth/constants"
 import { auth } from "@lootopia/auth/server"
-import { MiddlewareHandler } from "hono"
+import type { MiddlewareHandler } from "hono"
 import * as StatusCodes from "stoker/http-status-codes"
 import * as StatusPhrases from "stoker/http-status-phrases"
 
