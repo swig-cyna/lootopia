@@ -7,7 +7,6 @@ import ProfileForm from "@lootopia/mobile/features/account/components/ProfileFor
 const AccountPage = () => (
   <div className="flex flex-1 flex-col gap-6 w-full">
     <AccountHeader />
-    <Separator />
     <ProfileForm />
     <Separator />
     <ChangeEmailForm />

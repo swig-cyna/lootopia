@@ -1,0 +1,61 @@
+import { Button } from "@lootopia/mobile/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@lootopia/mobile/components/ui/card"
+import { api, getQueryKey, useMutation } from "@lootopia/mobile/lib/api"
+import { useQueryClient } from "@tanstack/react-query"
+import type { InferResponseType } from "hono/client"
+
+type PublishedHunt = Extract<
+  InferResponseType<typeof api.hunts.published.$get>,
+  { data: unknown }
+>["data"][number]
+
+type ExploreHuntCardProps = {
+  hunt: PublishedHunt
+}
+
+const ExploreHuntCard = ({ hunt }: ExploreHuntCardProps) => {
+  const queryClient = useQueryClient()
+  const [joinHunt, { isPending }] = useMutation(api.hunts[":id"].join.$post)
+
+  const handleJoin = async () => {
+    await joinHunt({ param: { id: hunt.id } })
+    queryClient.invalidateQueries({
+      queryKey: getQueryKey(api.hunts.published, { query: {} }),
+    })
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{hunt.title}</CardTitle>
+        <CardDescription>{hunt.description}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <p className="text-xs text-muted-foreground">
+          {hunt.points.length} point{hunt.points.length !== 1 ? "s" : ""}
+        </p>
+      </CardContent>
+      <CardFooter>
+        <Button
+          className="w-full"
+          size="lg"
+          variant={hunt.isJoined ? "secondary" : "default"}
+          loading={isPending}
+          disabled={hunt.isJoined}
+          onClick={handleJoin}
+        >
+          {hunt.isJoined ? "Joined" : "Join"}
+        </Button>
+      </CardFooter>
+    </Card>
+  )
+}
+
+export default ExploreHuntCard

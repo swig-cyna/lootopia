@@ -52,3 +52,10 @@ export interface QuizQuestionTable {
   answers: JSONColumnType<string[]>
   correctAnswerIndex: number
 }
+
+export interface HuntParticipationTable {
+  id: Generated<string>
+  huntId: string
+  userId: string
+  joinedAt: Timestamp
+}

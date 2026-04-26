@@ -3,9 +3,12 @@ import { requireRoles } from "@lootopia/api/middlewares/auth.middlewares"
 import { requireHuntOwner } from "@lootopia/api/routes/hunts/middlewares"
 import {
   createHuntSchema,
+  huntParticipationSchema,
   huntSchema,
   listHuntsQuerySchema,
   paginatedHuntsSchema,
+  paginatedMyHuntsSchema,
+  paginatedPublishedHuntsSchema,
   updateHuntSchema,
 } from "@lootopia/api/routes/hunts/schema"
 import {
@@ -135,6 +138,70 @@ export const deleteHuntPointRoute = createRoute({
     [StatusCodes.NOT_FOUND]: jsonContent(
       errorResponseSchema,
       StatusPhrases.NOT_FOUND,
+    ),
+  }),
+})
+
+export const listPublishedHuntsRoute = createRoute({
+  method: "get",
+  path: "/published",
+  tags: ["Hunts"],
+  summary: "List published hunts",
+  description:
+    "List all published hunts available to join.\n\nRequired roles: player, organizer",
+  middleware: [requireRoles([ROLES.PLAYER, ROLES.ORGANIZER])],
+  security: [{ bearerAuth: [] }],
+  request: {
+    query: listHuntsQuerySchema,
+  },
+  responses: createAuthResponses({
+    [StatusCodes.OK]: jsonContent(
+      paginatedPublishedHuntsSchema,
+      "Paginated list of published hunts",
+    ),
+  }),
+})
+
+export const listMyHuntsRoute = createRoute({
+  method: "get",
+  path: "/mine",
+  tags: ["Hunts"],
+  summary: "List my joined hunts",
+  description:
+    "List hunts the authenticated player has joined.\n\nRequired roles: player, organizer",
+  middleware: [requireRoles([ROLES.PLAYER, ROLES.ORGANIZER])],
+  security: [{ bearerAuth: [] }],
+  request: {
+    query: listHuntsQuerySchema,
+  },
+  responses: createAuthResponses({
+    [StatusCodes.OK]: jsonContent(
+      paginatedMyHuntsSchema,
+      "Paginated list of joined hunts",
+    ),
+  }),
+})
+
+export const joinHuntRoute = createRoute({
+  method: "post",
+  path: "/{id}/join",
+  tags: ["Hunts"],
+  summary: "Join a hunt",
+  description: "Join a published hunt as a player.\n\nRequired roles: player",
+  middleware: [requireRoles([ROLES.PLAYER])],
+  security: [{ bearerAuth: [] }],
+  request: {
+    params: idParamSchema,
+  },
+  responses: createAuthResponses({
+    [StatusCodes.CREATED]: jsonContent(huntParticipationSchema, "Joined hunt"),
+    [StatusCodes.NOT_FOUND]: jsonContent(
+      errorResponseSchema,
+      StatusPhrases.NOT_FOUND,
+    ),
+    [StatusCodes.CONFLICT]: jsonContent(
+      errorResponseSchema,
+      "Already joined this hunt",
     ),
   }),
 })

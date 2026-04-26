@@ -1,5 +1,6 @@
 import ProtectedRoute from "@lootopia/mobile/features/auth/components/ProtectedRoute"
 import AccountPage from "@lootopia/mobile/pages/(tabs)/account"
+import ExplorePage from "@lootopia/mobile/pages/(tabs)/explore/index"
 import IndexPage from "@lootopia/mobile/pages/(tabs)/index"
 import ErrorPage from "@lootopia/mobile/pages/error"
 import NotFoundPage from "@lootopia/mobile/pages/not-found"
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
               {
                 path: "/",
                 element: <IndexPage />,
+              },
+              {
+                path: "/explore",
+                element: <ExplorePage />,
               },
               {
                 path: "/account",
