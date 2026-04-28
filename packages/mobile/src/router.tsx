@@ -4,6 +4,7 @@ import ExplorePage from "@lootopia/mobile/pages/(tabs)/explore/index"
 import IndexPage from "@lootopia/mobile/pages/(tabs)/index"
 import ErrorPage from "@lootopia/mobile/pages/error"
 import NotFoundPage from "@lootopia/mobile/pages/not-found"
+import HuntPage from "@lootopia/mobile/pages/hunts/[id]"
 import SigninPage from "@lootopia/mobile/pages/signin"
 import { createBrowserRouter, RouterProvider } from "react-router"
 import TabsLayout from "./pages/(tabs)/layout"
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
                 element: <AccountPage />,
               },
             ],
+          },
+          {
+            path: "/hunts/:id",
+            element: <HuntPage />,
           },
         ],
       },

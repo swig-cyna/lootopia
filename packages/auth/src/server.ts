@@ -32,11 +32,10 @@ export const auth = betterAuth({
   },
   basePath: "/auth",
   advanced: {
-    defaultCookieAttributes: {
-      sameSite: "none",
-      secure: true,
-      partitioned: true,
-    },
+    defaultCookieAttributes:
+      process.env.NODE_ENV === "production"
+        ? { sameSite: "none", secure: true, partitioned: true }
+        : { sameSite: "lax", secure: false },
   },
   emailAndPassword: {
     enabled: true,

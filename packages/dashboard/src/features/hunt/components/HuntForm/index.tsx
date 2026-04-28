@@ -19,6 +19,7 @@ import mapboxgl from "mapbox-gl"
 import "mapbox-gl/dist/mapbox-gl.css"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
+import { v4 as uuidv4 } from "uuid"
 
 const HuntForm = () => {
   const { mutateAsync: createHunt } = useAddHunt()
@@ -163,7 +164,7 @@ const HuntForm = () => {
         .setLngLat([lng, lat])
         .addTo(map)
 
-      const id = crypto.randomUUID()
+      const id = uuidv4()
 
       marker.on("dragend", () => {
         const { lng: newLng, lat: newLat } = marker.getLngLat()
