@@ -24,7 +24,7 @@ export type HonoClientFunction =
       _options?: ClientRequestOptions,
     ) => Promise<ClientResponse<any, number, "json">>)
 
-export const api = hc<AppType>(import.meta.env.VITE_API_BASE_URL, {
+export const api = hc<AppType>(`${window.location.origin}/api`, {
   fetch: async (input: RequestInfo | URL, init?: RequestInit) => {
     const res = await fetch(input, { ...init, credentials: "include" })
 
