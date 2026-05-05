@@ -1,0 +1,8 @@
+**/node_modules
+**/dist
+packages/*/pnpm-lock.yaml
+docker/
+docker.prod/
+.git
+.vscode
+.claude

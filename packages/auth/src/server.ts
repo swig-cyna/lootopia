@@ -25,7 +25,7 @@ const permissions = {
 
 export const auth = betterAuth({
   baseURL: env.WEB_BASE_URL,
-  trustedOrigins: env.WEB_ORIGINS.split(","),
+
   database: {
     dialect,
     type: "postgres",
@@ -36,6 +36,7 @@ export const auth = betterAuth({
       process.env.NODE_ENV === "production"
         ? { sameSite: "none", secure: true, partitioned: true }
         : { sameSite: "lax", secure: false },
+    disableOriginCheck: true,
   },
   emailAndPassword: {
     enabled: true,

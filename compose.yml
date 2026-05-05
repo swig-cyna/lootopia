@@ -1,5 +1,6 @@
 services:
   db:
+    container_name: lootopia-db-dev
     image: postgres:17-alpine
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -12,7 +13,7 @@ services:
 
   fix-permissions-rustfs:
     image: alpine
-    container_name: fix-permissions-rustfs
+    container_name: lootopia-fix-permissions-dev
     command: >
       sh -c "
         chown -R 10001:10001 /data &&
@@ -27,7 +28,7 @@ services:
 
   bucket:
     image: rustfs/rustfs:latest
-    container_name: rustfs
+    container_name: lootopia-bucket-dev
     restart: unless-stopped
     user: "10001:10001"
     depends_on:

@@ -12,7 +12,9 @@
     "lint": "pnpm -r --parallel run lint",
     "lint:fix": "pnpm -r --parallel run lint:fix",
     "kysely": "dotenv -e .env -- pnpm --filter db kysely",
-    "s3:create": "dotenv -e .env -- node scripts/create-bucket.mjs"
+    "s3:create": "dotenv -e .env -- node scripts/create-bucket.mjs",
+    "prod:up": "docker compose -f compose.prod.yml up --build -d",
+    "prod:down": "docker compose -f compose.prod.yml down"
   },
   "devDependencies": {
     "dotenv-cli": "^11.0.0",

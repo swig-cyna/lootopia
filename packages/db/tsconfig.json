@@ -7,7 +7,11 @@
     "moduleResolution": "bundler",
     "strict": true,
     "skipLibCheck": true,
-    "noEmit": true
+    "noEmit": true,
+    "paths": {
+      "migrations:all": ["./src/migrations.d.ts"]
+    }
   },
+  "include": ["src"],
   "exclude": ["node_modules"]
 }
