@@ -83,3 +83,19 @@ export const updateHuntSchema = z.object({
 export const listHuntsQuerySchema = paginationParamsSchema
 
 export const paginatedHuntsSchema = createPaginatedResponseSchema(huntSchema)
+
+export const huntParticipationSchema = z.object({
+  id: z.string(),
+  huntId: z.string(),
+  userId: z.string(),
+  joinedAt: z.date(),
+})
+
+export const publishedHuntSchema = huntSchema.extend({
+  isJoined: z.boolean(),
+})
+
+export const paginatedPublishedHuntsSchema =
+  createPaginatedResponseSchema(publishedHuntSchema)
+
+export const paginatedMyHuntsSchema = createPaginatedResponseSchema(huntSchema)

@@ -4,7 +4,7 @@ import { createAuthClient } from "better-auth/react"
 export const createClient = (baseURL: string) =>
   createAuthClient({
     baseURL,
-    basePath: "/auth",
+    basePath: "/api/auth",
     plugins: [adminClient()],
   })
 

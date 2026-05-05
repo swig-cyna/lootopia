@@ -1,9 +1,11 @@
 import { db } from "@lootopia/db/index"
-import type {
-  HuntPointTable,
-  HuntRewardTable,
-  HuntTable,
-  QuizQuestionTable,
+import {
+  HUNT_STATUS,
+  type HuntParticipationTable,
+  type HuntPointTable,
+  type HuntRewardTable,
+  type HuntTable,
+  type QuizQuestionTable,
 } from "@lootopia/db/models/hunt"
 import { sql, type Insertable, type Selectable, type Updateable } from "kysely"
 
@@ -30,6 +32,9 @@ export type QuizQuestionUpdate = Omit<
   answers?: string[]
 }
 
+export type HuntParticipation = Selectable<HuntParticipationTable>
+export type NewHuntParticipation = Insertable<HuntParticipationTable>
+
 export const $hunt = {
   findById: (id: string) =>
     db.selectFrom("hunts").selectAll().where("id", "=", id).executeTakeFirst(),
@@ -50,6 +55,26 @@ export const $hunt = {
       .select((eb) => eb.fn.countAll<number>().as("count"))
       .where("organizerId", "=", organizerId)
       .executeTakeFirstOrThrow(),
+
+  findPublished: (page: number, limit: number) =>
+    db
+      .selectFrom("hunts")
+      .selectAll()
+      .where("status", "=", HUNT_STATUS.PUBLISHED)
+      .orderBy("createdAt", "desc")
+      .limit(limit)
+      .offset((page - 1) * limit)
+      .execute(),
+
+  countPublished: () =>
+    db
+      .selectFrom("hunts")
+      .select((eb) => eb.fn.countAll<number>().as("count"))
+      .where("status", "=", HUNT_STATUS.PUBLISHED)
+      .executeTakeFirstOrThrow(),
+
+  findByIds: (ids: string[]) =>
+    db.selectFrom("hunts").selectAll().where("id", "in", ids).execute(),
 
   create: (hunt: NewHunt) =>
     db
@@ -169,4 +194,29 @@ export const $quizQuestion = {
 
   delete: (id: string) =>
     db.deleteFrom("quiz_questions").where("id", "=", id).execute(),
+}
+
+export const $huntParticipation = {
+  create: (participation: NewHuntParticipation) =>
+    db
+      .insertInto("hunt_participations")
+      .values(participation)
+      .returningAll()
+      .executeTakeFirstOrThrow(),
+
+  findByUser: (userId: string) =>
+    db
+      .selectFrom("hunt_participations")
+      .selectAll()
+      .where("userId", "=", userId)
+      .orderBy("joinedAt", "desc")
+      .execute(),
+
+  findByUserAndHunt: (userId: string, huntId: string) =>
+    db
+      .selectFrom("hunt_participations")
+      .selectAll()
+      .where("userId", "=", userId)
+      .where("huntId", "=", huntId)
+      .executeTakeFirst(),
 }

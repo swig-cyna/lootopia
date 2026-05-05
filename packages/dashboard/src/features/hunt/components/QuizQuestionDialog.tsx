@@ -17,6 +17,7 @@ import { Input } from "@lootopia/dashboard/components/ui/input"
 import { Textarea } from "@lootopia/dashboard/components/ui/textarea"
 import { Plus, Trash2 } from "lucide-react"
 import { useEffect, useState } from "react"
+import { v4 as uuidv4 } from "uuid"
 
 export interface QuizQuestionValues {
   question: string
@@ -40,7 +41,7 @@ interface AnswerItem {
 const MAX_ANSWERS = 6
 
 const buildAnswerItems = (values: string[]): AnswerItem[] =>
-  values.map((value) => ({ id: crypto.randomUUID(), value }))
+  values.map((value) => ({ id: uuidv4(), value }))
 
 const buildInitialAnswers = (initial?: QuizQuestionValues): AnswerItem[] => {
   const base =
@@ -90,7 +91,7 @@ const QuizQuestionDialog = ({
       return
     }
 
-    setAnswers((prev) => [...prev, { id: crypto.randomUUID(), value: "" }])
+    setAnswers((prev) => [...prev, { id: uuidv4(), value: "" }])
   }
 
   const removeAnswer = (index: number) => {
@@ -108,7 +109,10 @@ const QuizQuestionDialog = ({
     })
   }
 
-  const handleSubmit = (event: { preventDefault: () => void; stopPropagation: () => void }) => {
+  const handleSubmit = (event: {
+    preventDefault: () => void
+    stopPropagation: () => void
+  }) => {
     event.preventDefault()
     event.stopPropagation()
 

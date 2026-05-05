@@ -7,7 +7,7 @@ type Client = typeof client
 const createClient = (...args: Parameters<typeof hc>): Client =>
   hc<AppType>(...args)
 
-export const api = createClient(import.meta.env.VITE_API_BASE_URL, {
+export const api = createClient(`${window.location.origin}/api`, {
   fetch: async (url: RequestInfo | URL, options?: RequestInit) => {
     const res = await fetch(url, { ...options, credentials: "include" })
 
