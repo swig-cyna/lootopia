@@ -5,7 +5,6 @@ import PointsList from "@lootopia/dashboard/features/hunt/components/HuntForm/Po
 import QuizQuestionDialog, {
   type QuizQuestionValues,
 } from "@lootopia/dashboard/features/hunt/components/QuizQuestionDialog"
-import { useAddHunt } from "@lootopia/dashboard/features/hunt/hooks/useHunt"
 import {
   huntSchema,
   type HuntFormValues,
@@ -15,6 +14,7 @@ import {
   type HuntGameType,
 } from "@lootopia/dashboard/features/hunt/utils/constant.ts"
 import type { HuntPoint } from "@lootopia/dashboard/features/hunt/utils/types"
+import { api, useMutation } from "@lootopia/dashboard/lib/api"
 import mapboxgl from "mapbox-gl"
 import "mapbox-gl/dist/mapbox-gl.css"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
@@ -22,7 +22,12 @@ import { useForm } from "react-hook-form"
 import { v4 as uuidv4 } from "uuid"
 
 const HuntForm = () => {
-  const { mutateAsync: createHunt } = useAddHunt()
+  const [createHunt] = useMutation(api.hunts.$post, {
+    onError: (err) => {
+      console.error(err)
+    },
+  })
+
   const {
     register,
     handleSubmit,
@@ -182,7 +187,7 @@ const HuntForm = () => {
     }
   }, [])
 
-  const onSubmit = (data: HuntFormValues) => createHunt(data)
+  const onSubmit = (data: HuntFormValues) => createHunt({ json: data })
 
   return (
     <div className="flex flex-1 flex-col gap-4 h-full">

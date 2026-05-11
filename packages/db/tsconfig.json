@@ -12,6 +12,6 @@
       "migrations:all": ["./src/migrations.d.ts"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "kysely.config.ts"],
   "exclude": ["node_modules"]
 }
