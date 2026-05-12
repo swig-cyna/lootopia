@@ -1,74 +1,76 @@
-Fais une revue de code adversariale du diff staged (`git diff --staged`) et des fichiers modifiés (`git status`).
+Do an adversarial code review of the staged diff (`git diff --staged`) and modified files (`git status`).
 
-Vérifie chaque point ci-dessous selon le type de fichier concerné. Pour chaque problème trouvé, indique : le fichier + numéro de ligne, ce qui est faux, et comment le corriger.
+Check each point below according to the type of file involved. For each problem found, indicate: the file + line number, what is wrong, and how to fix it.
 
 ---
 
-## Frontend — Styling (`packages/dashboard/` ou `packages/mobile/`)
+## Frontend — Styling (`packages/dashboard/` or `packages/mobile/`)
 
-- [ ] Pas de `style={{}}` inline sauf valeur dynamique impossible à exprimer en Tailwind
-- [ ] Pas de classes raw (`bg-white`, `text-gray-900`, `border-gray-200`) — utiliser les tokens sémantiques (`bg-card`, `text-foreground`, `border-border`)
-- [ ] Pas de `rounded-2xl` / `rounded-3xl` sur des containers ou cards — rester dans `rounded-sm` → `rounded-xl`
-- [ ] `rounded-full` uniquement pour avatars, icon buttons, pill badges
-- [ ] Pas de concaténation de strings pour les classNames — utiliser `cn` depuis `@/lib/utils`
-- [ ] Icônes uniquement depuis `lucide-react` — pas d'autres librairies d'icônes
-- [ ] Composants UI : vérifier si un shadcn/ui équivalent existe avant tout custom
+- [ ] No inline `style={{}}` except for dynamic values that cannot be expressed in Tailwind
+- [ ] No raw color classes (`bg-white`, `text-gray-900`, `border-gray-200`) — use semantic tokens (`bg-card`, `text-foreground`, `border-border`)
+- [ ] No `rounded-2xl` / `rounded-3xl` on containers or cards — stay within `rounded-sm` → `rounded-xl`
+- [ ] `rounded-full` only for avatars, icon buttons, pill badges
+- [ ] No string concatenation for classNames — use `cn` from `@/lib/utils`
+- [ ] Icons only from `lucide-react` — no other icon libraries
+- [ ] UI components: check if a shadcn/ui equivalent exists before building anything custom
 
 ## Frontend — Architecture
 
-- [ ] Les composants feature ne sont importés que via leur `index.ts`, jamais en profondeur
-- [ ] Un composant complexe (sous-composants, state partagé) est dans un dossier dédié avec `index.tsx` + `Context.tsx`
-- [ ] Les sous-composants d'un composant complexe sont préfixés du nom du parent (`UserAvatarImage`, `UserAvatarMenu`)
-- [ ] Un composant utilisé dans 2+ features est dans `src/components/`, pas dans une feature
-- [ ] Une page ne contient pas de logique métier — elle compose des features
-- [ ] Les hooks génériques (sans logique métier) sont dans `src/hooks/`, pas dans une feature
-- [ ] Un composant avec 3+ `useState`/`useEffect` ou des `useCallback`/`useMemo` lourds extrait sa logique dans un hook `use[ComponentName].ts` placé à côté du composant
-- [ ] `index.tsx` d'un composant complexe ne contient que du JSX — pas de `useState`, `useEffect`, `useCallback` directement dedans
-- [ ] Le hook custom porte le nom du composant préfixé de `use` : `useHuntForm`, `useUserAvatar`
+- [ ] Feature components are only imported via their `index.ts`, never deep-linked
+- [ ] A complex component (sub-components, shared state) lives in a dedicated folder with `index.tsx` + `Context.tsx`
+- [ ] Sub-components of a complex component are prefixed with the parent name (`UserAvatarImage`, `UserAvatarMenu`)
+- [ ] A component used in 2+ features lives in `src/components/`, not inside a feature
+- [ ] A page contains no business logic — it only composes features
+- [ ] Generic hooks (no business logic) live in `src/hooks/`, not inside a feature
+- [ ] A component with 3+ `useState`/`useEffect` or heavy `useCallback`/`useMemo` extracts its logic into a `use[ComponentName].ts` hook
+- [ ] `index.tsx` of a complex component contains only JSX — no `useState`, `useEffect`, `useCallback` directly inside
+- [ ] The custom hook is named after the component prefixed with `use`: `useHuntForm`, `useUserAvatar`
 
 ## Frontend — Data Fetching
 
-- [ ] `useQuery` et `useMutation` importés depuis `@lootopia/dashboard/lib/api`, pas depuis `@tanstack/react-query` directement
-- [ ] Les clés de cache construites avec `getQueryKey(api.endpoint)` — jamais de clés manuelles en dur
-- [ ] Invalidation via `invalidate()` (du `useQuery`) ou `queryClient.invalidateQueries({ queryKey: getQueryKey(...) })`
-- [ ] `useMutation` destructuré en tuple `const [mutate, { isPending }]`
-- [ ] Arguments de mutation : `{ json: data }`, `{ param: { id } }`, `{ query: {...} }`
+- [ ] `useQuery` and `useMutation` imported from `@lootopia/dashboard/lib/api`, not directly from `@tanstack/react-query`
+- [ ] Cache keys built with `getQueryKey(api.endpoint)` — never hardcoded manual keys
+- [ ] Invalidation via `invalidate()` (from `useQuery`) or `queryClient.invalidateQueries({ queryKey: getQueryKey(...) })`
+- [ ] `useMutation` destructured as a tuple: `const [mutate, { isPending }]`
+- [ ] Mutation arguments: `{ json: data }`, `{ param: { id } }`, `{ query: {...} }`
 
-## Frontend — Formulaires
+## Frontend — Forms
 
-- [ ] Schema Zod dans `features/[feature]/schema/` — jamais inline dans le composant
-- [ ] `useForm` typé avec le type inféré du schema : `useForm<MonType>`
-- [ ] `zodResolver` ou `standardSchemaResolver` utilisé — jamais de validation manuelle
-- [ ] Erreurs affichées via `<FieldError errors={[errors.champ]} />` — pas de `<p>` custom
-- [ ] Erreurs serveur via `setError('root', ...)` et affichées avec `errors.root`
-- [ ] Composants `Field`, `FieldGroup`, `FieldLabel`, `FieldError` utilisés pour structurer le form
+- [ ] Zod schema in `features/[feature]/schema/` — never inline in the component
+- [ ] `useForm` typed with the type inferred from the schema: `useForm<MyType>`
+- [ ] `zodResolver` or `standardSchemaResolver` used — never manual validation
+- [ ] Multi-component forms use `FormProvider` + `useFormContext` — never a custom React Context
+- [ ] Errors displayed via `<FieldError errors={[errors.field]} />` — no custom `<p>`
+- [ ] Server errors via `setError('root', ...)` and displayed with `errors.root`
+- [ ] `Field`, `FieldGroup`, `FieldLabel`, `FieldError` components used to structure the form
 
-## Backend — Architecture des routes
+## Backend — Route Architecture
 
-- [ ] Chaque route a exactement 4 fichiers : `schema.ts`, `doc.ts`, `controller.ts`, `route.ts`
-- [ ] `route.ts` ne contient que du câblage `.openapi(route, controller)` — zéro logique métier
-- [ ] Les controllers sont typés `RouteHandler<typeof maRoute, AuthenticatedContext>`
-- [ ] Inputs validés via `req.valid("json")`, `req.valid("param")`, `req.valid("query")` — jamais `req.json()` directement
-- [ ] Status codes depuis `stoker/http-status-codes` — jamais de nombres en dur (`200`, `404`, etc.)
-- [ ] Phrases d'erreur depuis `stoker/http-status-phrases` si nécessaire
+- [ ] Each route has exactly 4 files: `schema.ts`, `doc.ts`, `controller.ts`, `route.ts`
+- [ ] `route.ts` contains only wiring `.openapi(route, controller)` — zero business logic
+- [ ] Controllers are typed `RouteHandler<typeof myRoute, AuthenticatedContext>`
+- [ ] Inputs validated via `req.valid("json")`, `req.valid("param")`, `req.valid("query")` — never `req.json()` directly
+- [ ] Status codes from `stoker/http-status-codes` — never hardcoded numbers (`200`, `404`, etc.)
+- [ ] Error phrases from `stoker/http-status-phrases` if needed
 
 ## Backend — Auth
 
-- [ ] Routes protégées avec `middleware: [requireAuth]` ou `middleware: [requireRoles([ROLES.xxx])]`
-- [ ] Routes protégées utilisent `createAuthResponses({...})` — pas de 401/403 manuels dans les responses
-- [ ] `security: [{ bearerAuth: [] }]` présent sur les routes protégées dans `doc.ts`
-- [ ] Accès à l'utilisateur via `c.var.user` ou destructuré `{ var: { user } }`
+- [ ] Protected routes use `middleware: [requireAuth]` or `middleware: [requireRoles([ROLES.xxx])]`
+- [ ] Protected routes use `createAuthResponses({...})` — no manual 401/403 in responses
+- [ ] `security: [{ bearerAuth: [] }]` present on protected routes in `doc.ts`
+- [ ] User accessed via `c.var.user` or destructured as `{ var: { user } }`
 
 ---
 
-Format de sortie :
+Output format:
 
-**Si tout est correct :** "✅ Revue OK — aucun problème détecté."
+**If everything is correct:** "✅ Review OK — no issues found."
 
-**Si des problèmes sont trouvés :**
+**If problems are found:**
+
 ```
-❌ [fichier:ligne] — Description du problème
-→ Correction : ce qu'il faudrait écrire à la place
+❌ [file:line] — Description of the problem
+→ Fix: what should be written instead
 ```
 
-Trie les problèmes par sévérité : erreurs d'architecture d'abord, puis conventions, puis style.
+Sort problems by severity: architecture errors first, then conventions, then style.

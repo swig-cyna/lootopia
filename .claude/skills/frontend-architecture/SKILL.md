@@ -1,3 +1,8 @@
+---
+name: frontend-architecture
+description: Frontend React architecture — feature folders, components, hooks, context pattern, naming. Use when the user asks about how to structure a React component, where to put a file, feature organization, or frontend architecture.
+---
+
 # Frontend React - Feature-Based Architecture
 
 ## General Structure
@@ -61,6 +66,7 @@ features/auth/components/UserAvatar/
 ```
 
 **Rules for a component folder:**
+
 - `index.tsx` is the **only file imported from outside** the folder
 - `index.tsx` manages all the state and builds the `data` object passed to the context
 - Sub-components consume the context via the hook exposed in `UserAvatar.context.tsx`
@@ -89,7 +95,7 @@ and predictable across all complex components.
 ### `UserAvatar.context.tsx`
 
 ```tsx
-import { createContext, useContext } from 'react'
+import { createContext, useContext } from "react"
 
 type UserAvatarData = {
   isMenuOpen: boolean
@@ -120,7 +126,8 @@ export const UserAvatarProvider = ({
 
 export const useUserAvatar = () => {
   const ctx = useContext(UserAvatarContext)
-  if (!ctx) throw new Error('useUserAvatar must be used within UserAvatarProvider')
+  if (!ctx)
+    throw new Error("useUserAvatar must be used within UserAvatarProvider")
   return ctx
 }
 ```
@@ -128,10 +135,10 @@ export const useUserAvatar = () => {
 ### `index.tsx` — manages state, builds `data`, assembles sub-components
 
 ```tsx
-import { useState } from 'react'
-import { UserAvatarProvider } from './UserAvatar.context'
-import { UserAvatarImage } from './UserAvatarImage'
-import { UserAvatarMenu } from './UserAvatarMenu'
+import { useState } from "react"
+import { UserAvatarProvider } from "./UserAvatar.context"
+import { UserAvatarImage } from "./UserAvatarImage"
+import { UserAvatarMenu } from "./UserAvatarMenu"
 
 type UserAvatarProps = {
   avatarUrl: string
@@ -161,7 +168,7 @@ export const UserAvatar = ({ avatarUrl, username }: UserAvatarProps) => {
 ### Sub-component — only reads from `data`
 
 ```tsx
-import { useUserAvatar } from './UserAvatar.context'
+import { useUserAvatar } from "./UserAvatar.context"
 
 export const UserAvatarImage = () => {
   const { data } = useUserAvatar()
@@ -171,6 +178,7 @@ export const UserAvatarImage = () => {
 ```
 
 **Context rules:**
+
 - The context holds a single `data` object, never multiple separate props
 - `index.tsx` is responsible for managing state and building the `data` object
 - Sub-components only **read** from `data`, they never manage state themselves
@@ -181,18 +189,21 @@ export const UserAvatarImage = () => {
 ## Rule: Feature vs Root
 
 ### Goes inside `src/features/[feature]/`
+
 - A component used **only within that feature**
 - A hook that **depends on that feature's logic**
 - A utility that **manipulates that feature's data**
 - Types that are **specific to that feature**
 
 ### Goes at the root (`src/`)
+
 - A component used in **2 or more features** → `src/components/`
 - A generic hook with no business logic (e.g. `useDebounce`, `useLocalStorage`) → `src/hooks/`
 - A generic utility (e.g. `formatDate`, `slugify`) → `src/utils/`
 - An external library config → `src/lib/`
 
 **The question to ask yourself:**
+
 > "Could this code exist in a completely different project without any changes?"
 > Yes → root. No → inside the feature.
 
@@ -205,20 +216,20 @@ export const UserAvatarImage = () => {
 
 ```ts
 // ✅ Correct
-import { LoginForm } from '@/features/auth'
+import { LoginForm } from "@/features/auth"
 
 // ❌ Incorrect
-import { LoginForm } from '@/features/auth/components/LoginForm'
+import { LoginForm } from "@/features/auth/components/LoginForm"
 ```
 
 - The same rule applies to complex component folders:
 
 ```ts
 // ✅ Correct
-import { UserAvatar } from '@/features/auth/components/UserAvatar'
+import { UserAvatar } from "@/features/auth/components/UserAvatar"
 
 // ❌ Incorrect
-import { UserAvatarImage } from '@/features/auth/components/UserAvatar/UserAvatarImage'
+import { UserAvatarImage } from "@/features/auth/components/UserAvatar/UserAvatarImage"
 ```
 
 ---
@@ -234,9 +245,9 @@ src/pages/ProfilePage.tsx
 
 ```tsx
 // src/pages/ProfilePage.tsx
-import { UserProfile } from '@/features/profile'
-import { ActivityFeed } from '@/features/activity'
-import { PageLayout } from '@/components/PageLayout'
+import { UserProfile } from "@/features/profile"
+import { ActivityFeed } from "@/features/activity"
+import { PageLayout } from "@/components/PageLayout"
 
 // Route param comes from the router (e.g. React Router, Next.js)
 type ProfilePageProps = {
@@ -254,20 +265,22 @@ export const ProfilePage = ({ userId }: ProfilePageProps) => {
 ```
 
 **Page rules:**
+
 - A page only imports from `@/features/`, `@/components/`, and `@/hooks/` — never from other pages
 - Data fetching triggered by route params is passed down as props to features
 - A page should be readable at a glance — if it grows complex, something belongs in a feature instead
 
 ---
 
-## Rule: Trop de logique dans un composant → hook custom
+## Rule: Too much logic in a component → custom hook
 
-Quand un composant accumule trop de logique (state, effets, callbacks), on l'extrait dans un hook `use[ComponentName].ts` placé dans `features/[feature]/hooks/`.
+When a component accumulates too much logic (state, effects, callbacks), extract it into a `use[ComponentName].ts` hook placed in `features/[feature]/hooks/`.
 
-**Signaux qui déclenchent l'extraction :**
-- 3+ `useState` ou `useEffect`
-- Des `useCallback`/`useMemo` qui alourdissent le JSX
-- De la logique réutilisable ou testable indépendamment du rendu
+**Signals that trigger extraction:**
+
+- 3+ `useState` or `useEffect`
+- Heavy `useCallback`/`useMemo` cluttering the JSX
+- Logic that is reusable or testable independently from rendering
 
 ### Structure
 
@@ -275,24 +288,28 @@ Quand un composant accumule trop de logique (state, effets, callbacks), on l'ext
 features/hunt/
 ├── components/
 │   └── HuntForm/
-│       ├── index.tsx           # JSX uniquement — appelle useHuntForm(), passe les valeurs au rendu
-│       ├── HuntFormFields.tsx  # sous-composant
-│       └── HuntForm.context.tsx  # si les sous-composants ont besoin du state
+│       ├── index.tsx           # JSX only — calls useHuntForm(), passes values to render
+│       ├── HuntFormFields.tsx  # sub-component
+│       └── HuntForm.context.tsx  # if sub-components need shared state
 ├── hooks/
-│   └── useHuntForm.ts          # toute la logique : state, handlers, effets, mutations
+│   └── useHuntForm.ts          # all logic: state, handlers, effects, mutations
 ```
 
-### `hooks/useHuntForm.ts` — contient toute la logique
+### `hooks/useHuntForm.ts` — contains all the logic
 
 ```tsx
-import { useCallback, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { api, useMutation } from '@lootopia/dashboard/lib/api'
+import { useCallback, useState } from "react"
+import { useForm } from "react-hook-form"
+import { api, useMutation } from "@lootopia/dashboard/lib/api"
 
 export const useHuntForm = () => {
   const [points, setPoints] = useState<HuntPoint[]>([])
 
-  const { register, handleSubmit, formState: { errors } } = useForm<HuntFormValues>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<HuntFormValues>({
     resolver: zodResolver(huntSchema),
   })
 
@@ -304,15 +321,23 @@ export const useHuntForm = () => {
 
   const onSubmit = (data: HuntFormValues) => createHunt({ json: data })
 
-  return { points, register, handleSubmit, errors, isPending, removePoint, onSubmit }
+  return {
+    points,
+    register,
+    handleSubmit,
+    errors,
+    isPending,
+    removePoint,
+    onSubmit,
+  }
 }
 ```
 
-### `index.tsx` — JSX uniquement
+### `index.tsx` — JSX only
 
 ```tsx
-import { useHuntForm } from '@lootopia/dashboard/features/hunt/hooks/useHuntForm'
-import HuntFormFields from './HuntFormFields'
+import { useHuntForm } from "@lootopia/dashboard/features/hunt/hooks/useHuntForm"
+import HuntFormFields from "./HuntFormFields"
 
 const HuntForm = () => {
   const { register, handleSubmit, errors, isPending, onSubmit } = useHuntForm()
@@ -320,32 +345,33 @@ const HuntForm = () => {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <HuntFormFields register={register} errors={errors} />
-      <Button loading={isPending}>Créer</Button>
+      <Button loading={isPending}>Create</Button>
     </form>
   )
 }
 ```
 
-**Règles :**
-- Le hook porte le nom du composant préfixé de `use` : `useHuntForm`, `useUserAvatar`
-- Le hook est toujours dans `features/[feature]/hooks/` — jamais dans le dossier du composant
-- `index.tsx` ne contient que du JSX — zéro `useState`, `useEffect`, `useCallback` directement dedans
-- Si le composant a aussi des sous-composants qui partagent le state, combiner avec le pattern Context : le hook fournit les données, `index.tsx` les passe au provider
+**Rules:**
+
+- The hook is named after the component prefixed with `use`: `useHuntForm`, `useUserAvatar`
+- The hook always lives in `features/[feature]/hooks/` — never in the component folder
+- `index.tsx` contains only JSX — zero `useState`, `useEffect`, `useCallback` directly inside
+- If the component also has sub-components that share state, combine with the Context pattern: the hook provides the data, `index.tsx` passes it to the provider
 
 ---
 
 ## Quick Reference
 
-| Situation | Where to put it |
-|---|---|
-| Simple component of a feature | `features/[feature]/components/MyComponent.tsx` |
+| Situation                             | Where to put it                                       |
+| ------------------------------------- | ----------------------------------------------------- |
+| Simple component of a feature         | `features/[feature]/components/MyComponent.tsx`       |
 | Complex component with sub-components | `features/[feature]/components/MyComponent/index.tsx` |
-| Hook tied to a feature | `features/[feature]/hooks/useMyHook.ts` |
-| Generic hook | `src/hooks/useMyHook.ts` |
-| Utility tied to a feature | `features/[feature]/utils/myFunction.ts` |
-| Generic utility | `src/utils/myFunction.ts` |
-| Feature-specific types | `features/[feature]/types.ts` |
-| Global types | `src/types/` |
-| External library config | `src/lib/` |
-| Component shared by 2+ features | `src/components/MyComponent.tsx` |
-| Route entry point | `src/pages/MyPage.tsx` |
+| Hook tied to a feature                | `features/[feature]/hooks/useMyHook.ts`               |
+| Generic hook                          | `src/hooks/useMyHook.ts`                              |
+| Utility tied to a feature             | `features/[feature]/utils/myFunction.ts`              |
+| Generic utility                       | `src/utils/myFunction.ts`                             |
+| Feature-specific types                | `features/[feature]/types.ts`                         |
+| Global types                          | `src/types/`                                          |
+| External library config               | `src/lib/`                                            |
+| Component shared by 2+ features       | `src/components/MyComponent.tsx`                      |
+| Route entry point                     | `src/pages/MyPage.tsx`                                |

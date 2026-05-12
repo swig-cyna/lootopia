@@ -1,39 +1,38 @@
 # Lootopia — Claude Guidelines
 
-## Structure du monorepo
+## Monorepo Structure
 
 ```
 packages/
-├── api/        # Backend Hono — @lootopia/api
+├── api/        # Hono backend — @lootopia/api
 ├── auth/       # Better Auth — @lootopia/auth
 ├── db/         # Kysely + migrations — @lootopia/db
-├── dashboard/  # Frontend React (organisateurs) — @lootopia/dashboard
-└── mobile/     # Frontend React (joueurs) — @lootopia/mobile
+├── dashboard/  # React frontend (organizers) — @lootopia/dashboard
+└── mobile/     # React frontend (players) — @lootopia/mobile
 ```
 
-## Commandes pnpm
+## pnpm Commands
 
 ```bash
-pnpm dev                        # Lance tout en parallèle
-pnpm dev:api                    # API seulement
-pnpm dev:dashboard              # Dashboard seulement
-pnpm dev:mobile                 # Mobile seulement
-pnpm lint                       # Lint tous les packages
-pnpm lint:fix                   # Lint + autofix tous les packages
-pnpm format                     # Vérifie le formatage (prettier)
-pnpm format:fix                 # Formate tous les packages
-pnpm kysely migrate:make 'nom'  # Créer une migration
-pnpm kysely migrate:latest      # Appliquer les migrations
+pnpm dev                        # Start everything in parallel
+pnpm dev:api                    # API only
+pnpm dev:dashboard              # Dashboard only
+pnpm dev:mobile                 # Mobile only
+pnpm lint                       # Lint all packages
+pnpm lint:fix                   # Lint + autofix all packages
+pnpm format                     # Check formatting (prettier)
+pnpm format:fix                 # Format all packages
+pnpm kysely migrate:make 'name' # Create a migration
+pnpm kysely migrate:latest      # Apply migrations
 ```
 
-## Frontend
+## Available Skills
 
-@.claude/styling.md
-@.claude/frontend-architecture.md
-@.claude/data-fetching.md
-@.claude/forms.md
-@.claude/mapbox.md
-
-## Backend
-
-@.claude/backend-architecture.md
+| Skill                    | Description                                            |
+| ------------------------ | ------------------------------------------------------ |
+| `/styling`               | Tailwind, shadcn/ui, Lucide icons, theme tokens        |
+| `/frontend-architecture` | Feature-based architecture, components, hooks, context |
+| `/data-fetching`         | React Query + Hono Client, useQuery, useMutation       |
+| `/forms`                 | react-hook-form + Zod, FormProvider, Field components  |
+| `/mapbox`                | Mapbox GL JS, markers, SearchBox                       |
+| `/backend-architecture`  | Hono + zod-openapi, route structure, auth middlewares  |

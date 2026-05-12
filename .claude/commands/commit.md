@@ -1,22 +1,24 @@
-Analyse le résultat de `git diff --staged` et `git status`, puis génère un message de commit en suivant ces règles :
+Analyze `git diff HEAD` and `git status`, then generate a commit message following these rules:
 
-**Format :** `type(scope): description courte`
+**Format:** `type(scope): short description`
 
-**Types :**
-- `feat` — nouvelle fonctionnalité
-- `fix` — correction de bug
-- `refactor` — restructuration sans changement de comportement
-- `style` — changements visuels/CSS uniquement
+**Types:**
+
+- `feat` — new feature
+- `fix` — bug fix
+- `refactor` — restructuring without behavior change
+- `style` — visual/CSS changes only
 - `chore` — config, deps, scripts
-- `docs` — documentation uniquement
-- `test` — ajout ou modification de tests
+- `docs` — documentation only
+- `test` — adding or modifying tests
 
-**Scope :** le nom de la feature ou du module concerné (ex: `auth`, `map`, `ui`, `api`)
+**Scope:** the name of the feature or module involved (e.g. `auth`, `map`, `ui`, `api`)
 
-**Règles :**
-- Description en anglais, à l'infinitif, sans majuscule, sans point final
-- Maximum 72 caractères au total
-- Si les changements touchent plusieurs domaines distincts, propose 2-3 messages alternatifs
-- N'invente rien qui ne soit pas dans le diff
+**Rules:**
 
-Affiche uniquement le ou les messages de commit proposés, sans explication supplémentaire.
+- Description in English, imperative mood, no capital letter, no trailing period
+- Maximum 72 characters total
+- If changes touch multiple distinct domains, suggest 2-3 alternative messages
+- Never invent anything not present in the diff
+
+Output only the proposed commit message(s), with no additional explanation.
