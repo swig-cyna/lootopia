@@ -22,14 +22,14 @@ const NavUser = () => {
         <Popover>
           <PopoverTrigger asChild>
             <SidebarMenuButton size="lg" className="gap-3">
-              <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-sidebar-accent text-sidebar-accent-foreground">
+              <span className="bg-sidebar-accent text-sidebar-accent-foreground flex size-8 shrink-0 items-center justify-center rounded-full">
                 <UserIcon className="size-4" />
               </span>
               <span className="flex min-w-0 flex-col leading-tight group-data-[collapsible=icon]:hidden">
                 <span className="truncate text-sm font-medium">
                   {user?.name ?? "—"}
                 </span>
-                <span className="truncate text-xs text-muted-foreground">
+                <span className="text-muted-foreground truncate text-xs">
                   {user?.email ?? "—"}
                 </span>
               </span>
@@ -40,7 +40,7 @@ const NavUser = () => {
           <PopoverContent side="top" align="start" className="w-60 p-1">
             <button
               onClick={() => authClient.signOut()}
-              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted transition-colors"
+              className="hover:bg-muted flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors"
             >
               <LogOut className="size-4" />
               Sign out

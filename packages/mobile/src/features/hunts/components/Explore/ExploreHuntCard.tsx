@@ -38,7 +38,7 @@ const ExploreHuntCard = ({ hunt }: ExploreHuntCardProps) => {
         <CardDescription>{hunt.description}</CardDescription>
       </CardHeader>
       <CardContent>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           {hunt.points.length} point{hunt.points.length !== 1 ? "s" : ""}
         </p>
       </CardContent>

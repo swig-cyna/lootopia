@@ -6,16 +6,19 @@ const HuntInfoPanel = () => {
   const { sortedPoints, nextPoint, completedIds } = useHuntSession()
 
   return (
-    <div className="bg-background border-t border-border px-4 pt-4 pb-6 flex flex-col gap-3">
+    <div className="bg-background border-border flex flex-col gap-3 border-t px-4 pb-6 pt-4">
       {nextPoint ? (
         <HuntNextPointPanel />
       ) : (
         <div className="bg-muted rounded-xl p-3 text-center">
-          <p className="text-sm font-medium text-primary">Hunt complete!</p>
+          <p className="text-primary text-sm font-medium">Hunt complete!</p>
         </div>
       )}
 
-      <HuntProgressBar total={sortedPoints.length} completed={completedIds.size} />
+      <HuntProgressBar
+        total={sortedPoints.length}
+        completed={completedIds.size}
+      />
     </div>
   )
 }

@@ -24,20 +24,20 @@ const MyHuntCard = ({ hunt }: MyHuntCardProps) => {
 
   return (
     <Card
-      className="cursor-pointer hover:bg-muted/50 transition-colors active:scale-[0.99]"
+      className="hover:bg-muted/50 cursor-pointer transition-colors active:scale-[0.99]"
       onClick={() => navigate(`/hunts/${hunt.id}`)}
     >
       <CardHeader>
         <div className="flex items-start justify-between gap-2">
-          <div className="flex-1 min-w-0">
+          <div className="min-w-0 flex-1">
             <CardTitle>{hunt.title}</CardTitle>
             <CardDescription>{hunt.description}</CardDescription>
           </div>
-          <ChevronRight className="size-5 text-muted-foreground shrink-0 mt-0.5" />
+          <ChevronRight className="text-muted-foreground mt-0.5 size-5 shrink-0" />
         </div>
       </CardHeader>
       <CardContent>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           {hunt.points.length} point{hunt.points.length !== 1 ? "s" : ""}
         </p>
       </CardContent>

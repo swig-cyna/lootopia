@@ -69,7 +69,7 @@ const PointsList = ({
   )
 
   return (
-    <Card className="w-72 shrink-0 min-h-0 flex flex-col">
+    <Card className="flex min-h-0 w-72 shrink-0 flex-col">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <MapPin className="size-4" />
@@ -79,15 +79,15 @@ const PointsList = ({
           )}
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 min-h-0 px-0 flex flex-col gap-2">
+      <CardContent className="flex min-h-0 flex-1 flex-col gap-2 px-0">
         {points.length === 0 ? (
           <div className="px-4">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               Click on the map to place between 3 and 5 points.
             </p>
           </div>
         ) : (
-          <ScrollArea className="flex-1 min-h-0 px-4">
+          <ScrollArea className="min-h-0 flex-1 px-4">
             <DndContext
               sensors={sensors}
               collisionDetection={closestCenter}
@@ -115,7 +115,7 @@ const PointsList = ({
           </ScrollArea>
         )}
         {errors.points && (
-          <p className="px-4 text-sm text-destructive">
+          <p className="text-destructive px-4 text-sm">
             {errors.points.message}
           </p>
         )}

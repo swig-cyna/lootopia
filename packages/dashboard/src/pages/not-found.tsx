@@ -5,10 +5,10 @@ const NotFoundPage = () => {
   const navigate = useNavigate()
 
   return (
-    <main className="min-h-svh flex flex-col items-center justify-center gap-4 text-center">
+    <main className="flex min-h-svh flex-col items-center justify-center gap-4 text-center">
       <p className="text-5xl font-bold">404</p>
       <p className="text-lg font-medium">Page not found</p>
-      <p className="text-sm text-muted-foreground max-w-sm">
+      <p className="text-muted-foreground max-w-sm text-sm">
         The page you're looking for doesn't exist or has been moved.
       </p>
       <Button variant="outline" onClick={() => navigate("/")}>

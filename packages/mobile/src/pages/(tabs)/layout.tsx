@@ -12,7 +12,7 @@ type TabButtonProps = {
 const TabButton = ({ icon: Icon, label, to, active }: TabButtonProps) => (
   <Link
     to={to}
-    className="m-1 flex flex-col justify-center items-center aspect-square"
+    className="m-1 flex aspect-square flex-col items-center justify-center"
   >
     <Icon
       className={cn(
@@ -43,11 +43,11 @@ const TabsLayout = () => {
   const { pathname } = useLocation()
 
   return (
-    <div className="flex flex-col flex-1">
-      <div className="flex-1 flex p-4">
+    <div className="flex flex-1 flex-col">
+      <div className="flex flex-1 p-4">
         <Outlet />
       </div>
-      <div className="h-18 flex justify-around w-full bg-muted sticky bottom-0">
+      <div className="h-18 bg-muted sticky bottom-0 flex w-full justify-around">
         {tabs.map((tab) => (
           <TabButton key={tab.to} {...tab} active={pathname === tab.to} />
         ))}

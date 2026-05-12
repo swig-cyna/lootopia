@@ -10,7 +10,7 @@ const DashboardLayout = () => (
   <SidebarProvider>
     <AppSidebar />
     <SidebarInset>
-      <header className="flex h-12 items-center px-4 border-b">
+      <header className="flex h-12 items-center border-b px-4">
         <SidebarTrigger />
       </header>
       <main className="flex flex-1 p-4">

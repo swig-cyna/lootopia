@@ -190,14 +190,14 @@ const HuntForm = () => {
   const onSubmit = (data: HuntFormValues) => createHunt({ json: data })
 
   return (
-    <div className="flex flex-1 flex-col gap-4 h-full">
+    <div className="flex h-full flex-1 flex-col gap-4">
       <HuntFormFields
         register={register}
         errors={errors}
         onSubmit={handleSubmit(onSubmit)}
       />
 
-      <div className="flex flex-1 gap-4 min-h-0">
+      <div className="flex min-h-0 flex-1 gap-4">
         <HuntMap mapContainerRef={mapContainerRef} mapInstance={mapInstance} />
 
         <PointsList

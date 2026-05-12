@@ -8,10 +8,14 @@ export async function up(db: Kysely<any>): Promise<void> {
 
   await db.schema
     .createTable("hunts")
-    .addColumn("id", "text", (col) => col.primaryKey().defaultTo(sql`gen_random_uuid()`))
+    .addColumn("id", "text", (col) =>
+      col.primaryKey().defaultTo(sql`gen_random_uuid()`),
+    )
     .addColumn("title", "text", (col) => col.notNull())
     .addColumn("description", "text", (col) => col.notNull())
-    .addColumn("status", sql`hunt_status`, (col) => col.notNull().defaultTo("draft"))
+    .addColumn("status", sql`hunt_status`, (col) =>
+      col.notNull().defaultTo("draft"),
+    )
     .addColumn("organizerId", "text", (col) =>
       col.notNull().references("user.id").onDelete("cascade"),
     )
@@ -25,7 +29,9 @@ export async function up(db: Kysely<any>): Promise<void> {
 
   await db.schema
     .createTable("hunt_points")
-    .addColumn("id", "text", (col) => col.primaryKey().defaultTo(sql`gen_random_uuid()`))
+    .addColumn("id", "text", (col) =>
+      col.primaryKey().defaultTo(sql`gen_random_uuid()`),
+    )
     .addColumn("huntId", "text", (col) =>
       col.notNull().references("hunts.id").onDelete("cascade"),
     )
@@ -39,7 +45,9 @@ export async function up(db: Kysely<any>): Promise<void> {
 
   await db.schema
     .createTable("hunt_rewards")
-    .addColumn("id", "text", (col) => col.primaryKey().defaultTo(sql`gen_random_uuid()`))
+    .addColumn("id", "text", (col) =>
+      col.primaryKey().defaultTo(sql`gen_random_uuid()`),
+    )
     .addColumn("huntId", "text", (col) =>
       col.notNull().references("hunts.id").onDelete("cascade"),
     )
@@ -49,7 +57,9 @@ export async function up(db: Kysely<any>): Promise<void> {
 
   await db.schema
     .createTable("quiz_questions")
-    .addColumn("id", "text", (col) => col.primaryKey().defaultTo(sql`gen_random_uuid()`))
+    .addColumn("id", "text", (col) =>
+      col.primaryKey().defaultTo(sql`gen_random_uuid()`),
+    )
     .addColumn("huntPointId", "text", (col) =>
       col.notNull().references("hunt_points.id").onDelete("cascade"),
     )

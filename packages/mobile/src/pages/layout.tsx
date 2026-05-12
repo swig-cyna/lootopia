@@ -1,7 +1,7 @@
 import { Outlet } from "react-router"
 
 const AppLayout = () => (
-  <main className="flex flex-col flex-1 min-h-svh max-w-lg mx-auto">
+  <main className="mx-auto flex min-h-svh max-w-lg flex-1 flex-col">
     <Outlet />
   </main>
 )

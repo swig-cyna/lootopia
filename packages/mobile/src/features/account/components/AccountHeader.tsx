@@ -21,7 +21,7 @@ const AccountHeader = () => {
     <div className="flex items-center justify-between">
       <div>
         <h1 className="text-3xl">Account</h1>
-        <p className="text-muted-foreground text-sm mt-1">
+        <p className="text-muted-foreground mt-1 text-sm">
           {session?.user.email}
         </p>
       </div>

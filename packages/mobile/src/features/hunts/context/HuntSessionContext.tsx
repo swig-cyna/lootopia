@@ -60,7 +60,10 @@ export const HuntSessionProvider = ({ children }: { children: ReactNode }) => {
       return
     }
 
-    const distance = getDistance(userPosition, [nextPoint.longitude, nextPoint.latitude])
+    const distance = getDistance(userPosition, [
+      nextPoint.longitude,
+      nextPoint.latitude,
+    ])
 
     if (distance <= VALIDATION_RADIUS_M) {
       setActivePoint(nextPoint)

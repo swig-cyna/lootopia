@@ -8,15 +8,15 @@ const HuntProgressBar = ({ total, completed }: HuntProgressBarProps) => {
 
   return (
     <div className="flex flex-col gap-1.5">
-      <div className="flex justify-between items-center">
-        <span className="text-xs text-muted-foreground">Progress</span>
-        <span className="text-xs font-medium text-muted-foreground">
+      <div className="flex items-center justify-between">
+        <span className="text-muted-foreground text-xs">Progress</span>
+        <span className="text-muted-foreground text-xs font-medium">
           {completed}/{total}
         </span>
       </div>
-      <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+      <div className="bg-muted h-2 w-full overflow-hidden rounded-full">
         <div
-          className="h-full rounded-full bg-primary transition-all duration-500"
+          className="bg-primary h-full rounded-full transition-all duration-500"
           style={{ width: `${pct}%` }}
         />
       </div>

@@ -8,6 +8,8 @@
   "scripts": {
     "lint": "tsc -b && eslint",
     "lint:fix": "eslint --fix",
+    "format": "prettier --check .",
+    "format:fix": "prettier --write .",
     "kysely": "kysely"
   },
   "dependencies": {

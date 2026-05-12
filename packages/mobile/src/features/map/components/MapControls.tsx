@@ -7,7 +7,7 @@ const MapControls = () => {
   return (
     <button
       onClick={centerOnGPS}
-      className="absolute top-4 right-4 z-10 bg-white rounded-full shadow-lg p-2 hover:bg-gray-100 active:scale-95 transition-transform"
+      className="absolute right-4 top-4 z-10 rounded-full bg-white p-2 shadow-lg transition-transform hover:bg-gray-100 active:scale-95"
     >
       <Crosshair className="size-5 text-blue-500" />
     </button>

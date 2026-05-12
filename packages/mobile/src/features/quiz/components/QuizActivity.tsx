@@ -65,7 +65,7 @@ const QuizActivity = ({ quiz, onValidate }: QuizActivityProps) => {
             disabled={submitted}
             onClick={() => setSelected(i)}
             className={cn(
-              "text-left px-4 py-3 rounded-xl text-sm border-2 transition-colors",
+              "rounded-xl border-2 px-4 py-3 text-left text-sm transition-colors",
               ANSWER_STYLES[
                 answerState(i, selected, submitted, quiz.correctAnswerIndex)
               ],
@@ -93,7 +93,7 @@ const QuizActivity = ({ quiz, onValidate }: QuizActivityProps) => {
           </div>
           <button
             onClick={onValidate}
-            className="w-full py-3 rounded-xl text-sm font-semibold bg-primary text-primary-foreground"
+            className="bg-primary text-primary-foreground w-full rounded-xl py-3 text-sm font-semibold"
           >
             Continue
           </button>
@@ -103,7 +103,7 @@ const QuizActivity = ({ quiz, onValidate }: QuizActivityProps) => {
           disabled={selected === null}
           onClick={handleSubmit}
           className={cn(
-            "w-full py-3 rounded-xl text-sm font-semibold transition-colors",
+            "w-full rounded-xl py-3 text-sm font-semibold transition-colors",
             selected !== null
               ? "bg-primary text-primary-foreground"
               : "bg-muted text-muted-foreground cursor-not-allowed",

@@ -45,8 +45,14 @@ export const useHuntMap = () => {
 export const HuntMapProvider = ({ children }: { children: ReactNode }) => {
   const mapRef = useRef<Map | null>(null)
   const [mapReady, setMapReady] = useState(false)
-  const [debugPosition, setDebugPosition] = useState<[number, number] | null>(null)
-  const { userPosition: gpsPosition, heading, centerOnGPS } = useUserLocation(mapRef)
+  const [debugPosition, setDebugPosition] = useState<[number, number] | null>(
+    null,
+  )
+  const {
+    userPosition: gpsPosition,
+    heading,
+    centerOnGPS,
+  } = useUserLocation(mapRef)
 
   const userPosition = debugPosition ?? gpsPosition
 

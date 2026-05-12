@@ -36,7 +36,7 @@ const HuntPointMarker = ({
     <div className="flex flex-col items-center drop-shadow-sm">
       <div
         className={cn(
-          "w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-[3px] z-1 border-white",
+          "z-1 flex h-8 w-8 items-center justify-center rounded-full border-[3px] border-white text-xs font-bold",
           isCompleted && "bg-green-500 text-white",
           !isCompleted && isNext && "bg-primary text-primary-foreground",
           !isCompleted && !isNext && "bg-muted-foreground text-white",
@@ -44,7 +44,7 @@ const HuntPointMarker = ({
       >
         {label}
       </div>
-      <div className={cn("w-2.5 h-2.5 rotate-45 mt-[-6.4px] bg-white")} />
+      <div className={cn("mt-[-6.4px] h-2.5 w-2.5 rotate-45 bg-white")} />
     </div>,
     markerElRef.current,
   )

@@ -36,16 +36,16 @@ const UserMarkerInner = ({ map }: { map: mapboxgl.Map }) => {
 
   return createPortal(
     <div
-      className="relative w-6 h-6"
+      className="relative h-6 w-6"
       style={{
         transform: heading !== null ? `rotate(${heading}deg)` : undefined,
       }}
     >
       {heading !== null && (
-        <div className="absolute left-1/2 -translate-x-1/2 bottom-full w-2 h-2 rotate-45 bg-blue-500 opacity-85" />
+        <div className="absolute bottom-full left-1/2 h-2 w-2 -translate-x-1/2 rotate-45 bg-blue-500 opacity-85" />
       )}
-      <div className="absolute inset-0 rounded-full bg-blue-500 animate-ping opacity-75" />
-      <div className="relative z-10 w-6 h-6 rounded-full bg-blue-500 border-[3px] border-white shadow-md" />
+      <div className="absolute inset-0 animate-ping rounded-full bg-blue-500 opacity-75" />
+      <div className="relative z-10 h-6 w-6 rounded-full border-[3px] border-white bg-blue-500 shadow-md" />
     </div>,
     markerElRef.current,
   )

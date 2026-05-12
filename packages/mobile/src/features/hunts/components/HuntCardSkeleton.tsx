@@ -5,7 +5,7 @@ type HuntCardSkeletonProps = {
 }
 
 const HuntCardSkeleton = ({ count = 3 }: HuntCardSkeletonProps) => (
-  <div className="flex flex-col gap-3 w-full">
+  <div className="flex w-full flex-col gap-3">
     {Array.from({ length: count }).map((_, i) => (
       <Skeleton key={i} className="h-32 w-full rounded-xl" />
     ))}

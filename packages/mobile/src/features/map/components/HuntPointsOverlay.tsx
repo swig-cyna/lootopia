@@ -10,7 +10,9 @@ const HuntPointsOverlay = () => {
     return null
   }
 
-  const firstPendingIndex = sortedPoints.findIndex((p) => !completedIds.has(p.id))
+  const firstPendingIndex = sortedPoints.findIndex(
+    (p) => !completedIds.has(p.id),
+  )
 
   return sortedPoints.map((point, i) => (
     <HuntPointMarker

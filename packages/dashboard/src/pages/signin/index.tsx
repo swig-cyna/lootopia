@@ -2,7 +2,7 @@ import SigninForm from "@lootopia/dashboard/features/auth/components/SigninForm"
 
 const SigninPage = () => (
   <main
-    className="min-h-svh flex flex-col justify-center items-center gap-6 relative bg-amber-100/50"
+    className="relative flex min-h-svh flex-col items-center justify-center gap-6 bg-amber-100/50"
     style={{
       backgroundImage: "url('/img/noise-pattern.svg')",
       backgroundRepeat: "repeat",

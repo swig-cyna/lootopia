@@ -1,7 +1,10 @@
 import "mapbox-gl/dist/mapbox-gl.css"
 
 import HuntSession from "@lootopia/mobile/features/hunts/components/HuntSession"
-import { type HuntPoint, HuntSessionProvider } from "@lootopia/mobile/features/hunts/context/HuntSessionContext"
+import {
+  type HuntPoint,
+  HuntSessionProvider,
+} from "@lootopia/mobile/features/hunts/context/HuntSessionContext"
 import DebugMenu from "@lootopia/mobile/features/map/components/DebugMenu"
 import MapCanvas from "@lootopia/mobile/features/map/components/MapCanvas"
 import MapControls from "@lootopia/mobile/features/map/components/MapControls"
@@ -15,22 +18,26 @@ const HuntPageContent = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
 
-  const { data: hunt, isPending, isError } = useQuery(api.hunts[":id"], {
+  const {
+    data: hunt,
+    isPending,
+    isError,
+  } = useQuery(api.hunts[":id"], {
     param: { id: id! },
   })
 
   if (isPending) {
     return (
-      <div className="flex flex-col flex-1 min-h-svh items-center justify-center">
-        <LoaderCircle className="size-8 text-primary animate-spin" />
+      <div className="flex min-h-svh flex-1 flex-col items-center justify-center">
+        <LoaderCircle className="text-primary size-8 animate-spin" />
       </div>
     )
   }
 
   if (isError) {
     return (
-      <div className="flex flex-col flex-1 min-h-svh items-center justify-center gap-4">
-        <p className="text-sm text-destructive">Hunt not found.</p>
+      <div className="flex min-h-svh flex-1 flex-col items-center justify-center gap-4">
+        <p className="text-destructive text-sm">Hunt not found.</p>
         <button onClick={() => navigate("/")} className="text-sm underline">
           Go back
         </button>
@@ -39,14 +46,14 @@ const HuntPageContent = () => {
   }
 
   return (
-    <div className="flex flex-col h-svh overflow-hidden relative touch-none">
+    <div className="relative flex h-svh touch-none flex-col overflow-hidden">
       <MapCanvas />
       <UserMarker />
       <HuntSession points={hunt.points as HuntPoint[]} />
 
       <button
         onClick={() => navigate("/")}
-        className="absolute top-4 left-4 z-10 bg-white rounded-full shadow-lg p-2 hover:bg-gray-100 active:scale-95 transition-transform"
+        className="absolute left-4 top-4 z-10 rounded-full bg-white p-2 shadow-lg transition-transform hover:bg-gray-100 active:scale-95"
       >
         <ArrowLeft className="size-5 text-gray-700" />
       </button>

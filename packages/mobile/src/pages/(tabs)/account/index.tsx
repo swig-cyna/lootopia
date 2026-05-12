@@ -5,7 +5,7 @@ import ChangePasswordForm from "@lootopia/mobile/features/account/components/Cha
 import ProfileForm from "@lootopia/mobile/features/account/components/ProfileForm"
 
 const AccountPage = () => (
-  <div className="flex flex-1 flex-col gap-6 w-full">
+  <div className="flex w-full flex-1 flex-col gap-6">
     <AccountHeader />
     <ProfileForm />
     <Separator />

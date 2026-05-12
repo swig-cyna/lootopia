@@ -6,9 +6,9 @@ const ProtectedRoute = () => {
 
   if (isPending) {
     return (
-      <div className="min-h-svh flex justify-center items-center">
+      <div className="flex min-h-svh items-center justify-center">
         <img
-          className="animate-bounce size-24"
+          className="size-24 animate-bounce"
           style={{ animationDuration: "0.8s" }}
           src="/icon.svg"
         />

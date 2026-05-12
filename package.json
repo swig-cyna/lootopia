@@ -9,8 +9,10 @@
     "build": "dotenv -e .env -- pnpm -r run build",
     "start": "dotenv -e .env -- pnpm -r --parallel run start",
     "clean": "pnpm -r exec rm -rf dist node_modules",
-    "lint": "pnpm -r --parallel run lint",
-    "lint:fix": "pnpm -r --parallel run lint:fix",
+    "lint": "pnpm -r --parallel --reporter=append-only run lint",
+    "lint:fix": "pnpm -r --parallel --reporter=append-only run lint:fix",
+    "format": "pnpm -r --parallel --reporter=append-only run format",
+    "format:fix": "pnpm -r --parallel --reporter=append-only run format:fix",
     "kysely": "dotenv -e .env -- pnpm --filter db kysely",
     "s3:create": "dotenv -e .env -- node scripts/create-bucket.mjs",
     "prod:up": "docker compose -f compose.prod.yml up --build -d",
@@ -19,6 +21,8 @@
   "devDependencies": {
     "dotenv-cli": "^11.0.0",
     "minio": "^8.0.7",
+    "prettier": "^3.5.3",
+    "prettier-plugin-tailwindcss": "^0.6.12",
     "typescript": "^5.9.3"
   }
 }

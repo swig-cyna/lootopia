@@ -49,25 +49,25 @@ const SortablePointItem = ({
     <div
       ref={setNodeRef}
       style={style}
-      className="group flex flex-col gap-2 rounded-lg border p-2 text-sm cursor-pointer hover:bg-accent transition-colors"
+      className="hover:bg-accent group flex cursor-pointer flex-col gap-2 rounded-lg border p-2 text-sm transition-colors"
       onClick={() => onFlyTo(point)}
     >
       <div className="flex items-center gap-2">
         <button
           type="button"
-          className="cursor-grab active:cursor-grabbing shrink-0 text-muted-foreground hover:text-foreground"
+          className="text-muted-foreground hover:text-foreground shrink-0 cursor-grab active:cursor-grabbing"
           {...attributes}
           {...listeners}
           onClick={(e) => e.stopPropagation()}
         >
           <GripVertical className="size-4" />
         </button>
-        <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-medium">
+        <span className="bg-primary text-primary-foreground flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-medium">
           {index + 1}
         </span>
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
           <p className="truncate font-medium">Point {index + 1}</p>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             {point.lat.toFixed(4)}, {point.lng.toFixed(4)}
           </p>
         </div>
@@ -75,7 +75,7 @@ const SortablePointItem = ({
           type="button"
           variant="ghost"
           size="sm"
-          className="size-7 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+          className="size-7 p-0 opacity-0 transition-opacity group-hover:opacity-100"
           onClick={(e) => {
             e.stopPropagation()
             onRemove(point.id)

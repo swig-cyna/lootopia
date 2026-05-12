@@ -21,7 +21,7 @@ const Explore = () => {
 
   if (isError) {
     return (
-      <p className="text-sm text-destructive">
+      <p className="text-destructive text-sm">
         Failed to load hunts. Please try again.
       </p>
     )

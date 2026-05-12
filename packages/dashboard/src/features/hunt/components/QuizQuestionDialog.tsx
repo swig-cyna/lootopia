@@ -181,11 +181,11 @@ const QuizQuestionDialog = ({
               <div className="flex flex-col gap-2">
                 {answers.map((answer, index) => (
                   <div key={answer.id} className="flex items-center gap-2">
-                    <label className="flex items-center gap-2 flex-1">
+                    <label className="flex flex-1 items-center gap-2">
                       <input
                         type="radio"
                         name="correctAnswer"
-                        className="size-4 accent-primary"
+                        className="accent-primary size-4"
                         checked={correctAnswerIndex === index}
                         onChange={() => setCorrectAnswerIndex(index)}
                         aria-label={`Mark answer ${index + 1} as correct`}
@@ -210,7 +210,7 @@ const QuizQuestionDialog = ({
                   </div>
                 ))}
                 {errors.answers?.some(Boolean) && (
-                  <p className="text-sm text-destructive">
+                  <p className="text-destructive text-sm">
                     Every answer must be filled in.
                   </p>
                 )}

@@ -2,7 +2,7 @@ import Explore from "@lootopia/mobile/features/hunts/components/Explore"
 
 const ExplorePage = () => (
   <div className="flex flex-1 flex-col">
-    <h1 className="text-3xl mb-3">Explore</h1>
+    <h1 className="mb-3 text-3xl">Explore</h1>
     <Explore />
   </div>
 )
