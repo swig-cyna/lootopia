@@ -1,13 +1,5 @@
-import QuizActivity, {
-  type QuizQuestion,
-} from "@lootopia/mobile/features/quiz/components/QuizActivity"
-
-type HuntPoint = {
-  id: string
-  position: number
-  gameType: "quiz" | "ar"
-  quizQuestion?: QuizQuestion
-}
+import type { HuntPoint } from "@lootopia/mobile/features/hunts/context/HuntSessionContext"
+import QuizActivity from "@lootopia/mobile/features/quiz/components/QuizActivity"
 
 type PointActivitySheetProps = {
   point: HuntPoint

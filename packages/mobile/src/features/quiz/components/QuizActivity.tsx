@@ -1,12 +1,7 @@
+import type { QuizQuestion } from "@lootopia/mobile/features/hunts/context/HuntSessionContext"
 import { cn } from "@lootopia/mobile/lib/utils"
 import { CheckCircle, XCircle } from "lucide-react"
 import { useState } from "react"
-
-export type QuizQuestion = {
-  question: string
-  answers: string[]
-  correctAnswerIndex: number
-}
 
 type QuizActivityProps = {
   quiz: QuizQuestion

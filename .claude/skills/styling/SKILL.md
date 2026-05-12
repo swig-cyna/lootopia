@@ -74,24 +74,24 @@ Examples: `Button`, `Input`, `Dialog`, `Select`, `Tabs`, `Card`, `Badge`, `Toolt
 
 ### Installing a component
 
-The project uses **pnpm with a monorepo workspace**. Install shadcn components with the `--filter` flag targeting the correct package:
+The project uses **pnpm with a monorepo workspace**. Use the official shadcn monorepo pattern with `pnpm dlx` and the `-c` flag, **from the monorepo root**:
 
 ```bash
 # Dashboard (organizers frontend)
-pnpm --filter @lootopia/dashboard dlx shadcn@latest add <component>
+pnpm dlx shadcn@latest add <component> -c packages/dashboard
 
 # Mobile (players frontend)
-pnpm --filter @lootopia/mobile dlx shadcn@latest add <component>
+pnpm dlx shadcn@latest add <component> -c packages/mobile
 ```
 
 Examples:
 
 ```bash
-pnpm --filter @lootopia/dashboard dlx shadcn@latest add dialog
-pnpm --filter @lootopia/mobile dlx shadcn@latest add sheet
+pnpm dlx shadcn@latest add dialog -c packages/dashboard
+pnpm dlx shadcn@latest add sheet -c packages/mobile
 ```
 
-> Never use `npx` or `npm` to install shadcn components in this project.
+> **Never** run from inside a package directory (e.g. `cd packages/dashboard && npx shadcn add ...`). The `components.json` aliases contain `@lootopia/dashboard/...` paths — when the CLI runs from inside the package, it doubles the path and creates a nested folder (`packages/dashboard/packages/dashboard/...`).
 
 ### Theme
 
@@ -187,7 +187,7 @@ import { Settings, ChevronRight, AlertCircle } from 'lucide-react'
 | Styling a component           | Tailwind classes only                                                                       |
 | Custom CSS needed             | Only in `index.css` for theme variables                                                     |
 | Need a UI component           | Check shadcn/ui first                                                                       |
-| Installing a shadcn component | `pnpm --filter @lootopia/dashboard` or `@lootopia/mobile dlx shadcn@latest add <component>` |
+| Installing a shadcn component | `pnpm dlx shadcn@latest add <component> -c packages/dashboard` (always from monorepo root) |
 | Building a custom component   | Match shadcn/ui visual language, use theme tokens                                           |
 | Need an icon                  | `lucide-react` only                                                                         |
 | Conditional classNames        | Use `cn` from `@/lib/utils`, never string concat or template literals                       |

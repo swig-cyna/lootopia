@@ -1,10 +1,7 @@
 import "mapbox-gl/dist/mapbox-gl.css"
 
 import HuntSession from "@lootopia/mobile/features/hunts/components/HuntSession"
-import {
-  type HuntPoint,
-  HuntSessionProvider,
-} from "@lootopia/mobile/features/hunts/context/HuntSessionContext"
+import { HuntSessionProvider } from "@lootopia/mobile/features/hunts/context/HuntSessionContext"
 import DebugMenu from "@lootopia/mobile/features/map/components/DebugMenu"
 import MapCanvas from "@lootopia/mobile/features/map/components/MapCanvas"
 import MapControls from "@lootopia/mobile/features/map/components/MapControls"
@@ -49,7 +46,7 @@ const HuntPageContent = () => {
     <div className="relative flex h-svh touch-none flex-col overflow-hidden">
       <MapCanvas />
       <UserMarker />
-      <HuntSession points={hunt.points as HuntPoint[]} />
+      <HuntSession points={hunt.points} />
 
       <button
         onClick={() => navigate("/")}

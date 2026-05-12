@@ -10,17 +10,24 @@ import {
 
 const VALIDATION_RADIUS_M = 10
 
+export type QuizQuestion = {
+  id: string
+  huntPointId: string
+  question: string
+  answers: string[]
+  correctAnswerIndex: number
+}
+
 export type HuntPoint = {
   id: string
+  huntId: string
   longitude: number
   latitude: number
   position: number
   gameType: "quiz" | "ar"
-  quizQuestion?: {
-    question: string
-    answers: string[]
-    correctAnswerIndex: number
-  }
+  arId?: string | null
+  createdAt: string
+  quizQuestion?: QuizQuestion
 }
 
 type HuntSessionContextValue = {

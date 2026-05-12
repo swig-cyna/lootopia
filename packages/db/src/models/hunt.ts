@@ -34,6 +34,7 @@ export interface HuntPointTable {
   latitude: number
   longitude: number
   gameType: HuntGameType
+  arId: string | null
   createdAt: Timestamp
   position: number
 }
