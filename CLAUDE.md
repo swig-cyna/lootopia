@@ -26,13 +26,24 @@ pnpm kysely migrate:make 'name' # Create a migration
 pnpm kysely migrate:latest      # Apply migrations
 ```
 
+## Coding Conventions
+
+The following conventions apply to **all code written in this project**, always.
+
+@.claude/skills/code-quality/SKILL.md
+@.claude/skills/frontend-architecture/SKILL.md
+@.claude/skills/backend-architecture/SKILL.md
+
+---
+
 ## Available Skills
 
-| Skill                    | Description                                            |
-| ------------------------ | ------------------------------------------------------ |
-| `/styling`               | Tailwind, shadcn/ui, Lucide icons, theme tokens        |
-| `/frontend-architecture` | Feature-based architecture, components, hooks, context |
-| `/data-fetching`         | React Query + Hono Client, useQuery, useMutation       |
-| `/forms`                 | react-hook-form + Zod, FormProvider, Field components  |
-| `/mapbox`                | Mapbox GL JS, markers, SearchBox                       |
-| `/backend-architecture`  | Hono + zod-openapi, route structure, auth middlewares  |
+| Skill                    | Description                                                                      |
+| ------------------------ | -------------------------------------------------------------------------------- |
+| `/styling`               | Tailwind, shadcn/ui, Lucide icons, theme tokens                                  |
+| `/frontend-architecture` | Feature-based architecture, components, hooks, context                           |
+| `/data-fetching`         | React Query + Hono Client, useQuery, useMutation                                 |
+| `/forms`                 | react-hook-form + Zod, FormProvider, Field components                            |
+| `/mapbox`                | Mapbox GL JS, markers, SearchBox                                                 |
+| `/backend-architecture`  | Hono + zod-openapi, route structure, auth middlewares                            |
+| `/code-quality`          | Named handlers, curry functions, early returns, lookup objects, no prop drilling |

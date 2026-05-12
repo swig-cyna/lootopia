@@ -74,14 +74,21 @@ Examples: `Button`, `Input`, `Dialog`, `Select`, `Tabs`, `Card`, `Badge`, `Toolt
 
 ### Installing a component
 
-The project uses **pnpm with a monorepo workspace**. Install shadcn components with the `--filter` flag targeting the correct app package:
+The project uses **pnpm with a monorepo workspace**. Install shadcn components with the `--filter` flag targeting the correct package:
 
 ```bash
-pnpm --filter <app-name> dlx shadcn@latest add <component>
+# Dashboard (organizers frontend)
+pnpm --filter @lootopia/dashboard dlx shadcn@latest add <component>
 
-# Example
-pnpm --filter web dlx shadcn@latest add alert
-pnpm --filter web dlx shadcn@latest add dialog
+# Mobile (players frontend)
+pnpm --filter @lootopia/mobile dlx shadcn@latest add <component>
+```
+
+Examples:
+
+```bash
+pnpm --filter @lootopia/dashboard dlx shadcn@latest add dialog
+pnpm --filter @lootopia/mobile dlx shadcn@latest add sheet
 ```
 
 > Never use `npx` or `npm` to install shadcn components in this project.
@@ -175,16 +182,16 @@ import { Settings, ChevronRight, AlertCircle } from 'lucide-react'
 
 ## Quick Reference
 
-| Situation                     | Rule                                                                    |
-| ----------------------------- | ----------------------------------------------------------------------- |
-| Styling a component           | Tailwind classes only                                                   |
-| Custom CSS needed             | Only in `index.css` for theme variables                                 |
-| Need a UI component           | Check shadcn/ui first                                                   |
-| Installing a shadcn component | `pnpm --filter <app> dlx shadcn@latest add <component>`                 |
-| Building a custom component   | Match shadcn/ui visual language, use theme tokens                       |
-| Need an icon                  | `lucide-react` only                                                     |
-| Conditional classNames        | Use `cn` from `@/lib/utils`, never string concat or template literals   |
-| Raw color values              | Use semantic tokens (`bg-primary`, `text-muted-foreground`, etc.)       |
-| Border radius                 | Read `--radius` in `index.css`, stay within `rounded-sm` → `rounded-xl` |
-| Oversized radii               | Never use `rounded-2xl`, `rounded-3xl` on cards or containers           |
-| `rounded-full`                | Only for avatars, icon buttons, pill badges                             |
+| Situation                     | Rule                                                                                        |
+| ----------------------------- | ------------------------------------------------------------------------------------------- |
+| Styling a component           | Tailwind classes only                                                                       |
+| Custom CSS needed             | Only in `index.css` for theme variables                                                     |
+| Need a UI component           | Check shadcn/ui first                                                                       |
+| Installing a shadcn component | `pnpm --filter @lootopia/dashboard` or `@lootopia/mobile dlx shadcn@latest add <component>` |
+| Building a custom component   | Match shadcn/ui visual language, use theme tokens                                           |
+| Need an icon                  | `lucide-react` only                                                                         |
+| Conditional classNames        | Use `cn` from `@/lib/utils`, never string concat or template literals                       |
+| Raw color values              | Use semantic tokens (`bg-primary`, `text-muted-foreground`, etc.)                           |
+| Border radius                 | Read `--radius` in `index.css`, stay within `rounded-sm` → `rounded-xl`                     |
+| Oversized radii               | Never use `rounded-2xl`, `rounded-3xl` on cards or containers                               |
+| `rounded-full`                | Only for avatars, icon buttons, pill badges                                                 |
