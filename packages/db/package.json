@@ -6,7 +6,7 @@
     "./*": "./src/*.ts"
   },
   "scripts": {
-    "lint": "eslint",
+    "lint": "tsc -b && eslint",
     "lint:fix": "eslint --fix",
     "kysely": "kysely"
   },
@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@types/node": "^25.6.0",
+    "@types/node": "^25.7.0",
     "@types/pg": "^8.20.0",
     "eslint": "^10.3.0",
     "globals": "^17.6.0",
@@ -26,6 +26,6 @@
     "tsconfig-paths": "^4.2.0",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.59.2"
+    "typescript-eslint": "^8.59.3"
   }
 }
