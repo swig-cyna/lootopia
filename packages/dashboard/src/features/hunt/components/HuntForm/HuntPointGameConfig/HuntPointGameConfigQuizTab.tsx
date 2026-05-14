@@ -23,6 +23,7 @@ import {
   useForm,
   useFormContext,
 } from "react-hook-form"
+const NO_ANSWER_SELECTED = -1
 
 type HuntPointGameConfigQuizTabProps = {
   pointId: string | null
@@ -43,7 +44,7 @@ const HuntPointGameConfigQuizTab = ({
     defaultValues: existing ?? {
       question: "",
       answers: ["", ""],
-      correctAnswerIndex: -1,
+      correctAnswerIndex: NO_ANSWER_SELECTED,
     },
   })
 
@@ -57,7 +58,7 @@ const HuntPointGameConfigQuizTab = ({
     const current = methods.getValues("correctAnswerIndex")
 
     if (current === index) {
-      methods.setValue("correctAnswerIndex", -1)
+      methods.setValue("correctAnswerIndex", NO_ANSWER_SELECTED)
     } else if (current > index) {
       methods.setValue("correctAnswerIndex", current - 1)
     }
