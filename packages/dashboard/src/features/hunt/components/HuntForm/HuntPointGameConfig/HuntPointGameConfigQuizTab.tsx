@@ -12,9 +12,9 @@ import {
   RadioGroupItem,
 } from "@lootopia/dashboard/components/ui/radio-group"
 import {
-  quizzConfigSchema,
+  quizConfigSchema,
   type HuntFormValues,
-  type QuizzConfigValues,
+  type QuizConfigValues,
 } from "@lootopia/dashboard/features/hunt/schema/hunt"
 import { Plus, Trash2 } from "lucide-react"
 import {
@@ -37,10 +37,10 @@ const HuntPointGameConfigQuizTab = ({
   const { getValues, setValue } = useFormContext<HuntFormValues>()
 
   const point = getValues("points").find((p) => p.id === pointId)
-  const existing = point?.gameType === "quiz" ? point.quizz : undefined
+  const existing = point?.gameType === "quiz" ? point.quiz : undefined
 
-  const methods = useForm<QuizzConfigValues>({
-    resolver: zodResolver(quizzConfigSchema),
+  const methods = useForm<QuizConfigValues>({
+    resolver: zodResolver(quizConfigSchema),
     defaultValues: existing ?? {
       question: "",
       answers: ["", ""],
@@ -74,7 +74,7 @@ const HuntPointGameConfigQuizTab = ({
     setValue(
       "points",
       points.map((p) =>
-        p.id === pointId ? { ...p, gameType: "quiz" as const, quizz: data } : p,
+        p.id === pointId ? { ...p, gameType: "quiz" as const, quiz: data } : p,
       ) as HuntFormValues["points"],
     )
     onSave()

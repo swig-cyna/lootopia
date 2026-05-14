@@ -8,7 +8,7 @@ const basePointSchema = z.object({
   position: z.number().positive(),
 })
 
-export const quizzConfigSchema = z.object({
+export const quizConfigSchema = z.object({
   question: z.string().min(1, "Question is required"),
   answers: z
     .array(z.string().min(1, "Answer text is required"))
@@ -22,10 +22,8 @@ export const arConfigSchema = z.object({
   arId: z.string().min(1, "Please select an AR game"),
 })
 
-export type QuizzConfigValues = z.infer<typeof quizzConfigSchema>
+export type QuizConfigValues = z.infer<typeof quizConfigSchema>
 export type ArConfigValues = z.infer<typeof arConfigSchema>
-
-const quizzPointSchema = quizzConfigSchema
 
 export const huntSchema = z.object({
   title: z.string().min(2, "Title must be at least 2 characters"),
@@ -38,7 +36,7 @@ export const huntSchema = z.object({
         z.object({
           ...basePointSchema.shape,
           gameType: z.literal(HUNT_GAME_TYPE.QUIZ),
-          quizz: quizzPointSchema,
+          quiz: quizConfigSchema,
         }),
         z.object({
           ...basePointSchema.shape,

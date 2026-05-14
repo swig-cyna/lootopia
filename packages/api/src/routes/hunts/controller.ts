@@ -63,9 +63,9 @@ export const createHuntController: RouteHandler<
       ? await $quizQuestion.create(
           quizPoints.map(({ point, huntPoint }) => ({
             huntPointId: huntPoint.id,
-            question: point.quizz.question,
-            answers: point.quizz.answers,
-            correctAnswerIndex: point.quizz.correctAnswerIndex,
+            question: point.quiz.question,
+            answers: point.quiz.answers,
+            correctAnswerIndex: point.quiz.correctAnswerIndex,
           })),
         )
       : []
@@ -179,9 +179,9 @@ export const updateHuntController: RouteHandler<
       ? await $quizQuestion.create(
           quizPoints.map(({ point, huntPoint }) => ({
             huntPointId: huntPoint.id,
-            question: point.quizz.question,
-            answers: point.quizz.answers,
-            correctAnswerIndex: point.quizz.correctAnswerIndex,
+            question: point.quiz.question,
+            answers: point.quiz.answers,
+            correctAnswerIndex: point.quiz.correctAnswerIndex,
           })),
         )
       : []

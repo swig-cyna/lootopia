@@ -1,5 +1,7 @@
 import { useHuntMap } from "@lootopia/mobile/features/map/context/HuntMapContext"
 import { getDistance } from "@lootopia/mobile/features/map/utils/distance"
+import { api } from "@lootopia/mobile/lib/api"
+import type { InferResponseType } from "hono/client"
 import {
   createContext,
   useContext,
@@ -10,25 +12,9 @@ import {
 
 const VALIDATION_RADIUS_M = 10
 
-export type QuizQuestion = {
-  id: string
-  huntPointId: string
-  question: string
-  answers: string[]
-  correctAnswerIndex: number
-}
-
-export type HuntPoint = {
-  id: string
-  huntId: string
-  longitude: number
-  latitude: number
-  position: number
-  gameType: "quiz" | "ar"
-  arId?: string | null
-  createdAt: string
-  quizQuestion?: QuizQuestion
-}
+type HuntApiResponse = InferResponseType<(typeof api.hunts)[":id"]["$get"], 200>
+export type HuntPoint = HuntApiResponse["points"][number]
+export type QuizQuestion = NonNullable<HuntPoint["quizQuestion"]>
 
 type HuntSessionContextValue = {
   points: HuntPoint[]

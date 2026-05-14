@@ -42,7 +42,7 @@ const basePointInputSchema = z.object({
 export const createHuntPointSchema = z.discriminatedUnion("gameType", [
   basePointInputSchema.extend({
     gameType: z.literal(HUNT_GAME_TYPE.QUIZ),
-    quizz: quizConfigInputSchema,
+    quiz: quizConfigInputSchema,
   }),
   basePointInputSchema.extend({
     gameType: z.literal(HUNT_GAME_TYPE.AR),

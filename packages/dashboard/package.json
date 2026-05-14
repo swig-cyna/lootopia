@@ -6,8 +6,8 @@
     "build": "tsc -b && vite build",
     "lint": "tsc -b && eslint",
     "lint:fix": "eslint --fix",
-    "format": "prettier --check .",
-    "format:fix": "prettier --write .",
+    "format": "prettier --check . --log-level warn",
+    "format:fix": "prettier --write . --log-level warn",
     "preview": "vite preview"
   },
   "dependencies": {
