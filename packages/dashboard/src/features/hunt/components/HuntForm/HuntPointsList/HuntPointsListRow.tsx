@@ -84,10 +84,15 @@ const HuntPointsListRow = ({
       </div>
 
       <div className="flex shrink-0 gap-1">
-        <Button variant="ghost" size="icon" onClick={handleEdit}>
+        <Button type="button" variant="ghost" size="icon" onClick={handleEdit}>
           <Pencil />
         </Button>
-        <Button variant="ghost" size="icon" onClick={handleDelete}>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          onClick={handleDelete}
+        >
           <Trash2 className="text-destructive" />
         </Button>
       </div>
