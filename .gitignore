@@ -25,6 +25,8 @@ lerna-debug.log*
 
 # misc
 .DS_Store
+*.tsbuildinfo
+HANDOFF.md
 
 docker/
 docker.prod/

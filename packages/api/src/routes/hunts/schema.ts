@@ -112,9 +112,11 @@ export const validatePointSchema = z.discriminatedUnion("gameType", [
   z.object({
     gameType: z.literal(HUNT_GAME_TYPE.QUIZ),
     selectedAnswerIndex: z.number().min(0),
+    score: z.number().int().nonnegative(),
   }),
   z.object({
     gameType: z.literal(HUNT_GAME_TYPE.AR),
+    score: z.number().int().nonnegative(),
   }),
 ])
 

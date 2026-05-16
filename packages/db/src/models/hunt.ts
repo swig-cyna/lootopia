@@ -65,5 +65,6 @@ export interface HuntPointCompletionTable {
   id: Generated<string>
   huntParticipationId: string
   huntPointId: string
+  score: number
   completedAt: Timestamp
 }

@@ -14,8 +14,9 @@ const ARGame = ({ pointId, onValidate }: ARGameProps) => {
   const handleValidate = async () => {
     await validatePoint({
       param: { id: pointId },
-      json: { gameType: "ar" },
+      json: { gameType: "ar", score: 0 },
     })
+
     onValidate()
   }
 

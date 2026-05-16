@@ -417,6 +417,7 @@ export const validatePointController: RouteHandler<
   await $huntPointCompletion.create({
     huntParticipationId: participation.id,
     huntPointId: id,
+    score: body.score,
   })
 
   return json({ isCorrect }, StatusCodes.OK)
