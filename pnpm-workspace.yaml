@@ -1,5 +1,11 @@
 packages:
   - packages/*
 
+allowBuilds:
+  "@prisma/engines": false
+  esbuild: true
+  msw: false
+  prisma: false
+
 onlyBuiltDependencies:
   - esbuild

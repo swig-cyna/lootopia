@@ -1,10 +1,7 @@
 import "mapbox-gl/dist/mapbox-gl.css"
 
 import HuntSession from "@lootopia/mobile/features/hunts/components/HuntSession"
-import {
-  type HuntPoint,
-  HuntSessionProvider,
-} from "@lootopia/mobile/features/hunts/context/HuntSessionContext"
+import { HuntSessionProvider } from "@lootopia/mobile/features/hunts/context/HuntSessionContext"
 import DebugMenu from "@lootopia/mobile/features/map/components/DebugMenu"
 import MapCanvas from "@lootopia/mobile/features/map/components/MapCanvas"
 import MapControls from "@lootopia/mobile/features/map/components/MapControls"
@@ -26,6 +23,10 @@ const HuntPageContent = () => {
     param: { id: id! },
   })
 
+  const handleGoBack = () => {
+    navigate("/")
+  }
+
   if (isPending) {
     return (
       <div className="flex min-h-svh flex-1 flex-col items-center justify-center">
@@ -38,7 +39,7 @@ const HuntPageContent = () => {
     return (
       <div className="flex min-h-svh flex-1 flex-col items-center justify-center gap-4">
         <p className="text-destructive text-sm">Hunt not found.</p>
-        <button onClick={() => navigate("/")} className="text-sm underline">
+        <button onClick={handleGoBack} className="text-sm underline">
           Go back
         </button>
       </div>
@@ -49,7 +50,7 @@ const HuntPageContent = () => {
     <div className="relative flex h-svh touch-none flex-col overflow-hidden">
       <MapCanvas />
       <UserMarker />
-      <HuntSession points={hunt.points as HuntPoint[]} />
+      <HuntSession points={hunt.points} />
 
       <button
         onClick={() => navigate("/")}

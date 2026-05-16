@@ -29,26 +29,43 @@ export const createHuntController: RouteHandler<
 
   const hunt = await $hunt.create({
     title,
-    description,
+    description: description ?? "",
     organizerId: user.id,
   })
+
   const huntPoints = await $huntPoint.create(
-    points.map(({ quizQuestion: _, ...point }) => ({
-      ...point,
-      huntId: hunt.id,
-    })),
+    points.map((point) => {
+      const base = {
+        huntId: hunt.id,
+        latitude: point.latitude,
+        longitude: point.longitude,
+        position: point.position,
+        gameType: point.gameType,
+      }
+
+      if (point.gameType === "ar") {
+        return { ...base, arId: point.arId }
+      }
+
+      return base
+    }),
   )
 
-  const pointsWithQuiz = points
+  const quizPoints = points
     .map((point, i) => ({ point, huntPoint: huntPoints[i] }))
-    .filter(({ point }) => point.quizQuestion !== undefined)
+    .filter(
+      (entry): entry is typeof entry & { point: { gameType: "quiz" } } =>
+        entry.point.gameType === "quiz",
+    )
 
   const quizQuestions =
-    pointsWithQuiz.length > 0
+    quizPoints.length > 0
       ? await $quizQuestion.create(
-          pointsWithQuiz.map(({ point, huntPoint }) => ({
-            ...point.quizQuestion!,
+          quizPoints.map(({ point, huntPoint }) => ({
             huntPointId: huntPoint.id,
+            question: point.quiz.question,
+            answers: point.quiz.answers,
+            correctAnswerIndex: point.quiz.correctAnswerIndex,
           })),
         )
       : []
@@ -124,13 +141,57 @@ export const updateHuntController: RouteHandler<
     return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
   }
 
-  const updatedPoints = (
-    await Promise.all(
-      points?.map((point) => $huntPoint.update(point.id, point)) || [],
-    )
-  ).filter((point) => point !== undefined)
+  if (!points) {
+    const huntPoints = await $huntPoint.findByHuntIds([hunt.id])
 
-  return json({ ...hunt, points: updatedPoints }, StatusCodes.OK)
+    return json({ ...hunt, points: huntPoints }, StatusCodes.OK)
+  }
+
+  await $huntPoint.deleteByHuntId(hunt.id)
+
+  const huntPoints = await $huntPoint.create(
+    points.map((point) => {
+      const base = {
+        huntId: hunt.id,
+        latitude: point.latitude,
+        longitude: point.longitude,
+        position: point.position,
+        gameType: point.gameType,
+      }
+
+      if (point.gameType === "ar") {
+        return { ...base, arId: point.arId }
+      }
+
+      return base
+    }),
+  )
+
+  const quizPoints = points
+    .map((point, i) => ({ point, huntPoint: huntPoints[i] }))
+    .filter(
+      (entry): entry is typeof entry & { point: { gameType: "quiz" } } =>
+        entry.point.gameType === "quiz",
+    )
+
+  const quizQuestions =
+    quizPoints.length > 0
+      ? await $quizQuestion.create(
+          quizPoints.map(({ point, huntPoint }) => ({
+            huntPointId: huntPoint.id,
+            question: point.quiz.question,
+            answers: point.quiz.answers,
+            correctAnswerIndex: point.quiz.correctAnswerIndex,
+          })),
+        )
+      : []
+
+  const huntPointsWithQuiz = huntPoints.map((huntPoint) => ({
+    ...huntPoint,
+    quizQuestion: quizQuestions.find((q) => q.huntPointId === huntPoint.id),
+  }))
+
+  return json({ ...hunt, points: huntPointsWithQuiz }, StatusCodes.OK)
 }
 
 export const deleteHuntController: RouteHandler<

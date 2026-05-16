@@ -278,9 +278,14 @@ When a component accumulates too much logic (state, effects, callbacks), extract
 
 **Signals that trigger extraction:**
 
-- 3+ `useState` or `useEffect`
-- Heavy `useCallback`/`useMemo` cluttering the JSX
-- Logic that is reusable or testable independently from rendering
+- Logic that is **reusable across multiple components**
+- Logic that is **testable independently** from rendering
+- A component **shared with sub-components** that all need access to the same state (combine with Context pattern)
+
+**Not a signal for extraction:**
+
+- 3+ `useState` or `useEffect` alone — if the component is in its own dedicated file, keeping the logic co-located is fine
+- Heavy internal state that is not shared or reused — co-location in the component file is preferred
 
 ### Structure
 

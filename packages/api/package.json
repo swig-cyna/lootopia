@@ -5,8 +5,8 @@
     "dev": "tsx watch src/index.ts",
     "lint": "tsc -b && eslint",
     "lint:fix": "eslint --fix",
-    "format": "prettier --check .",
-    "format:fix": "prettier --write .",
+    "format": "prettier --check . --log-level warn",
+    "format:fix": "prettier --write . --log-level warn",
     "build": "node esbuild.config.mjs",
     "start": "node dist/index.cjs"
   },

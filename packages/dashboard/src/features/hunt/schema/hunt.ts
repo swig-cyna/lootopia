@@ -1,33 +1,86 @@
-import { HUNT_GAME_TYPE } from "@lootopia/dashboard/features/hunt/utils/constant.ts"
+import { HUNT_GAME_TYPE } from "@lootopia/dashboard/features/hunt/utils/constant"
 import { z } from "zod"
 
+const basePointSchema = z.object({
+  id: z.string(),
+  latitude: z.number(),
+  longitude: z.number(),
+  position: z.number().positive(),
+})
+
+export const quizConfigSchema = z.object({
+  question: z.string().min(1, "Question is required"),
+  answers: z
+    .array(z.string().min(1, "Answer text is required"))
+    .min(2, "At least 2 answers required"),
+  correctAnswerIndex: z
+    .number({ error: "Please select a correct answer" })
+    .min(0, "Please select a correct answer"),
+})
+
+export const arConfigSchema = z.object({
+  arId: z.string().min(1, "Please select an AR game"),
+})
+
+export type QuizConfigValues = z.infer<typeof quizConfigSchema>
+export type ArConfigValues = z.infer<typeof arConfigSchema>
+
 export const huntSchema = z.object({
-  title: z
-    .string()
-    .min(2, "Title must be at least 2 characters")
-    .max(100, "Title must be less than 100 characters"),
+  title: z.string().min(2, "Title must be at least 2 characters"),
   description: z
     .string()
     .max(200, "Description must be less than 200 characters"),
   points: z
-    .object({
-      latitude: z.number(),
-      longitude: z.number(),
-      gameType: z.enum([HUNT_GAME_TYPE.QUIZ, HUNT_GAME_TYPE.AR]),
-      position: z.number().positive(),
-      quizQuestion: z
-        .object({
-          question: z.string().min(1, "Question is required"),
-          answers: z
-            .array(z.string().min(1, "Answer cannot be empty"))
-            .min(2, "There must be at least 2 answers"),
-          correctAnswerIndex: z.number().min(0),
-        })
-        .optional(),
-    })
-    .array()
+    .array(
+      z.discriminatedUnion("gameType", [
+        z.object({
+          ...basePointSchema.shape,
+          gameType: z.literal(HUNT_GAME_TYPE.QUIZ),
+          quiz: quizConfigSchema,
+        }),
+        z.object({
+          ...basePointSchema.shape,
+          gameType: z.literal(HUNT_GAME_TYPE.AR),
+          arId: z.string().min(1, "Please select an AR game"),
+        }),
+        z.object({
+          ...basePointSchema.shape,
+          gameType: z.literal(HUNT_GAME_TYPE.NONE),
+        }),
+      ]),
+    )
     .min(3, "You must place at least 3 points")
-    .max(5, "You can place at most 5 points"),
+    .refine(
+      (points) => points.every((point, index) => point.position === index + 1),
+      "All points must have a unique position",
+    )
+    .superRefine((points, ctx) => {
+      const hasUnconfigured = points.some(
+        (point) => point.gameType === HUNT_GAME_TYPE.NONE,
+      )
+
+      if (hasUnconfigured) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Some points still need to be configured",
+        })
+      }
+
+      points.forEach((point, index) => {
+        if (point.gameType === HUNT_GAME_TYPE.NONE) {
+          ctx.addIssue({
+            code: "custom",
+            message: "All points must have a game type",
+            path: [index, "gameType"],
+          })
+        }
+      })
+    }),
 })
 
 export type HuntFormValues = z.infer<typeof huntSchema>
+
+export type HuntPointDraft = Extract<
+  HuntFormValues["points"][number],
+  { gameType: "none" }
+>

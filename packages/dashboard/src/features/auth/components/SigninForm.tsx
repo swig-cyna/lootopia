@@ -41,7 +41,8 @@ const SigninForm = () => {
         onError: (ctx) => {
           setError("root", { message: ctx.error.message })
         },
-        onSuccess: () => {
+        onSuccess: async () => {
+          await authClient.getSession()
           navigate("/")
         },
       },
