@@ -1,10 +1,11 @@
 import type { QuizQuestion } from "@lootopia/mobile/features/hunts/context/HuntSessionContext"
 import { api, useMutation } from "@lootopia/mobile/lib/api"
 import { cn } from "@lootopia/mobile/lib/utils"
+import { Button } from "@lootopia/mobile/components/ui/button"
 import { CheckCircle, XCircle } from "lucide-react"
 import { useState } from "react"
 
-type QuizActivityProps = {
+type QuizGameProps = {
   quiz: QuizQuestion
   onValidate: () => void
 }
@@ -36,7 +37,7 @@ const ANSWER_STYLES: Record<string, string> = {
   wrong: "border-destructive bg-destructive/10 text-destructive",
 }
 
-const QuizActivity = ({ quiz, onValidate }: QuizActivityProps) => {
+const QuizGame = ({ quiz, onValidate }: QuizGameProps) => {
   const [selected, setSelected] = useState<number | null>(null)
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
 
@@ -44,7 +45,7 @@ const QuizActivity = ({ quiz, onValidate }: QuizActivityProps) => {
     api.hunts.points[":id"].validate.$post,
   )
 
-  const handleSelect = (i: number) => {
+  const handleSelect = (i: number) => () => {
     setSelected(i)
   }
 
@@ -72,7 +73,7 @@ const QuizActivity = ({ quiz, onValidate }: QuizActivityProps) => {
           <button
             key={i}
             disabled={submitted}
-            onClick={() => handleSelect(i)}
+            onClick={handleSelect(i)}
             className={cn(
               "rounded-xl border-2 px-4 py-3 text-left text-sm transition-colors",
               ANSWER_STYLES[answerState(i, selected, isCorrect)],
@@ -98,29 +99,25 @@ const QuizActivity = ({ quiz, onValidate }: QuizActivityProps) => {
             )}
             {isCorrect ? "Correct!" : "Wrong answer."}
           </div>
-          <button
+          <Button
             onClick={onValidate}
-            className="bg-primary text-primary-foreground w-full rounded-xl py-3 text-sm font-semibold"
+            className="h-auto w-full rounded-xl py-3"
           >
             Continue
-          </button>
+          </Button>
         </div>
       ) : (
-        <button
-          disabled={selected === null || isPending}
+        <Button
+          disabled={selected === null}
+          loading={isPending}
           onClick={handleSubmit}
-          className={cn(
-            "w-full rounded-xl py-3 text-sm font-semibold transition-colors",
-            selected !== null
-              ? "bg-primary text-primary-foreground"
-              : "bg-muted text-muted-foreground cursor-not-allowed",
-          )}
+          className="h-auto w-full rounded-xl py-3"
         >
           Submit
-        </button>
+        </Button>
       )}
     </div>
   )
 }
 
-export default QuizActivity
+export default QuizGame

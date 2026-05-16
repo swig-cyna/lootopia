@@ -1,5 +1,5 @@
 import HuntInfoPanel from "@lootopia/mobile/features/hunts/components/HuntSession/HuntInfoPanel"
-import PointActivitySheet from "@lootopia/mobile/features/hunts/components/PointActivitySheet"
+import GameSheet from "@lootopia/mobile/features/hunts/components/GameSheet"
 import {
   type HuntPoint,
   useHuntSession,
@@ -29,7 +29,7 @@ const HuntSession = ({
       <HuntPointsOverlay />
       <HuntInfoPanel />
       {activePoint && (
-        <PointActivitySheet point={activePoint} onValidate={validatePoint} />
+        <GameSheet point={activePoint} onValidate={validatePoint} />
       )}
     </>
   )
