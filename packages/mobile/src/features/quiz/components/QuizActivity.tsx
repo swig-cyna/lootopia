@@ -1,4 +1,5 @@
 import type { QuizQuestion } from "@lootopia/mobile/features/hunts/context/HuntSessionContext"
+import { api, useMutation } from "@lootopia/mobile/lib/api"
 import { cn } from "@lootopia/mobile/lib/utils"
 import { CheckCircle, XCircle } from "lucide-react"
 import { useState } from "react"
@@ -11,18 +12,17 @@ type QuizActivityProps = {
 const answerState = (
   i: number,
   selected: number | null,
-  submitted: boolean,
-  correctIndex: number,
+  isCorrect: boolean | null,
 ) => {
-  if (!submitted) {
+  if (isCorrect === null) {
     return selected === i ? "selected" : "idle"
   }
 
-  if (i === correctIndex) {
+  if (isCorrect && i === selected) {
     return "correct"
   }
 
-  if (i === selected) {
+  if (!isCorrect && i === selected) {
     return "wrong"
   }
 
@@ -38,16 +38,30 @@ const ANSWER_STYLES: Record<string, string> = {
 
 const QuizActivity = ({ quiz, onValidate }: QuizActivityProps) => {
   const [selected, setSelected] = useState<number | null>(null)
-  const [submitted, setSubmitted] = useState(false)
-  const isCorrect = selected === quiz.correctAnswerIndex
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
 
-  const handleSubmit = () => {
+  const [validatePoint, { isPending }] = useMutation(
+    api.hunts.points[":id"].validate.$post,
+  )
+
+  const handleSelect = (i: number) => {
+    setSelected(i)
+  }
+
+  const handleSubmit = async () => {
     if (selected === null) {
       return
     }
 
-    setSubmitted(true)
+    const result = await validatePoint({
+      param: { id: quiz.huntPointId },
+      json: { gameType: "quiz", selectedAnswerIndex: selected },
+    })
+
+    setIsCorrect(result.isCorrect)
   }
+
+  const submitted = isCorrect !== null
 
   return (
     <div className="flex flex-col gap-3">
@@ -58,12 +72,10 @@ const QuizActivity = ({ quiz, onValidate }: QuizActivityProps) => {
           <button
             key={i}
             disabled={submitted}
-            onClick={() => setSelected(i)}
+            onClick={() => handleSelect(i)}
             className={cn(
               "rounded-xl border-2 px-4 py-3 text-left text-sm transition-colors",
-              ANSWER_STYLES[
-                answerState(i, selected, submitted, quiz.correctAnswerIndex)
-              ],
+              ANSWER_STYLES[answerState(i, selected, isCorrect)],
             )}
           >
             {answer}
@@ -95,7 +107,7 @@ const QuizActivity = ({ quiz, onValidate }: QuizActivityProps) => {
         </div>
       ) : (
         <button
-          disabled={selected === null}
+          disabled={selected === null || isPending}
           onClick={handleSubmit}
           className={cn(
             "w-full rounded-xl py-3 text-sm font-semibold transition-colors",

@@ -19,7 +19,7 @@ const HuntPageContent = () => {
     data: hunt,
     isPending,
     isError,
-  } = useQuery(api.hunts[":id"], {
+  } = useQuery(api.hunts.published[":id"], {
     param: { id: id! },
   })
 
@@ -50,7 +50,11 @@ const HuntPageContent = () => {
     <div className="relative flex h-svh touch-none flex-col overflow-hidden">
       <MapCanvas />
       <UserMarker />
-      <HuntSession points={hunt.points} />
+      <HuntSession
+        huntId={id!}
+        points={hunt.points}
+        completedPointIds={hunt.completedPointIds}
+      />
 
       <button
         onClick={() => navigate("/")}

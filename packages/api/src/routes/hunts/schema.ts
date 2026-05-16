@@ -13,6 +13,10 @@ export const quizQuestionSchema = z.object({
   correctAnswerIndex: z.number(),
 })
 
+export const playerQuizQuestionSchema = quizQuestionSchema.omit({
+  correctAnswerIndex: true,
+})
+
 export const huntsPointSchema = z.object({
   id: z.string(),
   huntId: z.string(),
@@ -23,6 +27,10 @@ export const huntsPointSchema = z.object({
   createdAt: z.date(),
   position: z.number(),
   quizQuestion: quizQuestionSchema.optional(),
+})
+
+export const playerHuntsPointSchema = huntsPointSchema.extend({
+  quizQuestion: playerQuizQuestionSchema.optional(),
 })
 
 const quizConfigInputSchema = z.object({
@@ -74,6 +82,14 @@ export const huntSchema = z.object({
   reward: huntsRewardSchema,
 })
 
+export const playerHuntSchema = huntSchema.extend({
+  points: z.array(playerHuntsPointSchema),
+})
+
+export const playerHuntDetailSchema = playerHuntSchema.extend({
+  completedPointIds: z.array(z.string()),
+})
+
 export const createHuntSchema = z.object({
   title: z.string().min(1).max(255),
   description: z.string().optional(),
@@ -92,6 +108,20 @@ export const updateHuntSchema = z.object({
   reward: huntsRewardSchema.optional(),
 })
 
+export const validatePointSchema = z.discriminatedUnion("gameType", [
+  z.object({
+    gameType: z.literal(HUNT_GAME_TYPE.QUIZ),
+    selectedAnswerIndex: z.number().min(0),
+  }),
+  z.object({
+    gameType: z.literal(HUNT_GAME_TYPE.AR),
+  }),
+])
+
+export const validatePointResponseSchema = z.object({
+  isCorrect: z.boolean(),
+})
+
 export const listHuntsQuerySchema = paginationParamsSchema
 
 export const paginatedHuntsSchema = createPaginatedResponseSchema(huntSchema)
@@ -103,11 +133,12 @@ export const huntParticipationSchema = z.object({
   joinedAt: z.date(),
 })
 
-export const publishedHuntSchema = huntSchema.extend({
+export const publishedHuntSchema = playerHuntSchema.extend({
   isJoined: z.boolean(),
 })
 
 export const paginatedPublishedHuntsSchema =
   createPaginatedResponseSchema(publishedHuntSchema)
 
-export const paginatedMyHuntsSchema = createPaginatedResponseSchema(huntSchema)
+export const paginatedMyHuntsSchema =
+  createPaginatedResponseSchema(playerHuntSchema)

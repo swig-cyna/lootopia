@@ -7,12 +7,22 @@ import {
 import HuntPointsOverlay from "@lootopia/mobile/features/map/components/HuntPointsOverlay"
 import { useEffect } from "react"
 
-const HuntSession = ({ points }: { points: HuntPoint[] }) => {
-  const { setPoints, activePoint, validatePoint } = useHuntSession()
+type HuntSessionProps = {
+  huntId: string
+  points: HuntPoint[]
+  completedPointIds: string[]
+}
+
+const HuntSession = ({
+  huntId,
+  points,
+  completedPointIds,
+}: HuntSessionProps) => {
+  const { setHuntData, activePoint, validatePoint } = useHuntSession()
 
   useEffect(() => {
-    setPoints(points)
-  }, [points])
+    setHuntData(points, completedPointIds)
+  }, [huntId])
 
   return (
     <>

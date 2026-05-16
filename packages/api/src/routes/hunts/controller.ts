@@ -5,6 +5,7 @@ import {
   $hunt,
   $huntParticipation,
   $huntPoint,
+  $huntPointCompletion,
   $huntReward,
   $quizQuestion,
 } from "@lootopia/db/repositories/hunt.repository"
@@ -16,11 +17,13 @@ import type {
   deleteHuntRewardRoute,
   deleteHuntRoute,
   getHuntRoute,
+  getPublishedHuntRoute,
   joinHuntRoute,
   listHuntsRoute,
   listMyHuntsRoute,
   listPublishedHuntsRoute,
   updateHuntRoute,
+  validatePointRoute,
 } from "@lootopia/api/routes/hunts/doc"
 
 export const createHuntController: RouteHandler<
@@ -141,6 +144,56 @@ export const getHuntController: RouteHandler<
 
   return json(
     { ...hunt, points: huntPointsWithQuiz, reward: huntReward },
+    StatusCodes.OK,
+  )
+}
+
+export const getPublishedHuntController: RouteHandler<
+  typeof getPublishedHuntRoute,
+  AuthenticatedContext
+> = async ({ req, json, var: { user } }) => {
+  const { id } = req.valid("param")
+  const hunt = await $hunt.findById(id)
+
+  if (!hunt || hunt.status !== "published") {
+    return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
+  }
+
+  const huntPoints = await $huntPoint.findByHuntIds([hunt.id])
+
+  const quizQuestions = await $quizQuestion.findByHuntPointIds(
+    huntPoints.map((point) => point.id),
+  )
+
+  const huntPointsWithQuiz = huntPoints.map((point) => {
+    const q = quizQuestions.find((quiz) => quiz.huntPointId === point.id)
+
+    return {
+      ...point,
+      quizQuestion: q
+        ? {
+            id: q.id,
+            huntPointId: q.huntPointId,
+            question: q.question,
+            answers: q.answers,
+          }
+        : undefined,
+    }
+  })
+
+  const participation = await $huntParticipation.findByUserAndHunt(
+    user.id,
+    hunt.id,
+  )
+
+  const completedPointIds = participation
+    ? (await $huntPointCompletion.findByParticipationId(participation.id)).map(
+        (c) => c.huntPointId,
+      )
+    : []
+
+  return json(
+    { ...hunt, points: huntPointsWithQuiz, completedPointIds },
     StatusCodes.OK,
   )
 }
@@ -323,6 +376,50 @@ export const listMyHuntsController: RouteHandler<
     paginate(huntsWithPoints, participations.length, page, limit),
     StatusCodes.OK,
   )
+}
+
+export const validatePointController: RouteHandler<
+  typeof validatePointRoute,
+  AuthenticatedContext
+> = async ({ req, json, var: { user } }) => {
+  const { id } = req.valid("param")
+  const body = req.valid("json")
+
+  const huntPoint = await $huntPoint.findById(id)
+
+  if (!huntPoint) {
+    return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
+  }
+
+  const participation = await $huntParticipation.findByUserAndHunt(
+    user.id,
+    huntPoint.huntId,
+  )
+
+  if (!participation) {
+    return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
+  }
+
+  const isCorrect = await (async () => {
+    if (body.gameType === "quiz") {
+      const quiz = await $quizQuestion.findByHuntPointId(id)
+
+      if (!quiz) {
+        return false
+      }
+
+      return body.selectedAnswerIndex === quiz.correctAnswerIndex
+    }
+
+    return true
+  })()
+
+  await $huntPointCompletion.create({
+    huntParticipationId: participation.id,
+    huntPointId: id,
+  })
+
+  return json({ isCorrect }, StatusCodes.OK)
 }
 
 export const joinHuntController: RouteHandler<

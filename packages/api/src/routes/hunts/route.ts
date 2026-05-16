@@ -6,11 +6,13 @@ import {
   deleteHuntPointController,
   deleteHuntRewardController,
   getHuntController,
+  getPublishedHuntController,
   joinHuntController,
   listHuntsController,
   listMyHuntsController,
   listPublishedHuntsController,
   updateHuntController,
+  validatePointController,
 } from "@lootopia/api/routes/hunts/controller"
 import {
   createHuntRoute,
@@ -18,11 +20,13 @@ import {
   deleteHuntRewardRoute,
   deleteHuntRoute,
   getHuntRoute,
+  getPublishedHuntRoute,
   joinHuntRoute,
   listHuntsRoute,
   listMyHuntsRoute,
   listPublishedHuntsRoute,
   updateHuntRoute,
+  validatePointRoute,
 } from "@lootopia/api/routes/hunts/doc"
 
 const huntsRouter = createRouter<AuthenticatedContext>()
@@ -31,6 +35,8 @@ const huntsRouter = createRouter<AuthenticatedContext>()
   .openapi(listPublishedHuntsRoute, listPublishedHuntsController)
   .openapi(listMyHuntsRoute, listMyHuntsController)
   .openapi(getHuntRoute, getHuntController)
+  .openapi(getPublishedHuntRoute, getPublishedHuntController)
+  .openapi(validatePointRoute, validatePointController)
   .openapi(updateHuntRoute, updateHuntController)
   .openapi(deleteHuntRoute, deleteHuntController)
   .openapi(joinHuntRoute, joinHuntController)

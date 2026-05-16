@@ -2,6 +2,7 @@ import { db } from "@lootopia/db/index"
 import {
   HUNT_STATUS,
   type HuntParticipationTable,
+  type HuntPointCompletionTable,
   type HuntPointTable,
   type HuntRewardTable,
   type HuntTable,
@@ -34,6 +35,9 @@ export type QuizQuestionUpdate = Omit<
 
 export type HuntParticipation = Selectable<HuntParticipationTable>
 export type NewHuntParticipation = Insertable<HuntParticipationTable>
+
+export type HuntPointCompletion = Selectable<HuntPointCompletionTable>
+export type NewHuntPointCompletion = Insertable<HuntPointCompletionTable>
 
 export const $hunt = {
   findById: (id: string) =>
@@ -96,7 +100,11 @@ export const $hunt = {
 
 export const $huntPoint = {
   findById: (id: string) =>
-    db.selectFrom("hunts").selectAll().where("id", "=", id).executeTakeFirst(),
+    db
+      .selectFrom("hunt_points")
+      .selectAll()
+      .where("id", "=", id)
+      .executeTakeFirst(),
 
   findByHuntIds: (huntId: string[]) =>
     db
@@ -162,6 +170,13 @@ export const $quizQuestion = {
       .where("id", "=", id)
       .executeTakeFirst(),
 
+  findByHuntPointId: (huntPointId: string) =>
+    db
+      .selectFrom("quiz_questions")
+      .selectAll()
+      .where("huntPointId", "=", huntPointId)
+      .executeTakeFirst(),
+
   findByHuntPointIds: (huntPointId: string[]) =>
     db
       .selectFrom("quiz_questions")
@@ -222,4 +237,21 @@ export const $huntParticipation = {
       .where("userId", "=", userId)
       .where("huntId", "=", huntId)
       .executeTakeFirst(),
+}
+
+export const $huntPointCompletion = {
+  create: (completion: NewHuntPointCompletion) =>
+    db
+      .insertInto("hunt_point_completions")
+      .values(completion)
+      .onConflict((oc) => oc.doNothing())
+      .returningAll()
+      .executeTakeFirst(),
+
+  findByParticipationId: (huntParticipationId: string) =>
+    db
+      .selectFrom("hunt_point_completions")
+      .select("huntPointId")
+      .where("huntParticipationId", "=", huntParticipationId)
+      .execute(),
 }
