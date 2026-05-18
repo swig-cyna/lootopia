@@ -59,6 +59,10 @@ const HuntForm = () => {
     mapHandleRef.current?.removePoint(id)
   }
 
+  const handleReorder = (orderedIds: string[]) => {
+    mapHandleRef.current?.reorderPoints(orderedIds)
+  }
+
   return (
     <div className="h-full w-full">
       <FormProvider {...methods}>
@@ -72,6 +76,7 @@ const HuntForm = () => {
               <HuntPointsList
                 onEdit={handleEditPoint}
                 onDelete={handleDeletePoint}
+                onReorder={handleReorder}
               />
             </CardContent>
 
