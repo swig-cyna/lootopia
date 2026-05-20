@@ -5,6 +5,7 @@ import {
   $hunt,
   $huntParticipation,
   $huntPoint,
+  $huntReward,
   $quizQuestion,
 } from "@lootopia/db/repositories/hunt.repository"
 import * as StatusCodes from "stoker/http-status-codes"
@@ -12,6 +13,7 @@ import * as StatusCodes from "stoker/http-status-codes"
 import type {
   createHuntRoute,
   deleteHuntPointRoute,
+  deleteHuntRewardRoute,
   deleteHuntRoute,
   getHuntRoute,
   joinHuntRoute,
@@ -25,7 +27,7 @@ export const createHuntController: RouteHandler<
   typeof createHuntRoute,
   AuthenticatedContext
 > = async ({ req, json, var: { user } }) => {
-  const { title, description, points } = req.valid("json")
+  const { title, description, points, reward } = req.valid("json")
 
   const hunt = await $hunt.create({
     title,
@@ -70,12 +72,21 @@ export const createHuntController: RouteHandler<
         )
       : []
 
+  const [huntReward] = await $huntReward.create({
+    huntId: hunt.id,
+    promoCode: reward.promoCode,
+    topX: reward.topX,
+  })
+
   const huntPointsWithQuiz = huntPoints.map((huntPoint) => ({
     ...huntPoint,
     quizQuestion: quizQuestions.find((q) => q.huntPointId === huntPoint.id),
   }))
 
-  return json({ ...hunt, points: huntPointsWithQuiz }, StatusCodes.CREATED)
+  return json(
+    { ...hunt, points: huntPointsWithQuiz, reward: huntReward },
+    StatusCodes.CREATED,
+  )
 }
 
 export const listHuntsController: RouteHandler<
@@ -91,10 +102,12 @@ export const listHuntsController: RouteHandler<
 
   const huntIds = hunts.map((hunt) => hunt.id)
   const huntPoints = await $huntPoint.findByHuntIds(huntIds)
+  const [huntRewards] = await $huntReward.findByHuntIds(huntIds)
 
   const huntsWithPoints = hunts.map((hunt) => ({
     ...hunt,
     points: huntPoints.filter((point) => point.huntId === hunt.id),
+    reward: huntRewards,
   }))
 
   return json(
@@ -115,6 +128,7 @@ export const getHuntController: RouteHandler<
   }
 
   const huntPoints = await $huntPoint.findByHuntIds([hunt.id])
+  const [huntReward] = await $huntReward.findByHuntIds([hunt.id])
 
   const quizQuestions = await $quizQuestion.findByHuntPointIds(
     huntPoints.map((point) => point.id),
@@ -125,7 +139,10 @@ export const getHuntController: RouteHandler<
     quizQuestion: quizQuestions.find((q) => q.huntPointId === point.id),
   }))
 
-  return json({ ...hunt, points: huntPointsWithQuiz }, StatusCodes.OK)
+  return json(
+    { ...hunt, points: huntPointsWithQuiz, reward: huntReward },
+    StatusCodes.OK,
+  )
 }
 
 export const updateHuntController: RouteHandler<
@@ -133,7 +150,7 @@ export const updateHuntController: RouteHandler<
   AuthenticatedContext
 > = async ({ req, json }) => {
   const { id } = req.valid("param")
-  const { title, description, status, points } = req.valid("json")
+  const { title, description, status, points, reward } = req.valid("json")
 
   const hunt = await $hunt.update(id, { title, description, status })
 
@@ -141,10 +158,24 @@ export const updateHuntController: RouteHandler<
     return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
   }
 
+  const huntReward = reward
+    ? await $huntReward.update(reward.id, {
+        topX: reward.topX,
+        promoCode: reward.promoCode,
+      })
+    : (await $huntReward.findByHuntIds([hunt.id]))[0]
+
+  if (!huntReward) {
+    return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
+  }
+
   if (!points) {
     const huntPoints = await $huntPoint.findByHuntIds([hunt.id])
 
-    return json({ ...hunt, points: huntPoints }, StatusCodes.OK)
+    return json(
+      { ...hunt, points: huntPoints, reward: huntReward },
+      StatusCodes.OK,
+    )
   }
 
   await $huntPoint.deleteByHuntId(hunt.id)
@@ -191,7 +222,10 @@ export const updateHuntController: RouteHandler<
     quizQuestion: quizQuestions.find((q) => q.huntPointId === huntPoint.id),
   }))
 
-  return json({ ...hunt, points: huntPointsWithQuiz }, StatusCodes.OK)
+  return json(
+    { ...hunt, points: huntPointsWithQuiz, reward: huntReward },
+    StatusCodes.OK,
+  )
 }
 
 export const deleteHuntController: RouteHandler<
@@ -216,6 +250,17 @@ export const deleteHuntPointController: RouteHandler<
   return body(null, StatusCodes.NO_CONTENT)
 }
 
+export const deleteHuntRewardController: RouteHandler<
+  typeof deleteHuntRewardRoute,
+  AuthenticatedContext
+> = async ({ req, body }) => {
+  const { id } = req.valid("param")
+
+  await $huntReward.delete(id)
+
+  return body(null, StatusCodes.NO_CONTENT)
+}
+
 export const listPublishedHuntsController: RouteHandler<
   typeof listPublishedHuntsRoute,
   AuthenticatedContext
@@ -233,11 +278,14 @@ export const listPublishedHuntsController: RouteHandler<
   const huntIds = hunts.map((hunt) => hunt.id)
   const huntPoints =
     huntIds.length > 0 ? await $huntPoint.findByHuntIds(huntIds) : []
+  const huntRewards =
+    huntIds.length > 0 ? await $huntReward.findByHuntIds(huntIds) : []
 
   const huntsWithPoints = hunts.map((hunt) => ({
     ...hunt,
     isJoined: joinedHuntIds.has(hunt.id),
     points: huntPoints.filter((point) => point.huntId === hunt.id),
+    reward: huntRewards.find((reward) => reward.huntId === hunt.id)!,
   }))
 
   return json(
@@ -259,14 +307,16 @@ export const listMyHuntsController: RouteHandler<
   }
 
   const huntIds = participations.map((p) => p.huntId)
-  const [hunts, huntPoints] = await Promise.all([
+  const [hunts, huntPoints, huntRewards] = await Promise.all([
     $hunt.findByIds(huntIds),
     $huntPoint.findByHuntIds(huntIds),
+    $huntReward.findByHuntIds(huntIds),
   ])
 
   const huntsWithPoints = hunts.map((hunt) => ({
     ...hunt,
     points: huntPoints.filter((point) => point.huntId === hunt.id),
+    reward: huntRewards.find((reward) => reward.huntId === hunt.id)!,
   }))
 
   return json(

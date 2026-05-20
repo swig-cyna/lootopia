@@ -3,6 +3,8 @@ import { createRouter, type AuthenticatedContext } from "@lootopia/api/lib/hono"
 import {
   createHuntController,
   deleteHuntController,
+  deleteHuntPointController,
+  deleteHuntRewardController,
   getHuntController,
   joinHuntController,
   listHuntsController,
@@ -12,6 +14,8 @@ import {
 } from "@lootopia/api/routes/hunts/controller"
 import {
   createHuntRoute,
+  deleteHuntPointRoute,
+  deleteHuntRewardRoute,
   deleteHuntRoute,
   getHuntRoute,
   joinHuntRoute,
@@ -30,5 +34,7 @@ const huntsRouter = createRouter<AuthenticatedContext>()
   .openapi(updateHuntRoute, updateHuntController)
   .openapi(deleteHuntRoute, deleteHuntController)
   .openapi(joinHuntRoute, joinHuntController)
+  .openapi(deleteHuntPointRoute, deleteHuntPointController)
+  .openapi(deleteHuntRewardRoute, deleteHuntRewardController)
 
 export default huntsRouter

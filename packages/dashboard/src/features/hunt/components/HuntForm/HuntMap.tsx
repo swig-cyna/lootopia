@@ -1,4 +1,5 @@
 import { Card } from "@lootopia/dashboard/components/ui/card"
+import type { HuntFormValues } from "@lootopia/dashboard/features/hunt/schema/hunt"
 import { HUNT_GAME_TYPE } from "@lootopia/dashboard/features/hunt/utils/constant"
 import { SearchBox } from "@mapbox/search-js-react"
 import mapboxgl from "mapbox-gl"
@@ -7,7 +8,6 @@ import { useEffect, useRef, useState, type RefObject } from "react"
 import { createRoot } from "react-dom/client"
 import { useFormContext } from "react-hook-form"
 import { v4 as uuidv4 } from "uuid"
-import type { HuntFormValues } from "@lootopia/dashboard/features/hunt/schema/hunt"
 
 const MAPBOX_STYLE = "mapbox://styles/mapbox/streets-v11"
 const MAP_DEFAULT_CENTER: [number, number] = [2.3522, 48.8566]
@@ -23,6 +23,7 @@ type MapPoint = {
 
 export type HuntMapHandle = {
   removePoint: (_id: string) => void
+  reorderPoints: (_orderedIds: string[]) => void
 }
 
 type HuntMapProps = {
@@ -100,8 +101,21 @@ const HuntMap = ({ handleRef }: HuntMapProps) => {
     setValue("points", updated as HuntFormValues["points"])
   }
 
+  const reorderPoints = (orderedIds: string[]) => {
+    const byId = new Map(pointsRef.current.map((p) => [p.id, p]))
+
+    pointsRef.current = orderedIds
+      .map((id) => byId.get(id))
+      .filter((p): p is MapPoint => p !== undefined)
+      .map((p, index) => {
+        p.root.render(<MarkerPin label={index + 1} />)
+
+        return p
+      })
+  }
+
   useEffect(() => {
-    handleRef.current = { removePoint }
+    handleRef.current = { removePoint, reorderPoints }
   })
 
   const handleMarkerDragEnd = (id: string, marker: mapboxgl.Marker) => () => {

@@ -11,6 +11,8 @@ import HuntMap, {
 } from "@lootopia/dashboard/features/hunt/components/HuntForm/HuntMap"
 import HuntPointGameConfig from "@lootopia/dashboard/features/hunt/components/HuntForm/HuntPointGameConfig"
 import HuntPointsList from "@lootopia/dashboard/features/hunt/components/HuntForm/HuntPointsList"
+import HuntReward from "@lootopia/dashboard/features/hunt/components/HuntForm/HuntReward"
+import HuntRewardConfig from "@lootopia/dashboard/features/hunt/components/HuntForm/HuntRewardConfig"
 import {
   huntSchema,
   type HuntFormValues,
@@ -26,6 +28,7 @@ const HuntForm = () => {
       title: "",
       description: "",
       points: [],
+      reward: { topX: 1, promoCode: "" },
     },
   })
 
@@ -35,6 +38,7 @@ const HuntForm = () => {
 
   const mapHandleRef = useRef<HuntMapHandle | null>(null)
   const [editingPointId, setEditingPointId] = useState<string | null>(null)
+  const [isRewardOpen, setIsRewardOpen] = useState(false)
 
   const onSubmit = methods.handleSubmit((data) => {
     const points = data.points
@@ -59,6 +63,18 @@ const HuntForm = () => {
     mapHandleRef.current?.removePoint(id)
   }
 
+  const handleReorder = (orderedIds: string[]) => {
+    mapHandleRef.current?.reorderPoints(orderedIds)
+  }
+
+  const handleOpenReward = () => {
+    setIsRewardOpen(true)
+  }
+
+  const handleCloseReward = () => {
+    setIsRewardOpen(false)
+  }
+
   return (
     <div className="h-full w-full">
       <FormProvider {...methods}>
@@ -72,10 +88,13 @@ const HuntForm = () => {
               <HuntPointsList
                 onEdit={handleEditPoint}
                 onDelete={handleDeletePoint}
+                onReorder={handleReorder}
               />
             </CardContent>
 
-            <CardFooter className="border-t pt-4">
+            <CardFooter className="flex-col gap-3 border-t pt-4">
+              <HuntReward onConfigure={handleOpenReward} />
+
               <Button type="submit" className="w-full" disabled={isPending}>
                 Create hunt
               </Button>
@@ -87,6 +106,8 @@ const HuntForm = () => {
           pointId={editingPointId}
           onClose={handleCloseConfig}
         />
+
+        <HuntRewardConfig open={isRewardOpen} onClose={handleCloseReward} />
       </FormProvider>
     </div>
   )

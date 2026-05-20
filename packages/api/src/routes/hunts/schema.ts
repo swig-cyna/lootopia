@@ -58,7 +58,6 @@ export const huntsRewardSchema = z.object({
 })
 
 export const createHuntRewardSchema = z.object({
-  huntId: z.string(),
   topX: z.number(),
   promoCode: z.string(),
 })
@@ -72,6 +71,7 @@ export const huntSchema = z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
   points: z.array(huntsPointSchema),
+  reward: huntsRewardSchema,
 })
 
 export const createHuntSchema = z.object({
@@ -81,6 +81,7 @@ export const createHuntSchema = z.object({
     .array(createHuntPointSchema)
     .min(3, "You must place at least 3 points")
     .max(5, "You can place at most 5 points"),
+  reward: createHuntRewardSchema,
 })
 
 export const updateHuntSchema = z.object({
@@ -88,6 +89,7 @@ export const updateHuntSchema = z.object({
   description: z.string().min(1).optional(),
   status: z.enum([HUNT_STATUS.DRAFT, HUNT_STATUS.PUBLISHED]).optional(),
   points: z.array(createHuntPointSchema).min(3).max(5).optional(),
+  reward: huntsRewardSchema.optional(),
 })
 
 export const listHuntsQuerySchema = paginationParamsSchema

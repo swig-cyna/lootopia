@@ -139,7 +139,7 @@ export const $huntReward = {
       .where("huntId", "in", huntId)
       .execute(),
 
-  create: (huntReward: NewHuntReward[]) =>
+  create: (huntReward: NewHuntReward) =>
     db.insertInto("hunt_rewards").values(huntReward).returningAll().execute(),
 
   update: (id: string, huntReward: HuntRewardUpdate) =>

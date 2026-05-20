@@ -14,17 +14,22 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable"
 import { FieldError } from "@lootopia/dashboard/components/ui/field"
+import type { HuntFormValues } from "@lootopia/dashboard/features/hunt/schema/hunt"
 import { MapPin } from "lucide-react"
 import { useFormContext } from "react-hook-form"
-import type { HuntFormValues } from "@lootopia/dashboard/features/hunt/schema/hunt"
 import HuntPointsListRow from "./HuntPointsListRow"
 
 type HuntPointsListProps = {
   onEdit: (_id: string) => void
   onDelete: (_id: string) => void
+  onReorder: (_orderedIds: string[]) => void
 }
 
-const HuntPointsList = ({ onEdit, onDelete }: HuntPointsListProps) => {
+const HuntPointsList = ({
+  onEdit,
+  onDelete,
+  onReorder,
+}: HuntPointsListProps) => {
   const {
     watch,
     setValue,
@@ -58,6 +63,7 @@ const HuntPointsList = ({ onEdit, onDelete }: HuntPointsListProps) => {
     )
 
     setValue("points", reordered as HuntFormValues["points"])
+    onReorder(reordered.map((p) => p.id))
   }
 
   return (

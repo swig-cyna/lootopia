@@ -142,6 +142,27 @@ export const deleteHuntPointRoute = createRoute({
   }),
 })
 
+export const deleteHuntRewardRoute = createRoute({
+  method: "delete",
+  path: "/{huntId}/rewards/{id}",
+  tags: ["Hunts"],
+  summary: "Delete a hunt reward",
+  description:
+    "Delete a hunt reward. Only the owner can delete.\n\nRequired roles: organizer",
+  middleware: [requireRoles([ROLES.ORGANIZER]), requireHuntOwner],
+  security: [{ bearerAuth: [] }],
+  request: {
+    params: idParamSchema,
+  },
+  responses: createAuthResponses({
+    [StatusCodes.NO_CONTENT]: { description: "Hunt reward deleted" },
+    [StatusCodes.NOT_FOUND]: jsonContent(
+      errorResponseSchema,
+      StatusPhrases.NOT_FOUND,
+    ),
+  }),
+})
+
 export const listPublishedHuntsRoute = createRoute({
   method: "get",
   path: "/published",
