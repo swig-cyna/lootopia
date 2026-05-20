@@ -181,10 +181,14 @@ export const getPublishedHuntController: RouteHandler<
     }
   })
 
-  const participation = await $huntParticipation.findByUserAndHunt(
-    user.id,
-    hunt.id,
-  )
+  const [participation, huntReward] = await Promise.all([
+    $huntParticipation.findByUserAndHunt(user.id, hunt.id),
+    $huntReward.findByHuntIds([hunt.id]),
+  ])
+
+  if (!huntReward[0]) {
+    return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
+  }
 
   const completedPointIds = participation
     ? (await $huntPointCompletion.findByParticipationId(participation.id)).map(
@@ -193,7 +197,7 @@ export const getPublishedHuntController: RouteHandler<
     : []
 
   return json(
-    { ...hunt, points: huntPointsWithQuiz, completedPointIds },
+    { ...hunt, points: huntPointsWithQuiz, reward: huntReward[0], completedPointIds },
     StatusCodes.OK,
   )
 }
