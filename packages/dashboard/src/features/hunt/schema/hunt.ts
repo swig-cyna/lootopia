@@ -22,8 +22,17 @@ export const arConfigSchema = z.object({
   arId: z.string().min(1, "Please select an AR game"),
 })
 
+export const rewardConfigSchema = z.object({
+  topX: z
+    .number({ error: "Number of winners is required" })
+    .int()
+    .min(1, "At least 1 winner is required"),
+  promoCode: z.string().min(1, "Promo code is required"),
+})
+
 export type QuizConfigValues = z.infer<typeof quizConfigSchema>
 export type ArConfigValues = z.infer<typeof arConfigSchema>
+export type RewardConfigValues = z.infer<typeof rewardConfigSchema>
 
 export const huntSchema = z.object({
   title: z.string().min(2, "Title must be at least 2 characters"),
@@ -76,6 +85,7 @@ export const huntSchema = z.object({
         }
       })
     }),
+  reward: rewardConfigSchema,
 })
 
 export type HuntFormValues = z.infer<typeof huntSchema>

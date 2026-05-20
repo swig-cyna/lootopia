@@ -58,7 +58,6 @@ export const huntsRewardSchema = z.object({
 })
 
 export const createHuntRewardSchema = z.object({
-  huntId: z.string(),
   topX: z.number(),
   promoCode: z.string(),
 })
