@@ -60,3 +60,11 @@ export interface HuntParticipationTable {
   userId: string
   joinedAt: Timestamp
 }
+
+export interface HuntPointCompletionTable {
+  id: Generated<string>
+  huntParticipationId: string
+  huntPointId: string
+  score: number
+  completedAt: Timestamp
+}

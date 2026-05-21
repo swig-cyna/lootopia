@@ -1,5 +1,5 @@
 import HuntInfoPanel from "@lootopia/mobile/features/hunts/components/HuntSession/HuntInfoPanel"
-import PointActivitySheet from "@lootopia/mobile/features/hunts/components/PointActivitySheet"
+import GameSheet from "@lootopia/mobile/features/hunts/components/GameSheet"
 import {
   type HuntPoint,
   useHuntSession,
@@ -7,19 +7,29 @@ import {
 import HuntPointsOverlay from "@lootopia/mobile/features/map/components/HuntPointsOverlay"
 import { useEffect } from "react"
 
-const HuntSession = ({ points }: { points: HuntPoint[] }) => {
-  const { setPoints, activePoint, validatePoint } = useHuntSession()
+type HuntSessionProps = {
+  huntId: string
+  points: HuntPoint[]
+  completedPointIds: string[]
+}
+
+const HuntSession = ({
+  huntId,
+  points,
+  completedPointIds,
+}: HuntSessionProps) => {
+  const { setHuntData, activePoint, validatePoint } = useHuntSession()
 
   useEffect(() => {
-    setPoints(points)
-  }, [points])
+    setHuntData(points, completedPointIds)
+  }, [huntId])
 
   return (
     <>
       <HuntPointsOverlay />
       <HuntInfoPanel />
       {activePoint && (
-        <PointActivitySheet point={activePoint} onValidate={validatePoint} />
+        <GameSheet point={activePoint} onValidate={validatePoint} />
       )}
     </>
   )

@@ -1,5 +1,6 @@
 import type {
   HuntParticipationTable,
+  HuntPointCompletionTable,
   HuntPointTable,
   HuntRewardTable,
   HuntTable,
@@ -29,4 +30,5 @@ export interface Database {
   hunt_rewards: HuntRewardTable
   quiz_questions: QuizQuestionTable
   hunt_participations: HuntParticipationTable
+  hunt_point_completions: HuntPointCompletionTable
 }

@@ -9,7 +9,10 @@ import {
   paginatedHuntsSchema,
   paginatedMyHuntsSchema,
   paginatedPublishedHuntsSchema,
+  playerHuntDetailSchema,
   updateHuntSchema,
+  validatePointResponseSchema,
+  validatePointSchema,
 } from "@lootopia/api/routes/hunts/schema"
 import {
   createAuthResponses,
@@ -63,14 +66,35 @@ export const getHuntRoute = createRoute({
   path: "/{id}",
   tags: ["Hunts"],
   summary: "Get a hunt by id",
-  description: "Get a hunt by id.\n\nRequired roles: player, organizer",
-  middleware: [requireRoles([ROLES.PLAYER, ROLES.ORGANIZER])],
+  description: "Get a hunt by id.\n\nRequired roles: organizer",
+  middleware: [requireRoles([ROLES.ORGANIZER]), requireHuntOwner],
   security: [{ bearerAuth: [] }],
   request: {
     params: idParamSchema,
   },
   responses: createAuthResponses({
     [StatusCodes.OK]: jsonContent(huntSchema, "Hunt found"),
+    [StatusCodes.NOT_FOUND]: jsonContent(
+      errorResponseSchema,
+      StatusPhrases.NOT_FOUND,
+    ),
+  }),
+})
+
+export const getPublishedHuntRoute = createRoute({
+  method: "get",
+  path: "/published/{id}",
+  tags: ["Hunts"],
+  summary: "Get a published hunt by id",
+  description:
+    "Get a published hunt by id without quiz answers.\n\nRequired roles: player, organizer",
+  middleware: [requireRoles([ROLES.PLAYER, ROLES.ORGANIZER])],
+  security: [{ bearerAuth: [] }],
+  request: {
+    params: idParamSchema,
+  },
+  responses: createAuthResponses({
+    [StatusCodes.OK]: jsonContent(playerHuntDetailSchema, "Hunt found"),
     [StatusCodes.NOT_FOUND]: jsonContent(
       errorResponseSchema,
       StatusPhrases.NOT_FOUND,
@@ -199,6 +223,31 @@ export const listMyHuntsRoute = createRoute({
     [StatusCodes.OK]: jsonContent(
       paginatedMyHuntsSchema,
       "Paginated list of joined hunts",
+    ),
+  }),
+})
+
+export const validatePointRoute = createRoute({
+  method: "post",
+  path: "/points/{id}/validate",
+  tags: ["Hunts"],
+  summary: "Validate a hunt point",
+  description:
+    "Validate a game answer and save player progress.\n\nRequired roles: player, organizer",
+  middleware: [requireRoles([ROLES.PLAYER, ROLES.ORGANIZER])],
+  security: [{ bearerAuth: [] }],
+  request: {
+    params: idParamSchema,
+    body: jsonContent(validatePointSchema, "Game answer payload"),
+  },
+  responses: createAuthResponses({
+    [StatusCodes.OK]: jsonContent(
+      validatePointResponseSchema,
+      "Validation result",
+    ),
+    [StatusCodes.NOT_FOUND]: jsonContent(
+      errorResponseSchema,
+      StatusPhrases.NOT_FOUND,
     ),
   }),
 })

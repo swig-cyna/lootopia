@@ -12,18 +12,20 @@ import {
 
 const VALIDATION_RADIUS_M = 10
 
-type HuntApiResponse = InferResponseType<(typeof api.hunts)[":id"]["$get"], 200>
+type HuntApiResponse = InferResponseType<
+  (typeof api.hunts.published)[":id"]["$get"],
+  200
+>
 export type HuntPoint = HuntApiResponse["points"][number]
 export type QuizQuestion = NonNullable<HuntPoint["quizQuestion"]>
 
 type HuntSessionContextValue = {
-  points: HuntPoint[]
-  setPoints: (_points: HuntPoint[]) => void
   sortedPoints: HuntPoint[]
   completedIds: Set<string>
   nextPoint: HuntPoint | null
   activePoint: HuntPoint | null
   validatePoint: () => void
+  setHuntData: (_points: HuntPoint[], _completedPointIds: string[]) => void
 }
 
 const HuntSessionContext = createContext<HuntSessionContextValue | null>(null)
@@ -63,6 +65,11 @@ export const HuntSessionProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [userPosition, nextPoint?.id])
 
+  const setHuntData = (newPoints: HuntPoint[], completedPointIds: string[]) => {
+    setPoints(newPoints)
+    setCompletedIds(new Set(completedPointIds))
+  }
+
   const validatePoint = () => {
     if (!activePoint) {
       return
@@ -75,13 +82,12 @@ export const HuntSessionProvider = ({ children }: { children: ReactNode }) => {
   return (
     <HuntSessionContext.Provider
       value={{
-        points,
-        setPoints,
         sortedPoints,
         completedIds,
         nextPoint,
         activePoint,
         validatePoint,
+        setHuntData,
       }}
     >
       {children}
