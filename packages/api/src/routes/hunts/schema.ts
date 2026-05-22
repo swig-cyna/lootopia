@@ -1,9 +1,14 @@
 import { z } from "@hono/zod-openapi"
 import {
   createPaginatedResponseSchema,
+  paginationMetadataSchema,
   paginationParamsSchema,
 } from "@lootopia/api/utils/responses"
-import { HUNT_GAME_TYPE, HUNT_STATUS } from "@lootopia/db/models/hunt"
+import {
+  HUNT_GAME_TYPE,
+  HUNT_SORT,
+  HUNT_STATUS,
+} from "@lootopia/db/models/hunt"
 
 export const quizQuestionSchema = z.object({
   id: z.string(),
@@ -130,7 +135,29 @@ export const validatePointResponseSchema = z.object({
 
 export const listHuntsQuerySchema = paginationParamsSchema
 
-export const paginatedHuntsSchema = createPaginatedResponseSchema(huntSchema)
+export const listOwnHuntsQuerySchema = paginationParamsSchema.extend({
+  status: z.enum([HUNT_STATUS.DRAFT, HUNT_STATUS.PUBLISHED]).optional(),
+  search: z.string().optional(),
+  sort: z
+    .enum([HUNT_SORT.RECENT, HUNT_SORT.OLDEST, HUNT_SORT.TITLE])
+    .optional()
+    .default(HUNT_SORT.RECENT),
+})
+
+export const organizerHuntSchema = huntSchema.extend({
+  playerCount: z.number(),
+  completionRate: z.number(),
+})
+
+export const organizerHuntsResponseSchema = z.object({
+  data: z.array(organizerHuntSchema),
+  metadata: paginationMetadataSchema,
+  counts: z.object({
+    all: z.number(),
+    published: z.number(),
+    draft: z.number(),
+  }),
+})
 
 export const huntParticipationSchema = z.object({
   id: z.string(),

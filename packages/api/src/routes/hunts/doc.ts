@@ -6,7 +6,8 @@ import {
   huntParticipationSchema,
   huntSchema,
   listHuntsQuerySchema,
-  paginatedHuntsSchema,
+  listOwnHuntsQuerySchema,
+  organizerHuntsResponseSchema,
   paginatedMyHuntsSchema,
   paginatedPublishedHuntsSchema,
   playerHuntDetailSchema,
@@ -52,11 +53,11 @@ export const listHuntsRoute = createRoute({
   middleware: [requireRoles([ROLES.ORGANIZER])],
   security: [{ bearerAuth: [] }],
   request: {
-    query: listHuntsQuerySchema,
+    query: listOwnHuntsQuerySchema,
   },
   responses: createAuthResponses({
     [StatusCodes.OK]: jsonContent(
-      paginatedHuntsSchema,
+      organizerHuntsResponseSchema,
       "Paginated list of hunts",
     ),
   }),

@@ -1,6 +1,7 @@
 import { type RouteHandler } from "@hono/zod-openapi"
 import { type AuthenticatedContext } from "@lootopia/api/lib/hono"
 import { paginate } from "@lootopia/api/utils/responses"
+import { HUNT_STATUS } from "@lootopia/db/models/hunt"
 import {
   $hunt,
   $huntParticipation,
@@ -97,25 +98,63 @@ export const listHuntsController: RouteHandler<
   typeof listHuntsRoute,
   AuthenticatedContext
 > = async ({ req, json, var: { user } }) => {
-  const { page, limit } = req.valid("query")
+  const { page, limit, status, search, sort } = req.valid("query")
 
-  const [hunts, { count }] = await Promise.all([
-    $hunt.findByOrganizer(user.id, page, limit),
-    $hunt.countByOrganizer(user.id),
+  const [hunts, { count }, statusCounts] = await Promise.all([
+    $hunt.findByOrganizer(user.id, page, limit, { status, search, sort }),
+    $hunt.countByOrganizer(user.id, { status, search }),
+    $hunt.countByOrganizerGrouped(user.id),
   ])
 
   const huntIds = hunts.map((hunt) => hunt.id)
-  const huntPoints = await $huntPoint.findByHuntIds(huntIds)
-  const [huntRewards] = await $huntReward.findByHuntIds(huntIds)
 
-  const huntsWithPoints = hunts.map((hunt) => ({
-    ...hunt,
-    points: huntPoints.filter((point) => point.huntId === hunt.id),
-    reward: huntRewards,
-  }))
+  const huntPoints = await $huntPoint.findByHuntIds(huntIds)
+  const huntRewards = await $huntReward.findByHuntIds(huntIds)
+  const participationCounts = await $huntParticipation.countByHuntIds(huntIds)
+  const completionCounts = await $huntPointCompletion.countByHuntIds(huntIds)
+
+  const playerCountByHunt = new Map(
+    participationCounts.map((row) => [row.huntId, Number(row.count)]),
+  )
+  const completionCountByHunt = new Map(
+    completionCounts.map((row) => [row.huntId, Number(row.count)]),
+  )
+
+  const data = hunts.map((hunt) => {
+    const points = huntPoints.filter((point) => point.huntId === hunt.id)
+    const playerCount = playerCountByHunt.get(hunt.id) ?? 0
+    const totalCompletions = completionCountByHunt.get(hunt.id) ?? 0
+    const completionRate =
+      playerCount > 0 && points.length > 0
+        ? Math.round((totalCompletions / (playerCount * points.length)) * 100)
+        : 0
+
+    return {
+      ...hunt,
+      points,
+      reward: huntRewards.find((reward) => reward.huntId === hunt.id)!,
+      playerCount,
+      completionRate,
+    }
+  })
+
+  const publishedCount = Number(
+    statusCounts.find((row) => row.status === HUNT_STATUS.PUBLISHED)?.count ??
+      0,
+  )
+  const draftCount = Number(
+    statusCounts.find((row) => row.status === HUNT_STATUS.DRAFT)?.count ?? 0,
+  )
 
   return json(
-    paginate(huntsWithPoints, Number(count), page, limit),
+    {
+      ...paginate(data, Number(count), page, limit),
+      counts: {
+        all: publishedCount + draftCount,
+        published: publishedCount,
+        draft: draftCount,
+      },
+    },
     StatusCodes.OK,
   )
 }
