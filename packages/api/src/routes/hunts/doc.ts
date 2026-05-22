@@ -11,6 +11,7 @@ import {
   paginatedPublishedHuntsSchema,
   playerHuntDetailSchema,
   updateHuntSchema,
+  updateHuntStatusSchema,
   validatePointResponseSchema,
   validatePointSchema,
 } from "@lootopia/api/routes/hunts/schema"
@@ -272,6 +273,28 @@ export const joinHuntRoute = createRoute({
     [StatusCodes.CONFLICT]: jsonContent(
       errorResponseSchema,
       "Already joined this hunt",
+    ),
+  }),
+})
+
+export const updateHuntStatusRoute = createRoute({
+  method: "patch",
+  path: "/{id}/status",
+  tags: ["Hunts"],
+  summary: "Update hunt status",
+  description:
+    "Update the status of a hunt to publish or unpublish it.\n\nRequired roles: organizer",
+  middleware: [requireRoles([ROLES.ORGANIZER]), requireHuntOwner],
+  security: [{ bearerAuth: [] }],
+  request: {
+    params: idParamSchema,
+    body: jsonContent(updateHuntStatusSchema, "Hunt status update payload"),
+  },
+  responses: createAuthResponses({
+    [StatusCodes.OK]: jsonContent(huntSchema, "Hunt status updated"),
+    [StatusCodes.NOT_FOUND]: jsonContent(
+      errorResponseSchema,
+      StatusPhrases.NOT_FOUND,
     ),
   }),
 })

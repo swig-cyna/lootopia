@@ -23,6 +23,7 @@ import type {
   listMyHuntsRoute,
   listPublishedHuntsRoute,
   updateHuntRoute,
+  updateHuntStatusRoute,
   validatePointRoute,
 } from "@lootopia/api/routes/hunts/doc"
 
@@ -197,7 +198,12 @@ export const getPublishedHuntController: RouteHandler<
     : []
 
   return json(
-    { ...hunt, points: huntPointsWithQuiz, reward: huntReward[0], completedPointIds },
+    {
+      ...hunt,
+      points: huntPointsWithQuiz,
+      reward: huntReward[0],
+      completedPointIds,
+    },
     StatusCodes.OK,
   )
 }
@@ -451,4 +457,35 @@ export const joinHuntController: RouteHandler<
   })
 
   return json(participation, StatusCodes.CREATED)
+}
+
+export const updateHuntStatusController: RouteHandler<
+  typeof updateHuntStatusRoute,
+  AuthenticatedContext
+> = async ({ req, json }) => {
+  const { id } = req.valid("param")
+  const { status } = req.valid("json")
+
+  const hunt = await $hunt.update(id, { status })
+
+  if (!hunt) {
+    return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
+  }
+
+  const huntPoints = await $huntPoint.findByHuntIds([hunt.id])
+  const [huntReward] = await $huntReward.findByHuntIds([hunt.id])
+
+  const quizQuestions = await $quizQuestion.findByHuntPointIds(
+    huntPoints.map((point) => point.id),
+  )
+
+  const huntPointsWithQuiz = huntPoints.map((point) => ({
+    ...point,
+    quizQuestion: quizQuestions.find((q) => q.huntPointId === point.id),
+  }))
+
+  return json(
+    { ...hunt, points: huntPointsWithQuiz, reward: huntReward },
+    StatusCodes.OK,
+  )
 }

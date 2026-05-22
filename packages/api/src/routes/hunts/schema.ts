@@ -120,6 +120,10 @@ export const validatePointSchema = z.discriminatedUnion("gameType", [
   }),
 ])
 
+export const updateHuntStatusSchema = z.object({
+  status: z.enum([HUNT_STATUS.DRAFT, HUNT_STATUS.PUBLISHED]),
+})
+
 export const validatePointResponseSchema = z.object({
   isCorrect: z.boolean(),
 })
