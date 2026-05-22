@@ -1,4 +1,4 @@
-import { HUNT_GAME_TYPE } from "@lootopia/dashboard/features/hunt/utils/constant"
+import { HUNT_GAME_TYPE } from "@lootopia/dashboard/features/hunt/utils/constants"
 import { z } from "zod"
 
 const basePointSchema = z.object({

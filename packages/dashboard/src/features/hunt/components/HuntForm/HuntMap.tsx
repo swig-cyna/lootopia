@@ -1,6 +1,6 @@
 import { Card } from "@lootopia/dashboard/components/ui/card"
 import type { HuntFormValues } from "@lootopia/dashboard/features/hunt/schema/hunt"
-import { HUNT_GAME_TYPE } from "@lootopia/dashboard/features/hunt/utils/constant"
+import { HUNT_GAME_TYPE } from "@lootopia/dashboard/features/hunt/utils/constants"
 import { SearchBox } from "@mapbox/search-js-react"
 import mapboxgl from "mapbox-gl"
 import "mapbox-gl/dist/mapbox-gl.css"
