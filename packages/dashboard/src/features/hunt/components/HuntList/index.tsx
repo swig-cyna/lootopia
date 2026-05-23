@@ -10,7 +10,7 @@ const HuntList = () => {
 
   return (
     <HuntListProvider data={data}>
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-4">
+      <div className="mx-auto flex h-full w-full flex-col gap-4">
         <HuntListHeader />
         <HuntListFilters />
         <HuntListTable />
