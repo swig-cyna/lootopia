@@ -1,5 +1,6 @@
 import { Button } from "@lootopia/mobile/components/ui/button"
-import { api, useMutation } from "@lootopia/mobile/lib/api"
+import { BalloonARGame } from "@lootopia/mobile/features/games/balloons"
+import { useEffect, useState } from "react"
 
 type ARGameProps = {
   pointId: string
@@ -7,17 +8,50 @@ type ARGameProps = {
 }
 
 const ARGame = ({ pointId, onValidate }: ARGameProps) => {
-  const [validatePoint, { isPending }] = useMutation(
-    api.hunts.points[":id"].validate.$post,
-  )
+  const [isARSupported, setIsARSupported] = useState<boolean | null>(null)
+  const [started, setStarted] = useState(false)
 
-  const handleValidate = async () => {
-    await validatePoint({
-      param: { id: pointId },
-      json: { gameType: "ar", score: 0 },
-    })
+  useEffect(() => {
+    if (!("xr" in navigator)) {
+      setIsARSupported(false)
 
-    onValidate()
+      return
+    }
+
+    navigator.xr
+      ?.isSessionSupported("immersive-ar")
+      .then(setIsARSupported)
+      .catch(() => setIsARSupported(false))
+  }, [])
+
+  const handleStart = () => setStarted(true)
+
+  if (started) {
+    return <BalloonARGame pointId={pointId} onValidate={onValidate} />
+  }
+
+  if (isARSupported === null) {
+    return (
+      <div className="flex flex-col items-center gap-3 py-4">
+        <p className="text-muted-foreground text-center text-sm">
+          Checking AR support...
+        </p>
+      </div>
+    )
+  }
+
+  if (!isARSupported) {
+    return (
+      <div className="flex flex-col items-center gap-3 py-4">
+        <p className="text-muted-foreground text-center text-sm">
+          AR is not supported on this device. You need a compatible Android
+          device with Chrome to play this game.
+        </p>
+        <Button disabled className="h-auto w-full rounded-xl py-3">
+          Start AR
+        </Button>
+      </div>
+    )
   }
 
   return (
@@ -25,11 +59,7 @@ const ARGame = ({ pointId, onValidate }: ARGameProps) => {
       <p className="text-muted-foreground text-center text-sm">
         Start the AR experience to validate this point.
       </p>
-      <Button
-        loading={isPending}
-        onClick={handleValidate}
-        className="h-auto w-full rounded-xl py-3"
-      >
+      <Button onClick={handleStart} className="h-auto w-full rounded-xl py-3">
         Start AR
       </Button>
     </div>
