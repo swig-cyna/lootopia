@@ -453,6 +453,31 @@ export const validatePointController: RouteHandler<
     return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
   }
 
+  const [allHuntPoints, completions] = await Promise.all([
+    $huntPoint.findByHuntIds([huntPoint.huntId]),
+    $huntPointCompletion.findByParticipationId(participation.id),
+  ])
+
+  const completedPointIds = new Set(completions.map((c) => c.huntPointId))
+
+  if (completedPointIds.has(id)) {
+    return json({ error: "Point already completed" }, StatusCodes.CONFLICT)
+  }
+
+  const previousPoints = allHuntPoints.filter(
+    (p) => p.position < huntPoint.position,
+  )
+  const allPreviousCompleted = previousPoints.every((p) =>
+    completedPointIds.has(p.id),
+  )
+
+  if (!allPreviousCompleted) {
+    return json(
+      { error: "Previous points must be completed first" },
+      StatusCodes.FORBIDDEN,
+    )
+  }
+
   const isCorrect = await (async () => {
     if (body.gameType === "quiz") {
       const quiz = await $quizQuestion.findByHuntPointId(id)
