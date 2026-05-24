@@ -25,9 +25,16 @@ const ARGame = ({ pointId, onValidate }: ARGameProps) => {
   }, [])
 
   const handleStart = () => setStarted(true)
+  const handleClose = () => setStarted(false)
 
   if (started) {
-    return <BalloonARGame pointId={pointId} onValidate={onValidate} />
+    return (
+      <BalloonARGame
+        pointId={pointId}
+        onValidate={onValidate}
+        onClose={handleClose}
+      />
+    )
   }
 
   if (isARSupported === null) {

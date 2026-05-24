@@ -9,10 +9,12 @@ import {
 import { api, useMutation } from "@lootopia/mobile/lib/api"
 import { Canvas } from "@react-three/fiber"
 import { XR, createXRStore } from "@react-three/xr"
-import { Target } from "lucide-react"
+import { ArrowLeft, Target } from "lucide-react"
 import { useCallback, useRef, useState } from "react"
+import { createPortal } from "react-dom"
 import { useBalloonGame } from "../../hooks/useBalloonGame"
 import { BalloonARGameProvider } from "./BalloonARGame.context"
+import { BalloonHTMLHUD } from "./BalloonHTMLHUD"
 import { BalloonScene } from "./BalloonScene"
 
 const xrStore = createXRStore()
@@ -20,9 +22,14 @@ const xrStore = createXRStore()
 type BalloonARGameProps = {
   pointId: string
   onValidate: () => void
+  onClose: () => void
 }
 
-const BalloonARGame = ({ pointId, onValidate }: BalloonARGameProps) => {
+const BalloonARGame = ({
+  pointId,
+  onValidate,
+  onClose,
+}: BalloonARGameProps) => {
   const [isLaunching, setIsLaunching] = useState(false)
   const [arPlaying, setArPlaying] = useState(false)
   const submittedRef = useRef(false)
@@ -68,6 +75,8 @@ const BalloonARGame = ({ pointId, onValidate }: BalloonARGameProps) => {
     }
   }
 
+  const { domOverlayRoot } = xrStore.getState()
+
   return (
     <BalloonARGameProvider
       data={{
@@ -86,6 +95,13 @@ const BalloonARGame = ({ pointId, onValidate }: BalloonARGameProps) => {
         {!arPlaying && (
           <div className="absolute inset-0 flex items-center justify-center p-6">
             <Empty className="bg-background w-full max-w-sm rounded-2xl p-6 shadow-lg">
+              <button
+                onClick={onClose}
+                className="text-muted-foreground hover:text-foreground -mx-1 mb-1 flex items-center gap-1 self-start text-sm"
+              >
+                <ArrowLeft className="size-4" />
+                Back
+              </button>
               <EmptyHeader>
                 <EmptyMedia>
                   <Target className="text-primary size-10" />
@@ -107,6 +123,10 @@ const BalloonARGame = ({ pointId, onValidate }: BalloonARGameProps) => {
           </div>
         )}
       </div>
+
+      {arPlaying &&
+        domOverlayRoot &&
+        createPortal(<BalloonHTMLHUD />, domOverlayRoot)}
     </BalloonARGameProvider>
   )
 }
