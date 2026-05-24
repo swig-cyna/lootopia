@@ -35,6 +35,9 @@ importers:
       '@lootopia/auth':
         specifier: workspace:*
         version: link:../auth
+      '@lootopia/common':
+        specifier: workspace:*
+        version: link:../common
       '@lootopia/db':
         specifier: workspace:*
         version: link:../db
@@ -128,6 +131,8 @@ importers:
         specifier: ^8.59.3
         version: 8.59.3(eslint@10.3.0(jiti@2.7.0))(typescript@5.9.3)
 
+  packages/common: {}
+
   packages/dashboard:
     dependencies:
       '@dnd-kit/core':
@@ -151,6 +156,9 @@ importers:
       '@lootopia/auth':
         specifier: workspace:*
         version: link:../auth
+      '@lootopia/common':
+        specifier: workspace:*
+        version: link:../common
       '@mapbox/search-js-react':
         specifier: ^1.5.1
         version: 1.5.1(mapbox-gl@3.23.1)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -303,6 +311,9 @@ importers:
       '@lootopia/auth':
         specifier: workspace:*
         version: link:../auth
+      '@lootopia/common':
+        specifier: workspace:*
+        version: link:../common
       '@react-three/drei':
         specifier: ^10.7.7
         version: 10.7.7(@react-three/fiber@9.6.1(@types/react@19.2.14)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(three@0.184.0))(@types/react@19.2.14)(@types/three@0.184.1)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(three@0.184.0)

@@ -22,7 +22,7 @@ const GameSheet = ({ point, onValidate }: GameSheetProps) => (
     {point.gameType === "quiz" && point.quizQuestion ? (
       <QuizGame quiz={point.quizQuestion} onValidate={onValidate} />
     ) : (
-      <ARGame pointId={point.id} onValidate={onValidate} />
+      <ARGame pointId={point.id} />
     )}
   </div>
 )

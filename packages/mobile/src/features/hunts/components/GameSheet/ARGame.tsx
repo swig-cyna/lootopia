@@ -1,15 +1,15 @@
 import { Button } from "@lootopia/mobile/components/ui/button"
-import { BalloonARGame } from "@lootopia/mobile/features/games/balloons"
 import { useEffect, useState } from "react"
+import { useNavigate, useParams } from "react-router"
 
 type ARGameProps = {
   pointId: string
-  onValidate: () => void
 }
 
-const ARGame = ({ pointId, onValidate }: ARGameProps) => {
+const ARGame = ({ pointId }: ARGameProps) => {
+  const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
   const [isARSupported, setIsARSupported] = useState<boolean | null>(null)
-  const [started, setStarted] = useState(false)
 
   useEffect(() => {
     if (!("xr" in navigator)) {
@@ -24,18 +24,7 @@ const ARGame = ({ pointId, onValidate }: ARGameProps) => {
       .catch(() => setIsARSupported(false))
   }, [])
 
-  const handleStart = () => setStarted(true)
-  const handleClose = () => setStarted(false)
-
-  if (started) {
-    return (
-      <BalloonARGame
-        pointId={pointId}
-        onValidate={onValidate}
-        onClose={handleClose}
-      />
-    )
-  }
+  const handleStart = () => navigate(`/hunts/${id}/ar/${pointId}`)
 
   if (isARSupported === null) {
     return (

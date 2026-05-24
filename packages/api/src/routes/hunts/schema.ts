@@ -4,6 +4,7 @@ import {
   paginationMetadataSchema,
   paginationParamsSchema,
 } from "@lootopia/api/utils/responses"
+import { AR_GAME_IDS } from "@lootopia/common/constants/hunt"
 import {
   HUNT_GAME_TYPE,
   HUNT_SORT,
@@ -59,7 +60,7 @@ export const createHuntPointSchema = z.discriminatedUnion("gameType", [
   }),
   basePointInputSchema.extend({
     gameType: z.literal(HUNT_GAME_TYPE.AR),
-    arId: z.string().min(1, "Please select an AR game"),
+    arId: z.enum(AR_GAME_IDS, { error: "Please select an AR game" }),
   }),
 ])
 

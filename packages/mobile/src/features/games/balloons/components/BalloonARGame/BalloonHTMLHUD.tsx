@@ -23,7 +23,7 @@ export const BalloonHTMLHUD = () => {
 
   if (data.finished) {
     return (
-      <div className="fixed inset-x-0 top-1/2 flex -translate-y-1/2 items-center justify-between bg-black/80 px-6 py-5">
+      <div className="fixed inset-x-0 top-1/2 flex -translate-y-1/2 flex-col items-center justify-between bg-black/80 px-6 py-5">
         <p className="text-base font-bold text-white">
           {data.remaining === 0 ? "All balloons popped!" : "Time's up!"}
         </p>
@@ -31,7 +31,7 @@ export const BalloonHTMLHUD = () => {
         <button
           onClick={data.onConfirmExit}
           disabled={data.isPending}
-          className="rounded-xl bg-green-500 px-6 py-2.5 text-base font-bold text-white disabled:bg-gray-500"
+          className="mt-4 rounded-xl bg-green-500 px-6 py-2.5 text-base font-bold text-white disabled:bg-gray-500"
         >
           {data.isPending ? "Saving..." : "Continue"}
         </button>

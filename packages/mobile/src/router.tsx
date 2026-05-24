@@ -4,6 +4,7 @@ import ExplorePage from "@lootopia/mobile/pages/(tabs)/explore/index"
 import IndexPage from "@lootopia/mobile/pages/(tabs)/index"
 import ErrorPage from "@lootopia/mobile/pages/error"
 import NotFoundPage from "@lootopia/mobile/pages/not-found"
+import ARGamePage from "@lootopia/mobile/pages/hunts/[id]/ar/[pointId]"
 import HuntPage from "@lootopia/mobile/pages/hunts/[id]"
 import SigninPage from "@lootopia/mobile/pages/signin"
 import { createBrowserRouter, RouterProvider } from "react-router"
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
           {
             path: "/hunts/:id",
             element: <HuntPage />,
+          },
+          {
+            path: "/hunts/:id/ar/:pointId",
+            element: <ARGamePage />,
           },
         ],
       },

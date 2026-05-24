@@ -1,3 +1,4 @@
+import { AR_GAME_IDS } from "@lootopia/common/constants/hunt"
 import { HUNT_GAME_TYPE } from "@lootopia/dashboard/features/hunt/utils/constants"
 import { z } from "zod"
 
@@ -19,7 +20,7 @@ export const quizConfigSchema = z.object({
 })
 
 export const arConfigSchema = z.object({
-  arId: z.string().min(1, "Please select an AR game"),
+  arId: z.enum(AR_GAME_IDS, { error: "Please select an AR game" }),
 })
 
 export const rewardConfigSchema = z.object({
@@ -50,7 +51,7 @@ export const huntSchema = z.object({
         z.object({
           ...basePointSchema.shape,
           gameType: z.literal(HUNT_GAME_TYPE.AR),
-          arId: z.string().min(1, "Please select an AR game"),
+          arId: z.enum(AR_GAME_IDS),
         }),
         z.object({
           ...basePointSchema.shape,

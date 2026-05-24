@@ -15,6 +15,7 @@
     "@hookform/resolvers": "^5.2.2",
     "@lootopia/api": "workspace:*",
     "@lootopia/auth": "workspace:*",
+    "@lootopia/common": "workspace:*",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.6.1",
     "@react-three/xr": "^6.6.29",

@@ -1,0 +1,7 @@
+{
+  "name": "@lootopia/common",
+  "type": "module",
+  "exports": {
+    "./*": "./src/*.ts"
+  }
+}

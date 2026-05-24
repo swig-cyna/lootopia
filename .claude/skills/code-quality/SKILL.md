@@ -284,6 +284,27 @@ export const HUNT_STATUS = {
 
 ---
 
+## No re-export proxies for shared packages
+
+When a constant, type, or utility moves to a shared package (e.g. `@lootopia/common`),
+**do not add a re-export in the old file**. Update every consumer to import directly from the source package.
+
+```ts
+// ✅ Correct — import directly from the source
+import { AR_GAMES, AR_GAME_IDS } from "@lootopia/common/constants/hunt"
+
+// ❌ Incorrect — re-export proxy in the old file
+// features/hunt/utils/constant.ts
+export { AR_GAMES, AR_GAME_IDS } from "@lootopia/common/constants/hunt"
+
+// ❌ Incorrect — consuming via the proxy
+import { AR_GAMES } from "@lootopia/dashboard/features/hunt/utils/constant"
+```
+
+**Why:** re-export proxies hide the real source, create a fake dependency on the old location, and make it impossible to know at a glance where a value actually lives. When a value moves, the old file should either remove the export entirely or be deleted — never become a pass-through.
+
+---
+
 ## Quick Reference
 
 | Situation                           | Rule                                     |
@@ -303,3 +324,4 @@ export const HUNT_STATUS = {
 | Constant used only in this file     | Top of file                              |
 | Constant shared within a feature    | `features/[feature]/constants.ts`        |
 | Constant shared across features     | `src/constants.ts`                       |
+| Constant moved to a shared package  | Import directly from source, no re-export proxy |
