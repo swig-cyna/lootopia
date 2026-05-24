@@ -9,7 +9,7 @@ export const BalloonHTMLHUD = () => {
     return (
       <div className="pointer-events-none fixed inset-0 flex items-center justify-center">
         <span
-          className="text-9xl font-black text-white"
+          className="text-7xl font-semibold text-white"
           style={{
             textShadow:
               "-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000",
@@ -24,14 +24,14 @@ export const BalloonHTMLHUD = () => {
   if (data.finished) {
     return (
       <div className="fixed inset-x-0 top-1/2 flex -translate-y-1/2 flex-col items-center justify-between bg-black/80 px-6 py-5">
-        <p className="text-base font-bold text-white">
+        <p className="text-base font-semibold text-white">
           {data.remaining === 0 ? "All balloons popped!" : "Time's up!"}
         </p>
-        <p className="text-3xl font-black text-green-400">{data.score} pts</p>
+        <p className="text-primary text-3xl font-black">{data.score} pts</p>
         <button
           onClick={data.onConfirmExit}
           disabled={data.isPending}
-          className="mt-4 rounded-xl bg-green-500 px-6 py-2.5 text-base font-bold text-white disabled:bg-gray-500"
+          className="bg-primary text-secondary mt-4 rounded-xl px-6 py-2.5 text-base font-semibold disabled:bg-gray-500"
         >
           {data.isPending ? "Saving..." : "Continue"}
         </button>
@@ -62,21 +62,23 @@ export const BalloonHTMLHUD = () => {
           <p className="text-xs uppercase tracking-widest text-white/70">
             Score
           </p>
-          <p className="text-xl font-black text-white">{data.score}</p>
+          <p className="text-xl font-semibold text-white">{data.score}</p>
         </div>
         <div className="h-8 w-px bg-white/20" />
         <div className="text-center">
           <p className="text-xs uppercase tracking-widest text-yellow-400/80">
             Time
           </p>
-          <p className="text-xl font-black text-yellow-400">{data.timeLeft}s</p>
+          <p className="text-xl font-semibold text-yellow-400">
+            {data.timeLeft}s
+          </p>
         </div>
         <div className="h-8 w-px bg-white/20" />
         <div className="text-center">
           <p className="text-xs uppercase tracking-widest text-white/70">
             Left
           </p>
-          <p className="text-xl font-black text-white">{data.remaining}</p>
+          <p className="text-xl font-semibold text-white">{data.remaining}</p>
         </div>
       </div>
     </div>

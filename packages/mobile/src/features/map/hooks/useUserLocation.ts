@@ -1,5 +1,5 @@
 import type { Map } from "mapbox-gl"
-import { useRef, useState, type RefObject } from "react"
+import { useEffect, useRef, useState, type RefObject } from "react"
 
 type IOSDeviceOrientationEvent = typeof DeviceOrientationEvent & {
   requestPermission: () => Promise<"granted" | "denied">
@@ -11,6 +11,8 @@ export const useUserLocation = (mapRef: RefObject<Map | null>) => {
   )
   const [heading, setHeading] = useState<number | null>(null)
   const orientationListening = useRef(false)
+  const watchIdRef = useRef<number | null>(null)
+  const prevRawHeading = useRef<number | null>(null)
 
   const startOrientationListener = () => {
     if (orientationListening.current) {
@@ -18,6 +20,28 @@ export const useUserLocation = (mapRef: RefObject<Map | null>) => {
     }
 
     orientationListening.current = true
+
+    const processHeading = (raw: number) => {
+      if (prevRawHeading.current === null) {
+        prevRawHeading.current = raw
+        setHeading(raw)
+
+        return
+      }
+
+      let delta = raw - prevRawHeading.current
+
+      if (delta > 180) {
+        delta -= 360
+      }
+
+      if (delta < -180) {
+        delta += 360
+      }
+
+      prevRawHeading.current = raw
+      setHeading((prev) => (prev === null ? raw : prev + delta))
+    }
 
     const handler = (e: DeviceOrientationEvent) => {
       const webkit = (
@@ -27,15 +51,35 @@ export const useUserLocation = (mapRef: RefObject<Map | null>) => {
       const h = webkit ?? computed
 
       if (h !== null && h !== undefined) {
-        setHeading(h)
+        processHeading(h)
+      }
+    }
+
+    let hasAbsolute = false
+
+    const absoluteHandler = (e: DeviceOrientationEvent) => {
+      hasAbsolute = true
+      handler(e)
+    }
+
+    const relativeHandler = (e: DeviceOrientationEvent) => {
+      if (!hasAbsolute) {
+        handler(e)
       }
     }
 
     window.addEventListener(
       "deviceorientationabsolute",
-      handler as EventListener,
+      absoluteHandler as EventListener,
     )
-    window.addEventListener("deviceorientation", handler as EventListener)
+    window.addEventListener(
+      "deviceorientation",
+      relativeHandler as EventListener,
+    )
+  }
+
+  const flyToPosition = (position: [number, number]) => {
+    mapRef.current?.flyTo({ center: position, zoom: 15 })
   }
 
   const centerOnGPS = async () => {
@@ -59,22 +103,44 @@ export const useUserLocation = (mapRef: RefObject<Map | null>) => {
       startOrientationListener()
     }
 
+    if (watchIdRef.current !== null) {
+      if (userPosition) {
+        flyToPosition(userPosition)
+      }
+
+      return
+    }
+
+    watchIdRef.current = navigator.geolocation.watchPosition(
+      (pos) => {
+        setUserPosition([pos.coords.longitude, pos.coords.latitude])
+      },
+      (err) => console.error("Geolocation error:", err.message),
+      { enableHighAccuracy: true, timeout: 10000 },
+    )
+
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        const { longitude, latitude } = pos.coords
-        const map = mapRef.current
-
-        if (!map) {
-          return
-        }
-
-        map.flyTo({ center: [longitude, latitude], zoom: 15 })
-        setUserPosition([longitude, latitude])
+        const position: [number, number] = [
+          pos.coords.longitude,
+          pos.coords.latitude,
+        ]
+        setUserPosition(position)
+        flyToPosition(position)
       },
       (err) => console.error("Geolocation error:", err.message),
       { enableHighAccuracy: true, timeout: 10000 },
     )
   }
+
+  useEffect(
+    () => () => {
+      if (watchIdRef.current !== null) {
+        navigator.geolocation.clearWatch(watchIdRef.current)
+      }
+    },
+    [],
+  )
 
   return { userPosition, heading, centerOnGPS }
 }
