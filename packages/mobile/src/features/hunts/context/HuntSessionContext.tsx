@@ -22,10 +22,15 @@ export type QuizQuestion = NonNullable<HuntPoint["quizQuestion"]>
 type HuntSessionContextValue = {
   sortedPoints: HuntPoint[]
   completedIds: Set<string>
+  totalScore: number
   nextPoint: HuntPoint | null
   activePoint: HuntPoint | null
-  validatePoint: () => void
-  setHuntData: (_points: HuntPoint[], _completedPointIds: string[]) => void
+  validatePoint: (_score: number) => void
+  setHuntData: (
+    _points: HuntPoint[],
+    _completedPointIds: string[],
+    _totalScore: number,
+  ) => void
 }
 
 const HuntSessionContext = createContext<HuntSessionContextValue | null>(null)
@@ -45,6 +50,7 @@ export const HuntSessionProvider = ({ children }: { children: ReactNode }) => {
 
   const [points, setPoints] = useState<HuntPoint[]>([])
   const [completedIds, setCompletedIds] = useState<Set<string>>(new Set())
+  const [totalScore, setTotalScore] = useState(0)
   const [activePoint, setActivePoint] = useState<HuntPoint | null>(null)
 
   const sortedPoints = [...points].sort((a, b) => a.position - b.position)
@@ -65,17 +71,23 @@ export const HuntSessionProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [userPosition, nextPoint?.id])
 
-  const setHuntData = (newPoints: HuntPoint[], completedPointIds: string[]) => {
+  const setHuntData = (
+    newPoints: HuntPoint[],
+    completedPointIds: string[],
+    initialTotalScore: number,
+  ) => {
     setPoints(newPoints)
     setCompletedIds(new Set(completedPointIds))
+    setTotalScore(initialTotalScore)
   }
 
-  const validatePoint = () => {
+  const validatePoint = (score: number) => {
     if (!activePoint) {
       return
     }
 
     setCompletedIds((prev) => new Set([...prev, activePoint.id]))
+    setTotalScore((prev) => prev + score)
     setActivePoint(null)
   }
 
@@ -84,6 +96,7 @@ export const HuntSessionProvider = ({ children }: { children: ReactNode }) => {
       value={{
         sortedPoints,
         completedIds,
+        totalScore,
         nextPoint,
         activePoint,
         validatePoint,

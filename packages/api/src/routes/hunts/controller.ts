@@ -230,11 +230,12 @@ export const getPublishedHuntController: RouteHandler<
     return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
   }
 
-  const completedPointIds = participation
-    ? (await $huntPointCompletion.findByParticipationId(participation.id)).map(
-        (c) => c.huntPointId,
-      )
+  const completions = participation
+    ? await $huntPointCompletion.findByParticipationId(participation.id)
     : []
+
+  const completedPointIds = completions.map((c) => c.huntPointId)
+  const totalScore = completions.reduce((sum, c) => sum + c.score, 0)
 
   return json(
     {
@@ -242,6 +243,7 @@ export const getPublishedHuntController: RouteHandler<
       points: huntPointsWithQuiz,
       reward: huntReward[0],
       completedPointIds,
+      totalScore,
     },
     StatusCodes.OK,
   )
@@ -495,7 +497,7 @@ export const validatePointController: RouteHandler<
   await $huntPointCompletion.create({
     huntParticipationId: participation.id,
     huntPointId: id,
-    score: body.score,
+    score: isCorrect ? body.score : 0,
   })
 
   return json({ isCorrect }, StatusCodes.OK)

@@ -312,7 +312,7 @@ export const $huntPointCompletion = {
   findByParticipationId: (huntParticipationId: string) =>
     db
       .selectFrom("hunt_point_completions")
-      .select("huntPointId")
+      .select(["huntPointId", "score"])
       .where("huntParticipationId", "=", huntParticipationId)
       .execute(),
 

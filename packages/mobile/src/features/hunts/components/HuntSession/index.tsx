@@ -11,18 +11,20 @@ type HuntSessionProps = {
   huntId: string
   points: HuntPoint[]
   completedPointIds: string[]
+  totalScore: number
 }
 
 const HuntSession = ({
   huntId,
   points,
   completedPointIds,
+  totalScore,
 }: HuntSessionProps) => {
   const { setHuntData, activePoint, validatePoint } = useHuntSession()
 
   useEffect(() => {
-    setHuntData(points, completedPointIds)
-  }, [huntId])
+    setHuntData(points, completedPointIds, totalScore)
+  }, [huntId, completedPointIds.length, totalScore])
 
   return (
     <>

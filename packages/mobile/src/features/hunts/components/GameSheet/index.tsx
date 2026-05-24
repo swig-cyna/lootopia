@@ -4,7 +4,7 @@ import QuizGame from "./QuizGame"
 
 type GameSheetProps = {
   point: HuntPoint
-  onValidate: () => void
+  onValidate: (_score: number) => void
 }
 
 const GAME_TITLE: Record<string, string> = {
@@ -22,7 +22,7 @@ const GameSheet = ({ point, onValidate }: GameSheetProps) => (
     {point.gameType === "quiz" && point.quizQuestion ? (
       <QuizGame quiz={point.quizQuestion} onValidate={onValidate} />
     ) : (
-      <ARGame pointId={point.id} />
+      <ARGame pointId={point.id} onValidate={onValidate} />
     )}
   </div>
 )
