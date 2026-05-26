@@ -254,7 +254,11 @@ export const updateHuntController: RouteHandler<
   const { id } = req.valid("param")
   const { title, description, status, points, reward } = req.valid("json")
 
-  const hunt = await $hunt.update(id, { title, description, status })
+  const hunt = await $hunt.update(id, {
+    ...(title !== undefined && { title }),
+    ...(description !== undefined && { description }),
+    ...(status !== undefined && { status }),
+  })
 
   if (!hunt) {
     return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)

@@ -173,7 +173,7 @@ export const $huntPoint = {
     db
       .updateTable("hunt_points")
       .set(huntpoint)
-      .where("id", "in", id)
+      .where("id", "=", id)
       .returningAll()
       .executeTakeFirst(),
 
@@ -206,7 +206,7 @@ export const $huntReward = {
     db
       .updateTable("hunt_rewards")
       .set(huntReward)
-      .where("id", "in", id)
+      .where("id", "=", id)
       .returningAll()
       .executeTakeFirst(),
 
@@ -257,7 +257,7 @@ export const $quizQuestion = {
         ...rest,
         ...(answers !== undefined && { answers: JSON.stringify(answers) }),
       })
-      .where("id", "in", id)
+      .where("id", "=", id)
       .returningAll()
       .executeTakeFirst()
   },
