@@ -518,6 +518,10 @@ export const updateHuntStatusController: RouteHandler<
   const huntPoints = await $huntPoint.findByHuntIds([hunt.id])
   const [huntReward] = await $huntReward.findByHuntIds([hunt.id])
 
+  if (!huntReward) {
+    return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
+  }
+
   const quizQuestions = await $quizQuestion.findByHuntPointIds(
     huntPoints.map((point) => point.id),
   )
