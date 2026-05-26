@@ -70,7 +70,7 @@ export const useHuntForm = (hunt?: HuntForEdit) => {
         param: { id: hunt.id },
         json: {
           title: data.title,
-          description: data.description || undefined,
+          description: data.description,
           points,
           reward: {
             ...hunt.reward,
