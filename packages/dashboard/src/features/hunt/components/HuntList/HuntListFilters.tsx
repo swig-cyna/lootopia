@@ -39,7 +39,7 @@ const HuntListFilters = () => {
 
   const handleTabChange = (value: string) => {
     setStatus(
-      value === ALL_TAB ? undefined : (value as typeof HUNT_STATUS.DRAFT),
+      value === ALL_TAB ? undefined : (value as HuntStatus),
     )
   }
 
