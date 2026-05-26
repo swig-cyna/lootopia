@@ -1,4 +1,3 @@
-import { standardSchemaResolver } from "@hookform/resolvers/standard-schema"
 import { Button } from "@lootopia/dashboard/components/ui/button"
 import {
   Card,
@@ -6,74 +5,35 @@ import {
   CardFooter,
 } from "@lootopia/dashboard/components/ui/card"
 import HuntDetails from "@lootopia/dashboard/features/hunt/components/HuntForm/HuntDetails"
-import HuntMap, {
-  type HuntMapHandle,
-} from "@lootopia/dashboard/features/hunt/components/HuntForm/HuntMap"
+import HuntMap from "@lootopia/dashboard/features/hunt/components/HuntForm/HuntMap"
 import HuntPointGameConfig from "@lootopia/dashboard/features/hunt/components/HuntForm/HuntPointGameConfig"
 import HuntPointsList from "@lootopia/dashboard/features/hunt/components/HuntForm/HuntPointsList"
 import HuntReward from "@lootopia/dashboard/features/hunt/components/HuntForm/HuntReward"
 import HuntRewardConfig from "@lootopia/dashboard/features/hunt/components/HuntForm/HuntRewardConfig"
-import {
-  huntSchema,
-  type HuntFormValues,
-} from "@lootopia/dashboard/features/hunt/schema/hunt"
-import { api, useMutation } from "@lootopia/dashboard/lib/api"
-import { useRef, useState } from "react"
-import { FormProvider, useForm } from "react-hook-form"
+import type { HuntForEdit } from "@lootopia/dashboard/features/hunt/hooks/useHunt"
+import { useHuntForm } from "@lootopia/dashboard/features/hunt/hooks/useHuntForm"
+import { FormProvider } from "react-hook-form"
 
-const HuntForm = () => {
-  const methods = useForm<HuntFormValues>({
-    resolver: standardSchemaResolver(huntSchema),
-    defaultValues: {
-      title: "",
-      description: "",
-      points: [],
-      reward: { topX: 1, promoCode: "" },
-    },
-  })
+type HuntFormProps = {
+  hunt?: HuntForEdit
+}
 
-  const [createHunt, { isPending }] = useMutation(api.hunts.$post, {
-    onError: (err) => methods.setError("root", { message: err.message }),
-  })
-
-  const mapHandleRef = useRef<HuntMapHandle | null>(null)
-  const [editingPointId, setEditingPointId] = useState<string | null>(null)
-  const [isRewardOpen, setIsRewardOpen] = useState(false)
-
-  const onSubmit = methods.handleSubmit((data) => {
-    const points = data.points
-      .filter(
-        (p): p is Exclude<(typeof data.points)[number], { gameType: "none" }> =>
-          p.gameType !== "none",
-      )
-      .map(({ id: _id, ...point }) => point)
-
-    return createHunt({ json: { ...data, points } })
-  })
-
-  const handleEditPoint = (id: string) => {
-    setEditingPointId(id)
-  }
-
-  const handleCloseConfig = () => {
-    setEditingPointId(null)
-  }
-
-  const handleDeletePoint = (id: string) => {
-    mapHandleRef.current?.removePoint(id)
-  }
-
-  const handleReorder = (orderedIds: string[]) => {
-    mapHandleRef.current?.reorderPoints(orderedIds)
-  }
-
-  const handleOpenReward = () => {
-    setIsRewardOpen(true)
-  }
-
-  const handleCloseReward = () => {
-    setIsRewardOpen(false)
-  }
+const HuntForm = ({ hunt }: HuntFormProps) => {
+  const {
+    methods,
+    onSubmit,
+    isPending,
+    submitLabel,
+    mapHandleRef,
+    editingPointId,
+    isRewardOpen,
+    handleEditPoint,
+    handleCloseConfig,
+    handleDeletePoint,
+    handleReorder,
+    handleOpenReward,
+    handleCloseReward,
+  } = useHuntForm(hunt)
 
   return (
     <div className="h-full w-full">
@@ -96,7 +56,7 @@ const HuntForm = () => {
               <HuntReward onConfigure={handleOpenReward} />
 
               <Button type="submit" className="w-full" disabled={isPending}>
-                Create hunt
+                {submitLabel}
               </Button>
             </CardFooter>
           </Card>

@@ -22,7 +22,7 @@ import {
   HUNT_STATUS_BADGE,
 } from "@lootopia/dashboard/features/hunt/utils/constants"
 import { cn } from "@lootopia/dashboard/lib/utils"
-import { Eye, EyeOff, MoreVertical, Trash2 } from "lucide-react"
+import { Eye, EyeOff, MoreVertical, Pencil, Trash2 } from "lucide-react"
 import { useState } from "react"
 
 const DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
@@ -35,13 +35,19 @@ const formatDate = (value: string | Date) =>
 
 const HuntListRow = ({ hunt }: { hunt: OrganizerHunt }) => {
   const { data } = useHuntListContext()
-  const { toggleStatus, deleteHunt, isMutating } = data
+  const { toggleStatus, deleteHunt, goToEdit, isMutating } = data
 
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
 
   const isPublished = hunt.status === HUNT_STATUS.PUBLISHED
+  const isDraft = hunt.status === HUNT_STATUS.DRAFT
   const statusBadge = HUNT_STATUS_BADGE[hunt.status]
+
+  const handleEdit = () => {
+    goToEdit(hunt.id)
+    setIsMenuOpen(false)
+  }
 
   const handleToggleStatus = () => {
     toggleStatus(hunt)
@@ -113,6 +119,16 @@ const HuntListRow = ({ hunt }: { hunt: OrganizerHunt }) => {
           </Button>
         </PopoverTrigger>
         <PopoverContent align="end" className="w-44 p-1">
+          {isDraft && (
+            <button
+              type="button"
+              onClick={handleEdit}
+              className="hover:bg-muted flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm"
+            >
+              <Pencil className="size-4" />
+              Edit
+            </button>
+          )}
           <button
             type="button"
             onClick={handleToggleStatus}
