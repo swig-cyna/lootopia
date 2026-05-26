@@ -15,6 +15,7 @@ import {
   HUNT_SORT_OPTIONS,
   HUNT_STATUS,
   type HuntSort,
+  type HuntStatus,
 } from "@lootopia/dashboard/features/hunt/utils/constants"
 import { ArrowUpDown, Check, Search } from "lucide-react"
 import { useState, type ChangeEvent } from "react"
@@ -38,9 +39,7 @@ const HuntListFilters = () => {
   )?.label
 
   const handleTabChange = (value: string) => {
-    setStatus(
-      value === ALL_TAB ? undefined : (value as HuntStatus),
-    )
+    setStatus(value === ALL_TAB ? undefined : (value as HuntStatus))
   }
 
   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) =>
