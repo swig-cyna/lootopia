@@ -1,5 +1,5 @@
+import type { useBalloonGame } from "@lootopia/mobile/features/games/balloons/hooks/useBalloonGame"
 import { createContext, useContext, type ReactNode } from "react"
-import type { useBalloonGame } from "../../hooks/useBalloonGame"
 
 type BalloonGameState = ReturnType<typeof useBalloonGame>
 

@@ -1,9 +1,9 @@
+import { useBalloonARGame } from "@lootopia/mobile/features/games/balloons/components/BalloonARGame/BalloonARGame.context"
+import type { Balloon } from "@lootopia/mobile/features/games/balloons/types"
 import { Sphere } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber"
 import { useRef } from "react"
 import type { Group } from "three"
-import type { Balloon } from "../../types"
-import { useBalloonARGame } from "./BalloonARGame.context"
 
 type BalloonObjectProps = {
   balloon: Balloon

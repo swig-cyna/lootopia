@@ -1,3 +1,4 @@
+import type { Balloon } from "@lootopia/mobile/features/games/balloons/types"
 import { useCallback, useEffect, useRef, useState } from "react"
 import {
   BALLOON_COLORS,
@@ -8,7 +9,6 @@ import {
   GAME_DURATION_S,
   TIME_BONUS_PER_SECOND,
 } from "../constants"
-import type { Balloon } from "../types"
 
 const generateBalloons = (): Balloon[] =>
   Array.from({ length: BALLOON_COUNT }, (_, i) => {

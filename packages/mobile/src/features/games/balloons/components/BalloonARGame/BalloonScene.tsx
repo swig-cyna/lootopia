@@ -1,7 +1,7 @@
+import { useBalloonARGame } from "@lootopia/mobile/features/games/balloons/components/BalloonARGame/BalloonARGame.context"
+import { BalloonObject } from "@lootopia/mobile/features/games/balloons/components/BalloonARGame/BalloonObject"
 import { useFrame } from "@react-three/fiber"
 import { useRef } from "react"
-import { useBalloonARGame } from "./BalloonARGame.context"
-import { BalloonObject } from "./BalloonObject"
 
 const STABLE_FRAMES_BEFORE_START = 15
 

@@ -1,4 +1,4 @@
-import { useBalloonARGame } from "./BalloonARGame.context"
+import { useBalloonARGame } from "@lootopia/mobile/features/games/balloons/components/BalloonARGame/BalloonARGame.context"
 
 export const BalloonHTMLHUD = () => {
   const { data } = useBalloonARGame()

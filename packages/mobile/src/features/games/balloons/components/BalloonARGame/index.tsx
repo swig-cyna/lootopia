@@ -6,16 +6,16 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@lootopia/mobile/components/ui/empty"
+import { BalloonARGameProvider } from "@lootopia/mobile/features/games/balloons/components/BalloonARGame/BalloonARGame.context"
+import { BalloonHTMLHUD } from "@lootopia/mobile/features/games/balloons/components/BalloonARGame/BalloonHTMLHUD"
+import { BalloonScene } from "@lootopia/mobile/features/games/balloons/components/BalloonARGame/BalloonScene"
+import { useBalloonGame } from "@lootopia/mobile/features/games/balloons/hooks/useBalloonGame"
 import { api, useMutation } from "@lootopia/mobile/lib/api"
 import { Canvas } from "@react-three/fiber"
 import { XR, createXRStore } from "@react-three/xr"
 import { ArrowLeft, Target } from "lucide-react"
 import { useCallback, useRef, useState } from "react"
 import { createPortal } from "react-dom"
-import { useBalloonGame } from "../../hooks/useBalloonGame"
-import { BalloonARGameProvider } from "./BalloonARGame.context"
-import { BalloonHTMLHUD } from "./BalloonHTMLHUD"
-import { BalloonScene } from "./BalloonScene"
 
 const xrStore = createXRStore()
 
