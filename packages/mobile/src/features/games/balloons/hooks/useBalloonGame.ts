@@ -1,5 +1,3 @@
-import type { Balloon } from "@lootopia/mobile/features/games/balloons/types"
-import { useCallback, useEffect, useRef, useState } from "react"
 import {
   BALLOON_COLORS,
   BALLOON_COUNT,
@@ -8,7 +6,9 @@ import {
   COUNTDOWN_START,
   GAME_DURATION_S,
   TIME_BONUS_PER_SECOND,
-} from "../constants"
+} from "@lootopia/mobile/features/games/balloons/constants"
+import type { Balloon } from "@lootopia/mobile/features/games/balloons/types"
+import { useCallback, useEffect, useRef, useState } from "react"
 
 const generateBalloons = (): Balloon[] =>
   Array.from({ length: BALLOON_COUNT }, (_, i) => {
@@ -27,40 +27,51 @@ const generateBalloons = (): Balloon[] =>
     }
   })
 
+type GameState = {
+  balloons: Balloon[]
+  score: number
+  timeLeft: number
+  started: boolean
+  finished: boolean
+  countdown: number | null
+}
+
+const INITIAL_GAME_STATE: GameState = {
+  balloons: [],
+  score: 0,
+  timeLeft: GAME_DURATION_S,
+  started: false,
+  finished: false,
+  countdown: null,
+}
+
 export const useBalloonGame = () => {
-  const [balloons, setBalloons] = useState<Balloon[]>([])
-  const [score, setScore] = useState(0)
-  const [timeLeft, setTimeLeft] = useState(GAME_DURATION_S)
-  const [started, setStarted] = useState(false)
-  const [finished, setFinished] = useState(false)
-  const [countdown, setCountdown] = useState<number | null>(null)
+  const [game, setGame] = useState<GameState>(INITIAL_GAME_STATE)
 
   const timeLeftRef = useRef(GAME_DURATION_S)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
-  const remaining = balloons.filter((b) => !b.popped).length
+  const remaining = game.balloons.filter((b) => !b.popped).length
 
   useEffect(() => {
-    if (!started || finished) {
+    if (!game.started || game.finished) {
       return undefined
     }
 
     intervalRef.current = setInterval(() => {
-      setTimeLeft((prev) => {
-        const next = prev - 1
+      setGame((prev) => {
+        const next = prev.timeLeft - 1
         timeLeftRef.current = next
 
         if (next <= 0) {
-          setFinished(true)
-
           if (intervalRef.current) {
             clearInterval(intervalRef.current)
           }
 
-          return 0
+          return { ...prev, timeLeft: 0, finished: true }
         }
 
-        return next
+        return { ...prev, timeLeft: next }
       })
     }, 1000)
 
@@ -69,70 +80,81 @@ export const useBalloonGame = () => {
         clearInterval(intervalRef.current)
       }
     }
-  }, [started, finished])
+  }, [game.started, game.finished])
 
   useEffect(() => {
-    if (started && balloons.length > 0 && remaining === 0 && !finished) {
-      setFinished(true)
+    if (
+      game.started &&
+      game.balloons.length > 0 &&
+      remaining === 0 &&
+      !game.finished
+    ) {
+      setGame((prev) => ({ ...prev, finished: true }))
     }
-  }, [remaining, started, balloons.length, finished])
+  }, [remaining, game.started, game.balloons.length, game.finished])
 
   useEffect(() => {
-    if (countdown === null) {
+    if (game.countdown === null) {
       return undefined
     }
 
-    const delay = countdown === 0 ? COUNTDOWN_GO_DURATION_MS : 1000
+    const delay = game.countdown === 0 ? COUNTDOWN_GO_DURATION_MS : 1000
 
     const timer = setTimeout(() => {
-      if (countdown === 0) {
-        setStarted(true)
-        setCountdown(null)
+      if (game.countdown === 0) {
+        setGame((prev) => ({ ...prev, started: true, countdown: null }))
       } else {
-        setCountdown((prev) => (prev !== null ? prev - 1 : null))
+        setGame((prev) => ({
+          ...prev,
+          countdown: prev.countdown !== null ? prev.countdown - 1 : null,
+        }))
       }
     }, delay)
 
     return () => clearTimeout(timer)
-  }, [countdown])
+  }, [game.countdown])
 
   const startGame = useCallback(() => {
-    setBalloons(generateBalloons())
-    setScore(0)
-    setTimeLeft(GAME_DURATION_S)
     timeLeftRef.current = GAME_DURATION_S
-    setStarted(false)
-    setFinished(false)
-    setCountdown(COUNTDOWN_START)
+    setGame({
+      balloons: generateBalloons(),
+      score: 0,
+      timeLeft: GAME_DURATION_S,
+      started: false,
+      finished: false,
+      countdown: COUNTDOWN_START,
+    })
   }, [])
 
   const popBalloon = useCallback((id: string) => {
-    setBalloons((prev) => {
-      const balloon = prev.find((b) => b.id === id)
+    setGame((prev) => {
+      const balloon = prev.balloons.find((b) => b.id === id)
 
       if (!balloon || balloon.popped) {
         return prev
       }
 
-      setScore(
-        (s) =>
-          s +
+      return {
+        ...prev,
+        score:
+          prev.score +
           BASE_SCORE_PER_BALLOON +
           timeLeftRef.current * TIME_BONUS_PER_SECOND,
-      )
-
-      return prev.map((b) => (b.id === id ? { ...b, popped: true } : b))
+        balloons: prev.balloons.map((b) =>
+          b.id === id ? { ...b, popped: true } : b,
+        ),
+      }
     })
   }, [])
 
   return {
-    balloons,
-    score,
-    timeLeft,
-    started,
-    finished,
+    balloons: game.balloons,
+    score: game.score,
+    timeLeft: game.timeLeft,
+    started: game.started,
+    finished: game.finished,
     remaining,
-    countdown,
+    countdown: game.countdown,
     startGame,
     popBalloon,
   }
