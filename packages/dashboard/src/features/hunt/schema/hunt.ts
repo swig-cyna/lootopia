@@ -94,3 +94,16 @@ export type HuntPointDraft = Extract<
   HuntFormValues["points"][number],
   { gameType: "none" }
 >
+
+type DistributiveOmit<T, K extends PropertyKey> = T extends T
+  ? Omit<T, K>
+  : never
+
+export type HuntSubmitData = Omit<HuntFormValues, "points"> & {
+  points: Array<
+    DistributiveOmit<
+      Exclude<HuntFormValues["points"][number], HuntPointDraft>,
+      "id"
+    >
+  >
+}

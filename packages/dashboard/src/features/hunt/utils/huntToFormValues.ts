@@ -1,6 +1,6 @@
-import type { HuntForEdit } from "@lootopia/dashboard/features/hunt/hooks/useHunt"
 import type { HuntFormValues } from "@lootopia/dashboard/features/hunt/schema/hunt"
 import { HUNT_GAME_TYPE } from "@lootopia/dashboard/features/hunt/utils/constants"
+import type { HuntForEdit } from "@lootopia/dashboard/features/hunt/utils/types"
 
 const toFormPoint = (
   point: HuntForEdit["points"][number],
