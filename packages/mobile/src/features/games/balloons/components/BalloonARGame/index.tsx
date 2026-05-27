@@ -54,12 +54,16 @@ const BalloonARGame = ({
       // Session may already be closed
     }
 
-    await validatePoint({
-      param: { id: pointId },
-      json: { gameType: "ar", score: gameState.score },
-    })
-
-    onValidate()
+    try {
+      await validatePoint({
+        param: { id: pointId },
+        json: { gameType: "ar", score: gameState.score },
+      })
+      onValidate()
+    } catch (error) {
+      submittedRef.current = false
+      console.error("Failed to validate point:", error)
+    }
   }, [gameState.score, onValidate, pointId, validatePoint])
 
   const handleEnterAR = async () => {

@@ -13,6 +13,8 @@ export const useUserLocation = (mapRef: RefObject<Map | null>) => {
   const orientationListening = useRef(false)
   const watchIdRef = useRef<number | null>(null)
   const prevRawHeading = useRef<number | null>(null)
+  const absoluteHandlerRef = useRef<EventListener | null>(null)
+  const relativeHandlerRef = useRef<EventListener | null>(null)
 
   const startOrientationListener = () => {
     if (orientationListening.current) {
@@ -68,14 +70,13 @@ export const useUserLocation = (mapRef: RefObject<Map | null>) => {
       }
     }
 
+    absoluteHandlerRef.current = absoluteHandler as EventListener
+    relativeHandlerRef.current = relativeHandler as EventListener
     window.addEventListener(
       "deviceorientationabsolute",
-      absoluteHandler as EventListener,
+      absoluteHandlerRef.current,
     )
-    window.addEventListener(
-      "deviceorientation",
-      relativeHandler as EventListener,
-    )
+    window.addEventListener("deviceorientation", relativeHandlerRef.current)
   }
 
   const flyToPosition = (position: [number, number]) => {
@@ -137,6 +138,20 @@ export const useUserLocation = (mapRef: RefObject<Map | null>) => {
     () => () => {
       if (watchIdRef.current !== null) {
         navigator.geolocation.clearWatch(watchIdRef.current)
+      }
+
+      if (absoluteHandlerRef.current) {
+        window.removeEventListener(
+          "deviceorientationabsolute",
+          absoluteHandlerRef.current,
+        )
+      }
+
+      if (relativeHandlerRef.current) {
+        window.removeEventListener(
+          "deviceorientation",
+          relativeHandlerRef.current,
+        )
       }
     },
     [],

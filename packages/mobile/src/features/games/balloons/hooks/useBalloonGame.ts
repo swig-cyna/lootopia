@@ -107,15 +107,22 @@ export const useBalloonGame = () => {
   }, [])
 
   const popBalloon = useCallback((id: string) => {
-    setBalloons((prev) =>
-      prev.map((b) => (b.id === id ? { ...b, popped: true } : b)),
-    )
-    setScore(
-      (prev) =>
-        prev +
-        BASE_SCORE_PER_BALLOON +
-        timeLeftRef.current * TIME_BONUS_PER_SECOND,
-    )
+    setBalloons((prev) => {
+      const balloon = prev.find((b) => b.id === id)
+
+      if (!balloon || balloon.popped) {
+        return prev
+      }
+
+      setScore(
+        (s) =>
+          s +
+          BASE_SCORE_PER_BALLOON +
+          timeLeftRef.current * TIME_BONUS_PER_SECOND,
+      )
+
+      return prev.map((b) => (b.id === id ? { ...b, popped: true } : b))
+    })
   }, [])
 
   return {

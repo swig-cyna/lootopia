@@ -49,9 +49,11 @@ export const BalloonScene = () => {
       <directionalLight position={[5, 5, 5]} intensity={1.5} />
       <pointLight position={[-5, 5, -5]} intensity={0.5} />
 
-      {data.balloons.map((balloon) => (
-        <BalloonObject key={balloon.id} balloon={balloon} />
-      ))}
+      {data.balloons
+        .filter((balloon) => !balloon.popped)
+        .map((balloon) => (
+          <BalloonObject key={balloon.id} balloon={balloon} />
+        ))}
     </>
   )
 }

@@ -28,6 +28,8 @@ import type {
   validatePointRoute,
 } from "@lootopia/api/routes/hunts/doc"
 
+const MAX_AR_SCORE = 2000
+
 export const createHuntController: RouteHandler<
   typeof createHuntRoute,
   AuthenticatedContext
@@ -494,10 +496,12 @@ export const validatePointController: RouteHandler<
     return true
   })()
 
+  const finalScore = isCorrect ? Math.min(body.score, MAX_AR_SCORE) : 0
+
   await $huntPointCompletion.create({
     huntParticipationId: participation.id,
     huntPointId: id,
-    score: isCorrect ? body.score : 0,
+    score: finalScore,
   })
 
   return json({ isCorrect }, StatusCodes.OK)
