@@ -28,6 +28,8 @@ import type {
   validatePointRoute,
 } from "@lootopia/api/routes/hunts/doc"
 
+const MAX_AR_SCORE = 2000
+
 export const createHuntController: RouteHandler<
   typeof createHuntRoute,
   AuthenticatedContext
@@ -230,11 +232,12 @@ export const getPublishedHuntController: RouteHandler<
     return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
   }
 
-  const completedPointIds = participation
-    ? (await $huntPointCompletion.findByParticipationId(participation.id)).map(
-        (c) => c.huntPointId,
-      )
+  const completions = participation
+    ? await $huntPointCompletion.findByParticipationId(participation.id)
     : []
+
+  const completedPointIds = completions.map((c) => c.huntPointId)
+  const totalScore = completions.reduce((sum, c) => sum + c.score, 0)
 
   return json(
     {
@@ -242,6 +245,7 @@ export const getPublishedHuntController: RouteHandler<
       points: huntPointsWithQuiz,
       reward: huntReward[0],
       completedPointIds,
+      totalScore,
     },
     StatusCodes.OK,
   )
@@ -453,6 +457,31 @@ export const validatePointController: RouteHandler<
     return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
   }
 
+  const [allHuntPoints, completions] = await Promise.all([
+    $huntPoint.findByHuntIds([huntPoint.huntId]),
+    $huntPointCompletion.findByParticipationId(participation.id),
+  ])
+
+  const completedPointIds = new Set(completions.map((c) => c.huntPointId))
+
+  if (completedPointIds.has(id)) {
+    return json({ error: "Point already completed" }, StatusCodes.CONFLICT)
+  }
+
+  const previousPoints = allHuntPoints.filter(
+    (p) => p.position < huntPoint.position,
+  )
+  const allPreviousCompleted = previousPoints.every((p) =>
+    completedPointIds.has(p.id),
+  )
+
+  if (!allPreviousCompleted) {
+    return json(
+      { error: "Previous points must be completed first" },
+      StatusCodes.FORBIDDEN,
+    )
+  }
+
   const isCorrect = await (async () => {
     if (body.gameType === "quiz") {
       const quiz = await $quizQuestion.findByHuntPointId(id)
@@ -467,10 +496,12 @@ export const validatePointController: RouteHandler<
     return true
   })()
 
+  const finalScore = isCorrect ? Math.min(body.score, MAX_AR_SCORE) : 0
+
   await $huntPointCompletion.create({
     huntParticipationId: participation.id,
     huntPointId: id,
-    score: body.score,
+    score: finalScore,
   })
 
   return json({ isCorrect }, StatusCodes.OK)

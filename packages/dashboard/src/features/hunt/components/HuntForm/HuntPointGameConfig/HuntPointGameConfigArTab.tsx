@@ -1,18 +1,23 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from "@lootopia/dashboard/components/ui/button"
+import { FieldError } from "@lootopia/dashboard/components/ui/field"
 import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "@lootopia/dashboard/components/ui/field"
-import { Input } from "@lootopia/dashboard/components/ui/input"
+  RadioGroup,
+  RadioGroupItem,
+} from "@lootopia/dashboard/components/ui/radio-group"
 import {
   arConfigSchema,
   type ArConfigValues,
   type HuntFormValues,
 } from "@lootopia/dashboard/features/hunt/schema/hunt"
-import { FormProvider, useForm, useFormContext } from "react-hook-form"
+import { AR_GAMES } from "@lootopia/common/constants/hunt"
+import { cn } from "@lootopia/dashboard/lib/utils"
+import {
+  Controller,
+  FormProvider,
+  useForm,
+  useFormContext,
+} from "react-hook-form"
 
 type HuntPointGameConfigArTabProps = {
   pointId: string | null
@@ -30,7 +35,7 @@ const HuntPointGameConfigArTab = ({
 
   const methods = useForm<ArConfigValues>({
     resolver: zodResolver(arConfigSchema),
-    defaultValues: { arId: existing?.arId ?? "" },
+    defaultValues: { arId: existing?.arId },
   })
 
   const onSubmit = methods.handleSubmit((data) => {
@@ -46,16 +51,46 @@ const HuntPointGameConfigArTab = ({
     onSave()
   })
 
+  const selectedArId = methods.watch("arId")
+
   return (
     <FormProvider {...methods}>
       <form onSubmit={onSubmit} className="flex flex-col gap-4">
-        <FieldGroup>
-          <Field>
-            <FieldLabel htmlFor="arId">AR Game ID</FieldLabel>
-            <Input id="arId" {...methods.register("arId")} />
-            <FieldError errors={[methods.formState.errors.arId]} />
-          </Field>
-        </FieldGroup>
+        <Controller
+          control={methods.control}
+          name="arId"
+          render={({ field }) => (
+            <RadioGroup
+              value={field.value}
+              onValueChange={field.onChange}
+              className="flex flex-col gap-2"
+            >
+              {AR_GAMES.map((game) => (
+                <label
+                  key={game.id}
+                  htmlFor={game.id}
+                  className={cn(
+                    "border-input flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition-colors",
+                    selectedArId === game.id && "border-primary bg-primary/5",
+                  )}
+                >
+                  <RadioGroupItem
+                    value={game.id}
+                    id={game.id}
+                    className="mt-0.5 shrink-0"
+                  />
+                  <div className="flex flex-col gap-0.5">
+                    <p className="text-sm font-medium">{game.label}</p>
+                    <p className="text-muted-foreground text-xs">
+                      {game.description}
+                    </p>
+                  </div>
+                </label>
+              ))}
+            </RadioGroup>
+          )}
+        />
+        <FieldError errors={[methods.formState.errors.arId]} />
 
         <Button type="submit">Save</Button>
       </form>

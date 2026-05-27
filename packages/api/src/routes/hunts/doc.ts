@@ -251,6 +251,14 @@ export const validatePointRoute = createRoute({
       errorResponseSchema,
       StatusPhrases.NOT_FOUND,
     ),
+    [StatusCodes.CONFLICT]: jsonContent(
+      errorResponseSchema,
+      StatusPhrases.CONFLICT,
+    ),
+    [StatusCodes.FORBIDDEN]: jsonContent(
+      errorResponseSchema,
+      StatusPhrases.FORBIDDEN,
+    ),
   }),
 })
 

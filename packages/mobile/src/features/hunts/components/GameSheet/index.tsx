@@ -4,7 +4,7 @@ import QuizGame from "./QuizGame"
 
 type GameSheetProps = {
   point: HuntPoint
-  onValidate: () => void
+  onValidate: (_score: number) => void
 }
 
 const GAME_TITLE: Record<string, string> = {

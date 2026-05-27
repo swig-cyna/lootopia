@@ -15,9 +15,17 @@ import { useEffect, useRef, useState } from "react"
 const BASE_SCORE = 1000
 const SCORE_DECAY_PER_SECOND = 10
 
+type QuizState = {
+  started: boolean
+  selected: number | null
+  isCorrect: boolean | null
+  elapsed: number
+  earnedScore: number
+}
+
 type QuizGameProps = {
   quiz: QuizQuestion
-  onValidate: () => void
+  onValidate: (_score: number) => void
 }
 
 const answerState = (
@@ -56,10 +64,13 @@ const formatElapsed = (ms: number) => {
 }
 
 const QuizGame = ({ quiz, onValidate }: QuizGameProps) => {
-  const [started, setStarted] = useState(false)
-  const [selected, setSelected] = useState<number | null>(null)
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
-  const [elapsed, setElapsed] = useState(0)
+  const [state, setState] = useState<QuizState>({
+    started: false,
+    selected: null,
+    isCorrect: null,
+    elapsed: 0,
+    earnedScore: 0,
+  })
 
   const startRef = useRef<number | null>(null)
 
@@ -68,29 +79,31 @@ const QuizGame = ({ quiz, onValidate }: QuizGameProps) => {
   )
 
   useEffect(() => {
-    if (!started) {
+    if (!state.started) {
       return undefined
     }
 
     startRef.current = Date.now()
 
     const interval = setInterval(() => {
-      setElapsed(Date.now() - startRef.current!)
+      setState((prev) => ({ ...prev, elapsed: Date.now() - startRef.current! }))
     }, 1000)
 
     return () => clearInterval(interval)
-  }, [started])
+  }, [state.started])
 
   const handleStart = () => {
-    setStarted(true)
+    setState((prev) => ({ ...prev, started: true }))
   }
 
   const handleSelect = (i: number) => () => {
-    setSelected(i)
+    setState((prev) => ({ ...prev, selected: i }))
   }
 
+  const handleContinue = () => onValidate(state.earnedScore)
+
   const handleSubmit = async () => {
-    if (selected === null || startRef.current === null) {
+    if (state.selected === null || startRef.current === null) {
       return
     }
 
@@ -102,15 +115,19 @@ const QuizGame = ({ quiz, onValidate }: QuizGameProps) => {
 
     const result = await validatePoint({
       param: { id: quiz.huntPointId },
-      json: { gameType: "quiz", selectedAnswerIndex: selected, score },
+      json: { gameType: "quiz", selectedAnswerIndex: state.selected, score },
     })
 
-    setIsCorrect(result.isCorrect)
+    setState((prev) => ({
+      ...prev,
+      earnedScore: result.isCorrect ? score : 0,
+      isCorrect: result.isCorrect,
+    }))
   }
 
-  const submitted = isCorrect !== null
+  const submitted = state.isCorrect !== null
 
-  if (!started) {
+  if (!state.started) {
     return (
       <Empty className="border-0 p-0">
         <EmptyHeader>
@@ -136,7 +153,7 @@ const QuizGame = ({ quiz, onValidate }: QuizGameProps) => {
         <p className="text-sm font-medium leading-snug">{quiz.question}</p>
         {!submitted && (
           <span className="text-muted-foreground font-mono text-xs tabular-nums">
-            {formatElapsed(elapsed)}
+            {formatElapsed(state.elapsed)}
           </span>
         )}
       </div>
@@ -149,7 +166,7 @@ const QuizGame = ({ quiz, onValidate }: QuizGameProps) => {
             onClick={handleSelect(i)}
             className={cn(
               "rounded-xl border-2 px-4 py-3 text-left text-sm transition-colors",
-              ANSWER_STYLES[answerState(i, selected, isCorrect)],
+              ANSWER_STYLES[answerState(i, state.selected, state.isCorrect)],
             )}
           >
             {answer}
@@ -162,18 +179,20 @@ const QuizGame = ({ quiz, onValidate }: QuizGameProps) => {
           <div
             className={cn(
               "flex items-center gap-2 text-sm font-medium",
-              isCorrect ? "text-green-600" : "text-destructive",
+              state.isCorrect ? "text-green-600" : "text-destructive",
             )}
           >
-            {isCorrect ? (
+            {state.isCorrect ? (
               <CheckCircle className="size-4 shrink-0" />
             ) : (
               <XCircle className="size-4 shrink-0" />
             )}
-            {isCorrect ? "Correct!" : "Wrong answer."}
+            {state.isCorrect
+              ? `Correct! +${state.earnedScore} pts`
+              : "Wrong answer."}
           </div>
           <Button
-            onClick={onValidate}
+            onClick={handleContinue}
             className="h-auto w-full rounded-xl py-3"
           >
             Continue
@@ -181,7 +200,7 @@ const QuizGame = ({ quiz, onValidate }: QuizGameProps) => {
         </div>
       ) : (
         <Button
-          disabled={selected === null}
+          disabled={state.selected === null}
           loading={isPending}
           onClick={handleSubmit}
           className="h-auto w-full rounded-xl py-3"

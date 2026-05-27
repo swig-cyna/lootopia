@@ -54,6 +54,7 @@ const HuntPageContent = () => {
         huntId={id!}
         points={hunt.points}
         completedPointIds={hunt.completedPointIds}
+        totalScore={hunt.totalScore}
       />
 
       <button
