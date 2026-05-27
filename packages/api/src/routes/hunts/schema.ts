@@ -96,8 +96,8 @@ export const createHuntSchema = z.object({
   description: z.string().optional(),
   points: z
     .array(createHuntPointSchema)
-    .min(HUNT_POINTS_MIN, "You must place at least 3 points")
-    .max(HUNT_POINTS_MAX, "You can place at most 5 points"),
+    .min(HUNT_POINTS_MIN, `You must place at least ${HUNT_POINTS_MIN} points`)
+    .max(HUNT_POINTS_MAX, `You can place at most ${HUNT_POINTS_MAX} points`),
   reward: createHuntRewardSchema,
 })
 
