@@ -13,6 +13,7 @@
     "kysely": "kysely"
   },
   "dependencies": {
+    "@lootopia/common": "workspace:*",
     "@t3-oss/env-core": "^0.13.11",
     "kysely": "^0.28.17",
     "pg": "^8.20.0",

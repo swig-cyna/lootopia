@@ -8,8 +8,8 @@ import {
 import {
   arConfigSchema,
   type ArConfigValues,
-  type HuntFormValues,
-} from "@lootopia/dashboard/features/hunt/schema/hunt"
+} from "@lootopia/common/schemas/hunt"
+import type { HuntFormValues } from "@lootopia/dashboard/features/hunt/schema/hunt"
 import { AR_GAMES } from "@lootopia/common/constants/hunt"
 import { cn } from "@lootopia/dashboard/lib/utils"
 import {

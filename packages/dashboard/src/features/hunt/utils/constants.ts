@@ -1,3 +1,10 @@
+import {
+  HUNT_SORT,
+  HUNT_STATUS,
+  type HuntSort,
+  type HuntStatus,
+} from "@lootopia/common/constants/hunt"
+
 export const HUNT_GAME_TYPE = {
   QUIZ: "quiz",
   AR: "ar",
@@ -5,21 +12,6 @@ export const HUNT_GAME_TYPE = {
 } as const
 
 export type HuntGameType = (typeof HUNT_GAME_TYPE)[keyof typeof HUNT_GAME_TYPE]
-
-export const HUNT_STATUS = {
-  DRAFT: "draft",
-  PUBLISHED: "published",
-} as const
-
-export type HuntStatus = (typeof HUNT_STATUS)[keyof typeof HUNT_STATUS]
-
-export const HUNT_SORT = {
-  RECENT: "recent",
-  OLDEST: "oldest",
-  TITLE: "title",
-} as const
-
-export type HuntSort = (typeof HUNT_SORT)[keyof typeof HUNT_SORT]
 
 export const HUNT_STATUS_BADGE: Record<
   HuntStatus,

@@ -4,12 +4,20 @@ import {
   paginationMetadataSchema,
   paginationParamsSchema,
 } from "@lootopia/api/utils/responses"
-import { AR_GAME_IDS } from "@lootopia/common/constants/hunt"
 import {
+  AR_GAME_IDS,
   HUNT_GAME_TYPE,
+  HUNT_POINTS_MAX,
+  HUNT_POINTS_MIN,
   HUNT_SORT,
   HUNT_STATUS,
-} from "@lootopia/db/models/hunt"
+  HUNT_TITLE_MAX,
+  HUNT_TITLE_MIN,
+} from "@lootopia/common/constants/hunt"
+import {
+  basePointInputSchema,
+  quizConfigSchema,
+} from "@lootopia/common/schemas/hunt"
 
 export const quizQuestionSchema = z.object({
   id: z.string(),
@@ -29,7 +37,7 @@ export const huntsPointSchema = z.object({
   latitude: z.number(),
   longitude: z.number(),
   gameType: z.enum([HUNT_GAME_TYPE.QUIZ, HUNT_GAME_TYPE.AR]),
-  arId: z.string().nullable().optional(),
+  arId: z.enum(AR_GAME_IDS).nullable().optional(),
   createdAt: z.date(),
   position: z.number(),
   quizQuestion: quizQuestionSchema.optional(),
@@ -39,24 +47,10 @@ export const playerHuntsPointSchema = huntsPointSchema.extend({
   quizQuestion: playerQuizQuestionSchema.optional(),
 })
 
-const quizConfigInputSchema = z.object({
-  question: z.string().min(1, "Question is required"),
-  answers: z
-    .array(z.string().min(1, "Answer text is required"))
-    .min(2, "At least 2 answers required"),
-  correctAnswerIndex: z.number().min(0),
-})
-
-const basePointInputSchema = z.object({
-  latitude: z.number(),
-  longitude: z.number(),
-  position: z.number().positive(),
-})
-
 export const createHuntPointSchema = z.discriminatedUnion("gameType", [
   basePointInputSchema.extend({
     gameType: z.literal(HUNT_GAME_TYPE.QUIZ),
-    quiz: quizConfigInputSchema,
+    quiz: quizConfigSchema,
   }),
   basePointInputSchema.extend({
     gameType: z.literal(HUNT_GAME_TYPE.AR),
@@ -98,20 +92,24 @@ export const playerHuntDetailSchema = playerHuntSchema.extend({
 })
 
 export const createHuntSchema = z.object({
-  title: z.string().min(1).max(255),
+  title: z.string().min(HUNT_TITLE_MIN).max(HUNT_TITLE_MAX),
   description: z.string().optional(),
   points: z
     .array(createHuntPointSchema)
-    .min(3, "You must place at least 3 points")
-    .max(5, "You can place at most 5 points"),
+    .min(HUNT_POINTS_MIN, "You must place at least 3 points")
+    .max(HUNT_POINTS_MAX, "You can place at most 5 points"),
   reward: createHuntRewardSchema,
 })
 
 export const updateHuntSchema = z.object({
-  title: z.string().min(1).max(255).optional(),
+  title: z.string().min(HUNT_TITLE_MIN).max(HUNT_TITLE_MAX).optional(),
   description: z.string().min(1).optional(),
   status: z.enum([HUNT_STATUS.DRAFT, HUNT_STATUS.PUBLISHED]).optional(),
-  points: z.array(createHuntPointSchema).min(3).max(5).optional(),
+  points: z
+    .array(createHuntPointSchema)
+    .min(HUNT_POINTS_MIN)
+    .max(HUNT_POINTS_MAX)
+    .optional(),
   reward: huntsRewardSchema.optional(),
 })
 

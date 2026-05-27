@@ -18,7 +18,7 @@ import { Input } from "@lootopia/dashboard/components/ui/input"
 import {
   signinSchema,
   type SigninFormValues,
-} from "@lootopia/dashboard/features/auth/schema/signin"
+} from "@lootopia/common/schemas/auth"
 import authClient from "@lootopia/dashboard/features/auth/utils/auth-client"
 import { useForm } from "react-hook-form"
 import { useNavigate } from "react-router"

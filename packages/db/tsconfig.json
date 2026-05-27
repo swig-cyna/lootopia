@@ -9,7 +9,8 @@
     "skipLibCheck": true,
     "noEmit": true,
     "paths": {
-      "migrations:all": ["./src/migrations.d.ts"]
+      "migrations:all": ["./src/migrations.d.ts"],
+      "@lootopia/common/*": ["../common/src/*"]
     }
   },
   "include": ["src", "kysely.config.ts"],

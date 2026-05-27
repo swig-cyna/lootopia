@@ -27,7 +27,7 @@ const toFormPoint = (
   return {
     ...base,
     gameType: HUNT_GAME_TYPE.AR,
-    arId: point.arId ?? "",
+    arId: point.arId!,
   }
 }
 

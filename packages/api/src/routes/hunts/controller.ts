@@ -1,7 +1,7 @@
 import { type RouteHandler } from "@hono/zod-openapi"
 import { type AuthenticatedContext } from "@lootopia/api/lib/hono"
 import { paginate } from "@lootopia/api/utils/responses"
-import { HUNT_STATUS } from "@lootopia/db/models/hunt"
+import { HUNT_STATUS, MAX_AR_SCORE } from "@lootopia/common/constants/hunt"
 import {
   $hunt,
   $huntParticipation,
@@ -27,8 +27,6 @@ import type {
   updateHuntStatusRoute,
   validatePointRoute,
 } from "@lootopia/api/routes/hunts/doc"
-
-const MAX_AR_SCORE = 2000
 
 export const createHuntController: RouteHandler<
   typeof createHuntRoute,

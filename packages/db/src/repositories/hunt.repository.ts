@@ -1,16 +1,18 @@
 import { db } from "@lootopia/db/index"
 import {
-  HUNT_SORT,
-  HUNT_STATUS,
   type HuntParticipationTable,
   type HuntPointCompletionTable,
   type HuntPointTable,
   type HuntRewardTable,
-  type HuntSort,
   type HuntTable,
   type ListOrganizerHuntsOptions,
   type QuizQuestionTable,
 } from "@lootopia/db/models/hunt"
+import {
+  HUNT_SORT,
+  HUNT_STATUS,
+  type HuntSort,
+} from "@lootopia/common/constants/hunt"
 import { sql, type Insertable, type Selectable, type Updateable } from "kysely"
 
 const HUNT_SORT_ORDER: Record<

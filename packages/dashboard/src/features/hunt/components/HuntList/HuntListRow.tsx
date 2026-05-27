@@ -16,9 +16,9 @@ import {
 import { useHuntListContext } from "@lootopia/dashboard/features/hunt/components/HuntList/HuntList.context"
 import HuntListThumbnail from "@lootopia/dashboard/features/hunt/components/HuntList/HuntListThumbnail"
 import type { OrganizerHunt } from "@lootopia/dashboard/features/hunt/hooks/useHuntList"
+import { HUNT_STATUS } from "@lootopia/common/constants/hunt"
 import {
   HUNT_LIST_GRID_COLS,
-  HUNT_STATUS,
   HUNT_STATUS_BADGE,
 } from "@lootopia/dashboard/features/hunt/utils/constants"
 import { cn } from "@lootopia/dashboard/lib/utils"

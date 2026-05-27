@@ -12,11 +12,11 @@ import {
 } from "@lootopia/dashboard/components/ui/tabs"
 import { useHuntListContext } from "@lootopia/dashboard/features/hunt/components/HuntList/HuntList.context"
 import {
-  HUNT_SORT_OPTIONS,
   HUNT_STATUS,
   type HuntSort,
   type HuntStatus,
-} from "@lootopia/dashboard/features/hunt/utils/constants"
+} from "@lootopia/common/constants/hunt"
+import { HUNT_SORT_OPTIONS } from "@lootopia/dashboard/features/hunt/utils/constants"
 import { ArrowUpDown, Check, Search } from "lucide-react"
 import { useState, type ChangeEvent } from "react"
 

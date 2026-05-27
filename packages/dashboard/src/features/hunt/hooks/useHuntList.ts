@@ -1,10 +1,12 @@
 import {
-  HUNT_LIST_PAGE_SIZE,
   HUNT_SORT,
   HUNT_STATUS,
-  SEARCH_DEBOUNCE_MS,
   type HuntSort,
   type HuntStatus,
+} from "@lootopia/common/constants/hunt"
+import {
+  HUNT_LIST_PAGE_SIZE,
+  SEARCH_DEBOUNCE_MS,
 } from "@lootopia/dashboard/features/hunt/utils/constants"
 import { useDebouncedValue } from "@lootopia/dashboard/hooks/useDebouncedValue"
 import { api, useMutation, useQuery } from "@lootopia/dashboard/lib/api"

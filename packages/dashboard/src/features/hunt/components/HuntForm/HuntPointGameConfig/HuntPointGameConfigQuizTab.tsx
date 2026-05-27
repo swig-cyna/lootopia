@@ -13,9 +13,9 @@ import {
 } from "@lootopia/dashboard/components/ui/radio-group"
 import {
   quizConfigSchema,
-  type HuntFormValues,
   type QuizConfigValues,
-} from "@lootopia/dashboard/features/hunt/schema/hunt"
+} from "@lootopia/common/schemas/hunt"
+import type { HuntFormValues } from "@lootopia/dashboard/features/hunt/schema/hunt"
 import { Plus, Trash2 } from "lucide-react"
 import {
   Controller,

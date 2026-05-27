@@ -10,7 +10,7 @@ import { Input } from "@lootopia/mobile/components/ui/input"
 import {
   signinSchema,
   type SigninFormValues,
-} from "@lootopia/mobile/features/auth/schema/signin"
+} from "@lootopia/common/schemas/auth"
 import authClient from "@lootopia/mobile/features/auth/utils/auth-client"
 import { useForm } from "react-hook-form"
 import { useNavigate } from "react-router"
