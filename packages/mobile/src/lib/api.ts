@@ -51,7 +51,13 @@ type QueryRequest = { $get: HonoClientFunction; $url: (_args?: any) => URL }
 export const getQueryKey = <TRequest extends QueryRequest>(
   request: TRequest,
   queryArgs?: InferRequestType<TRequest["$get"]>,
-) => [request.$url().toString(), JSON.stringify(queryArgs)]
+) => {
+  if (queryArgs === undefined) {
+    return [request.$url().toString()]
+  }
+
+  return [request.$url().toString(), JSON.stringify(queryArgs)]
+}
 
 export const useQuery = <TRequest extends QueryRequest>(
   request: TRequest,
@@ -96,8 +102,11 @@ export const useMutation = <TRequest extends HonoClientFunction>(
   const { mutateAsync, ...rest } = useReactMutation({
     mutationFn: async (variables) => {
       const res = await request(variables)
+      const text = await res.text()
 
-      return res.json() as Promise<OkResponse<InferResponseType<TRequest>>>
+      return (text ? JSON.parse(text) : null) as OkResponse<
+        InferResponseType<TRequest>
+      >
     },
     ...mutationArgs,
   })

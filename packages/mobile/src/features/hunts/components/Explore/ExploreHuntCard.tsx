@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@lootopia/mobile/components/ui/card"
 import { api, getQueryKey, useMutation } from "@lootopia/mobile/lib/api"
-import { useQueryClient } from "@tanstack/react-query"
+import queryClient from "@lootopia/mobile/lib/queryClient"
 import type { InferResponseType } from "hono/client"
 
 type PublishedHunt = Extract<
@@ -21,14 +21,17 @@ type ExploreHuntCardProps = {
 }
 
 const ExploreHuntCard = ({ hunt }: ExploreHuntCardProps) => {
-  const queryClient = useQueryClient()
-  const [joinHunt, { isPending }] = useMutation(api.hunts[":id"].join.$post)
+  const [joinHunt, { isPending }] = useMutation(api.hunts[":id"].join.$post, {
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: getQueryKey(api.hunts.published),
+      })
+      queryClient.invalidateQueries({ queryKey: getQueryKey(api.hunts.mine) })
+    },
+  })
 
-  const handleJoin = async () => {
-    await joinHunt({ param: { id: hunt.id } })
-    queryClient.invalidateQueries({
-      queryKey: getQueryKey(api.hunts.published, { query: {} }),
-    })
+  const handleJoin = () => {
+    joinHunt({ param: { id: hunt.id } })
   }
 
   return (

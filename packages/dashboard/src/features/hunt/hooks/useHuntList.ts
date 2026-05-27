@@ -9,7 +9,13 @@ import {
   SEARCH_DEBOUNCE_MS,
 } from "@lootopia/dashboard/features/hunt/utils/constants"
 import { useDebouncedValue } from "@lootopia/dashboard/hooks/useDebouncedValue"
-import { api, useMutation, useQuery } from "@lootopia/dashboard/lib/api"
+import {
+  api,
+  getQueryKey,
+  useMutation,
+  useQuery,
+} from "@lootopia/dashboard/lib/api"
+import queryClient from "@lootopia/dashboard/lib/queryClient"
 import type { InferResponseType } from "hono/client"
 import { useState } from "react"
 import { useNavigate } from "react-router"
@@ -54,12 +60,18 @@ export const useHuntList = () => {
 
   const [updateStatus, { isPending: isUpdatingStatus }] = useMutation(
     api.hunts[":id"].status.$patch,
-    { onSuccess: () => query.invalidate() },
+    {
+      onSuccess: () =>
+        queryClient.invalidateQueries({ queryKey: getQueryKey(api.hunts) }),
+    },
   )
 
   const [removeHunt, { isPending: isDeleting }] = useMutation(
     api.hunts[":id"].$delete,
-    { onSuccess: () => query.invalidate() },
+    {
+      onSuccess: () =>
+        queryClient.invalidateQueries({ queryKey: getQueryKey(api.hunts) }),
+    },
   )
 
   const setStatus = (status?: HuntStatus) =>

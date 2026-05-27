@@ -11,7 +11,12 @@ import { Loader } from "@lootopia/dashboard/components/ui/loader"
 import HuntForm from "@lootopia/dashboard/features/hunt/components/HuntForm"
 import type { HuntSubmitData } from "@lootopia/dashboard/features/hunt/schema/hunt"
 import { huntToFormValues } from "@lootopia/dashboard/features/hunt/utils/huntToFormValues"
-import { api, useMutation, useQuery } from "@lootopia/dashboard/lib/api"
+import {
+  api,
+  getQueryKey,
+  useMutation,
+  useQuery,
+} from "@lootopia/dashboard/lib/api"
 import queryClient from "@lootopia/dashboard/lib/queryClient"
 import { MapPinOff } from "lucide-react"
 import { useNavigate, useParams } from "react-router"
@@ -32,7 +37,7 @@ const HuntEditPage = () => {
 
   const [updateHunt, { isPending }] = useMutation(api.hunts[":id"].$put, {
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [api.hunts.$url().toString()] })
+      queryClient.invalidateQueries({ queryKey: getQueryKey(api.hunts) })
       navigate("/hunt")
     },
   })
