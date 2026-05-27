@@ -41,7 +41,7 @@ const UserMarkerInner = ({ map }: { map: mapboxgl.Map }) => {
           className="absolute inset-0"
           style={{ transform: `rotate(${heading}deg)` }}
         >
-          <div className="absolute left-1/2 top-1 h-0 w-0 -translate-x-1/2 border-l-[6px] border-r-[6px] border-b-blue-500 border-l-transparent border-r-transparent opacity-90" />
+          <div className="border-b-10 absolute left-1/2 top-1 h-0 w-0 -translate-x-1/2 border-l-[6px] border-r-[6px] border-b-blue-500 border-l-transparent border-r-transparent opacity-90" />
         </div>
       )}
       <div className="absolute h-6 w-6 animate-ping rounded-full bg-blue-500 opacity-75" />
