@@ -1,14 +1,26 @@
 import { db } from "@lootopia/db/index"
 import {
+  HUNT_SORT,
   HUNT_STATUS,
   type HuntParticipationTable,
   type HuntPointCompletionTable,
   type HuntPointTable,
   type HuntRewardTable,
+  type HuntSort,
   type HuntTable,
+  type ListOrganizerHuntsOptions,
   type QuizQuestionTable,
 } from "@lootopia/db/models/hunt"
 import { sql, type Insertable, type Selectable, type Updateable } from "kysely"
+
+const HUNT_SORT_ORDER: Record<
+  HuntSort,
+  { column: "createdAt" | "title"; direction: "asc" | "desc" }
+> = {
+  [HUNT_SORT.RECENT]: { column: "createdAt", direction: "desc" },
+  [HUNT_SORT.OLDEST]: { column: "createdAt", direction: "asc" },
+  [HUNT_SORT.TITLE]: { column: "title", direction: "asc" },
+}
 
 export type Hunt = Selectable<HuntTable>
 export type NewHunt = Insertable<HuntTable>
@@ -43,22 +55,62 @@ export const $hunt = {
   findById: (id: string) =>
     db.selectFrom("hunts").selectAll().where("id", "=", id).executeTakeFirst(),
 
-  findByOrganizer: (organizerId: string, page: number, limit: number) =>
-    db
+  findByOrganizer: (
+    organizerId: string,
+    page: number,
+    limit: number,
+    options: ListOrganizerHuntsOptions = {},
+  ) => {
+    const order = HUNT_SORT_ORDER[options.sort ?? HUNT_SORT.RECENT]
+
+    let query = db
       .selectFrom("hunts")
       .selectAll()
       .where("organizerId", "=", organizerId)
-      .orderBy("createdAt", "desc")
+
+    if (options.status) {
+      query = query.where("status", "=", options.status)
+    }
+
+    if (options.search) {
+      query = query.where("title", "ilike", `%${options.search}%`)
+    }
+
+    return query
+      .orderBy(order.column, order.direction)
       .limit(limit)
       .offset((page - 1) * limit)
-      .execute(),
+      .execute()
+  },
 
-  countByOrganizer: (organizerId: string) =>
-    db
+  countByOrganizer: (
+    organizerId: string,
+    options: Omit<ListOrganizerHuntsOptions, "sort"> = {},
+  ) => {
+    let query = db
       .selectFrom("hunts")
       .select((eb) => eb.fn.countAll<number>().as("count"))
       .where("organizerId", "=", organizerId)
-      .executeTakeFirstOrThrow(),
+
+    if (options.status) {
+      query = query.where("status", "=", options.status)
+    }
+
+    if (options.search) {
+      query = query.where("title", "ilike", `%${options.search}%`)
+    }
+
+    return query.executeTakeFirstOrThrow()
+  },
+
+  countByOrganizerGrouped: (organizerId: string) =>
+    db
+      .selectFrom("hunts")
+      .select("status")
+      .select((eb) => eb.fn.countAll<number>().as("count"))
+      .where("organizerId", "=", organizerId)
+      .groupBy("status")
+      .execute(),
 
   findPublished: (page: number, limit: number) =>
     db
@@ -121,7 +173,7 @@ export const $huntPoint = {
     db
       .updateTable("hunt_points")
       .set(huntpoint)
-      .where("id", "in", id)
+      .where("id", "=", id)
       .returningAll()
       .executeTakeFirst(),
 
@@ -154,7 +206,7 @@ export const $huntReward = {
     db
       .updateTable("hunt_rewards")
       .set(huntReward)
-      .where("id", "in", id)
+      .where("id", "=", id)
       .returningAll()
       .executeTakeFirst(),
 
@@ -205,7 +257,7 @@ export const $quizQuestion = {
         ...rest,
         ...(answers !== undefined && { answers: JSON.stringify(answers) }),
       })
-      .where("id", "in", id)
+      .where("id", "=", id)
       .returningAll()
       .executeTakeFirst()
   },
@@ -237,6 +289,15 @@ export const $huntParticipation = {
       .where("userId", "=", userId)
       .where("huntId", "=", huntId)
       .executeTakeFirst(),
+
+  countByHuntIds: (huntIds: string[]) =>
+    db
+      .selectFrom("hunt_participations")
+      .select("huntId")
+      .select((eb) => eb.fn.countAll<number>().as("count"))
+      .where("huntId", "in", huntIds)
+      .groupBy("huntId")
+      .execute(),
 }
 
 export const $huntPointCompletion = {
@@ -253,5 +314,19 @@ export const $huntPointCompletion = {
       .selectFrom("hunt_point_completions")
       .select("huntPointId")
       .where("huntParticipationId", "=", huntParticipationId)
+      .execute(),
+
+  countByHuntIds: (huntIds: string[]) =>
+    db
+      .selectFrom("hunt_point_completions")
+      .innerJoin(
+        "hunt_participations",
+        "hunt_participations.id",
+        "hunt_point_completions.huntParticipationId",
+      )
+      .select("hunt_participations.huntId as huntId")
+      .select((eb) => eb.fn.countAll<number>().as("count"))
+      .where("hunt_participations.huntId", "in", huntIds)
+      .groupBy("hunt_participations.huntId")
       .execute(),
 }

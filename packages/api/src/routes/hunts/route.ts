@@ -12,6 +12,7 @@ import {
   listMyHuntsController,
   listPublishedHuntsController,
   updateHuntController,
+  updateHuntStatusController,
   validatePointController,
 } from "@lootopia/api/routes/hunts/controller"
 import {
@@ -26,6 +27,7 @@ import {
   listMyHuntsRoute,
   listPublishedHuntsRoute,
   updateHuntRoute,
+  updateHuntStatusRoute,
   validatePointRoute,
 } from "@lootopia/api/routes/hunts/doc"
 
@@ -42,5 +44,6 @@ const huntsRouter = createRouter<AuthenticatedContext>()
   .openapi(joinHuntRoute, joinHuntController)
   .openapi(deleteHuntPointRoute, deleteHuntPointController)
   .openapi(deleteHuntRewardRoute, deleteHuntRewardController)
+  .openapi(updateHuntStatusRoute, updateHuntStatusController)
 
 export default huntsRouter

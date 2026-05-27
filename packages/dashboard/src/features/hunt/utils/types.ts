@@ -1,4 +1,4 @@
-import type { HuntGameType } from "@lootopia/dashboard/features/hunt/utils/constant.ts"
+import type { HuntGameType } from "@lootopia/dashboard/features/hunt/utils/constants"
 import type { Marker } from "mapbox-gl"
 
 export interface HuntPoint {

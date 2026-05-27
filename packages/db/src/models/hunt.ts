@@ -11,6 +11,14 @@ export const HUNT_STATUS = {
 
 export type HuntStatus = (typeof HUNT_STATUS)[keyof typeof HUNT_STATUS]
 
+export const HUNT_SORT = {
+  RECENT: "recent",
+  OLDEST: "oldest",
+  TITLE: "title",
+} as const
+
+export type HuntSort = (typeof HUNT_SORT)[keyof typeof HUNT_SORT]
+
 export const HUNT_GAME_TYPE = {
   QUIZ: "quiz",
   AR: "ar",
@@ -67,4 +75,10 @@ export interface HuntPointCompletionTable {
   huntPointId: string
   score: number
   completedAt: Timestamp
+}
+
+export interface ListOrganizerHuntsOptions {
+  status?: HuntStatus
+  search?: string
+  sort?: HuntSort
 }

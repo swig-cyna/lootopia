@@ -2,9 +2,9 @@ import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import { Badge } from "@lootopia/dashboard/components/ui/badge"
 import { Button } from "@lootopia/dashboard/components/ui/button"
-import { HUNT_GAME_TYPE } from "@lootopia/dashboard/features/hunt/utils/constant"
-import { GripVertical, Pencil, Trash2 } from "lucide-react"
 import type { HuntFormValues } from "@lootopia/dashboard/features/hunt/schema/hunt"
+import { HUNT_GAME_TYPE } from "@lootopia/dashboard/features/hunt/utils/constants"
+import { GripVertical, Pencil, Trash2 } from "lucide-react"
 
 type HuntPoint = HuntFormValues["points"][number]
 

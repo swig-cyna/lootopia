@@ -1,6 +1,6 @@
 import { Card } from "@lootopia/dashboard/components/ui/card"
 import type { HuntFormValues } from "@lootopia/dashboard/features/hunt/schema/hunt"
-import { HUNT_GAME_TYPE } from "@lootopia/dashboard/features/hunt/utils/constant"
+import { HUNT_GAME_TYPE } from "@lootopia/dashboard/features/hunt/utils/constants"
 import { SearchBox } from "@mapbox/search-js-react"
 import mapboxgl from "mapbox-gl"
 import "mapbox-gl/dist/mapbox-gl.css"
@@ -12,6 +12,8 @@ import { v4 as uuidv4 } from "uuid"
 const MAPBOX_STYLE = "mapbox://styles/mapbox/streets-v11"
 const MAP_DEFAULT_CENTER: [number, number] = [2.3522, 48.8566]
 const MAP_DEFAULT_ZOOM = 5
+const MAP_FIT_PADDING = 80
+const MAP_FIT_MAX_ZOOM = 15
 
 type MapPoint = {
   id: string
@@ -126,6 +128,40 @@ const HuntMap = ({ handleRef }: HuntMapProps) => {
     syncFormPoints()
   }
 
+  const initExistingMarkers = (map: mapboxgl.Map) => {
+    const existing = getValues("points")
+
+    if (existing.length === 0) {
+      return
+    }
+
+    const bounds = new mapboxgl.LngLatBounds()
+
+    pointsRef.current = existing.map((point, index) => {
+      const { el, root } = buildMarkerElement(index + 1)
+      const marker = new mapboxgl.Marker({ element: el, draggable: true })
+        .setLngLat([point.longitude, point.latitude])
+        .addTo(map)
+
+      marker.on("dragend", handleMarkerDragEnd(point.id, marker))
+      bounds.extend([point.longitude, point.latitude])
+
+      return {
+        id: point.id,
+        lat: point.latitude,
+        lng: point.longitude,
+        marker,
+        root,
+      }
+    })
+
+    map.fitBounds(bounds, {
+      padding: MAP_FIT_PADDING,
+      maxZoom: MAP_FIT_MAX_ZOOM,
+      duration: 0,
+    })
+  }
+
   const handleMapClick = (map: mapboxgl.Map) => (e: mapboxgl.MapMouseEvent) => {
     const { lng, lat } = e.lngLat
     const id = uuidv4()
@@ -174,6 +210,7 @@ const HuntMap = ({ handleRef }: HuntMapProps) => {
     setMapInstance(map)
     map.addControl(new mapboxgl.NavigationControl(), "top-right")
     map.on("click", handleMapClick(map))
+    initExistingMarkers(map)
 
     return () => map.remove()
   }, [])
