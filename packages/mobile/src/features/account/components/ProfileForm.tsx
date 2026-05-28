@@ -47,9 +47,7 @@ const ProfileForm = () => {
   }
 
   return (
-    <section className="flex flex-col gap-4">
-      <h2 className="text-lg font-semibold">Profile</h2>
-
+    <div className="flex flex-col gap-4">
       <form id="profile-form" onSubmit={handleSubmit(onSubmit)}>
         <FieldGroup>
           <Field>
@@ -76,7 +74,7 @@ const ProfileForm = () => {
       >
         Save changes
       </Button>
-    </section>
+    </div>
   )
 }
 

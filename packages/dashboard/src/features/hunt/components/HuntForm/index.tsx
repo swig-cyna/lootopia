@@ -89,8 +89,8 @@ const HuntForm = ({
         <form onSubmit={handleSubmit} className="flex h-full gap-4">
           <HuntMap handleRef={mapHandleRef} />
 
-          <Card className="flex w-96 shrink-0 flex-col">
-            <CardContent className="flex flex-1 flex-col gap-4 overflow-y-auto">
+          <Card className="flex h-full w-96 shrink-0 flex-col">
+            <CardContent className="flex min-h-0 flex-1 flex-col gap-4 overflow-hidden">
               <HuntDetails />
 
               <HuntPointsList

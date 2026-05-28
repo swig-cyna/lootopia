@@ -17,11 +17,16 @@ const AccountHeader = () => {
     })
   }
 
+  const initial = session?.user.name?.charAt(0).toUpperCase() ?? "?"
+
   return (
-    <div className="flex items-center justify-between">
-      <div>
-        <h1 className="text-3xl">Account</h1>
-        <p className="text-muted-foreground mt-1 text-sm">
+    <div className="flex items-center gap-4">
+      <div className="bg-primary text-primary-foreground flex size-14 shrink-0 items-center justify-center rounded-full text-xl font-bold">
+        {initial}
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="truncate font-semibold">{session?.user.name}</p>
+        <p className="text-muted-foreground truncate text-sm">
           {session?.user.email}
         </p>
       </div>

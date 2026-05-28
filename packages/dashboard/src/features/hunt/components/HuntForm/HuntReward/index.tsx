@@ -27,8 +27,8 @@ const HuntReward = ({ onConfigure }: HuntRewardProps) => {
           "hover:bg-accent focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2",
         )}
       >
-        <span className="bg-primary/10 text-primary flex size-10 shrink-0 items-center justify-center rounded-md">
-          <Trophy className="size-5" />
+        <span className="bg-primary text-primary flex size-10 shrink-0 items-center justify-center rounded-md">
+          <Trophy className="text-foreground size-5" />
         </span>
 
         <span className="flex flex-1 flex-col">
