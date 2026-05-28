@@ -26,20 +26,14 @@ const SigninForm = () => {
     resolver: standardSchemaResolver(signinSchema),
   })
 
-  const onSubmit = async (data: SigninFormValues) => {
-    await authClient.signIn.email(
+  const onSubmit = (data: SigninFormValues) =>
+    authClient.signIn.email(
       { email: data.email, password: data.password },
       {
-        onError: (ctx) => {
-          setError("root", { message: ctx.error.message })
-        },
-        onSuccess: async () => {
-          await authClient.getSession()
-          navigate("/")
-        },
+        onSuccess: () => navigate("/"),
+        onError: (ctx) => setError("root", { message: ctx.error.message }),
       },
     )
-  }
 
   return (
     <div className="flex w-full flex-col gap-8">

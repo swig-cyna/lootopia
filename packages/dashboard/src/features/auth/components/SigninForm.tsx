@@ -1,4 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod"
+import {
+  signinSchema,
+  type SigninFormValues,
+} from "@lootopia/common/schemas/auth"
 import { Button } from "@lootopia/dashboard/components/ui/button"
 import {
   Card,
@@ -15,10 +19,6 @@ import {
   FieldLabel,
 } from "@lootopia/dashboard/components/ui/field"
 import { Input } from "@lootopia/dashboard/components/ui/input"
-import {
-  signinSchema,
-  type SigninFormValues,
-} from "@lootopia/common/schemas/auth"
 import authClient from "@lootopia/dashboard/features/auth/utils/auth-client"
 import { useForm } from "react-hook-form"
 import { useNavigate } from "react-router"
@@ -34,20 +34,14 @@ const SigninForm = () => {
     resolver: zodResolver(signinSchema),
   })
 
-  const onSubmit = async (data: SigninFormValues) => {
-    await authClient.signIn.email(
+  const onSubmit = (data: SigninFormValues) =>
+    authClient.signIn.email(
       { email: data.email, password: data.password },
       {
-        onError: (ctx) => {
-          setError("root", { message: ctx.error.message })
-        },
-        onSuccess: async () => {
-          await authClient.getSession()
-          navigate("/")
-        },
-      },
+        onSuccess: () => navigate("/"),
+        onError: (ctx) => setError("root", { message: ctx.error.message }),
+      }
     )
-  }
 
   return (
     <Card className="w-full max-w-sm">
