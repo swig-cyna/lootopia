@@ -24,7 +24,7 @@ export const HUNT_STATUS_BADGE: Record<
   },
   [HUNT_STATUS.DRAFT]: {
     label: "Draft",
-    className: "border border-dashed text-muted-foreground",
+    className: "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400",
   },
 }
 
@@ -37,6 +37,3 @@ export const HUNT_SORT_OPTIONS: { value: HuntSort; label: string }[] = [
 export const HUNT_LIST_PAGE_SIZE = 10
 
 export const SEARCH_DEBOUNCE_MS = 300
-
-export const HUNT_LIST_GRID_COLS =
-  "grid grid-cols-[minmax(0,1fr)_64px_104px_72px_160px_88px_44px] items-center gap-4"

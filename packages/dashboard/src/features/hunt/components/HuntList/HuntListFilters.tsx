@@ -1,3 +1,8 @@
+import {
+  HUNT_STATUS,
+  type HuntSort,
+  type HuntStatus,
+} from "@lootopia/common/constants/hunt"
 import { Button } from "@lootopia/dashboard/components/ui/button"
 import { Input } from "@lootopia/dashboard/components/ui/input"
 import {
@@ -11,11 +16,6 @@ import {
   TabsTrigger,
 } from "@lootopia/dashboard/components/ui/tabs"
 import { useHuntListContext } from "@lootopia/dashboard/features/hunt/components/HuntList/HuntList.context"
-import {
-  HUNT_STATUS,
-  type HuntSort,
-  type HuntStatus,
-} from "@lootopia/common/constants/hunt"
 import { HUNT_SORT_OPTIONS } from "@lootopia/dashboard/features/hunt/utils/constants"
 import { ArrowUpDown, Check, Search } from "lucide-react"
 import { useState, type ChangeEvent } from "react"
@@ -24,14 +24,14 @@ const ALL_TAB = "all"
 
 const HuntListFilters = () => {
   const { data } = useHuntListContext()
-  const { counts, filters, setStatus, setSearch, setSort } = data
+  const { filters, setStatus, setSearch, setSort } = data
 
   const [isSortOpen, setIsSortOpen] = useState(false)
 
   const statusTabs = [
-    { value: ALL_TAB, label: "All", count: counts.all },
-    { value: HUNT_STATUS.PUBLISHED, label: "Live", count: counts.published },
-    { value: HUNT_STATUS.DRAFT, label: "Drafts", count: counts.draft },
+    { value: ALL_TAB, label: "All" },
+    { value: HUNT_STATUS.PUBLISHED, label: "Live" },
+    { value: HUNT_STATUS.DRAFT, label: "Drafts" },
   ]
 
   const activeSortLabel = HUNT_SORT_OPTIONS.find(
@@ -57,7 +57,6 @@ const HuntListFilters = () => {
           {statusTabs.map((tab) => (
             <TabsTrigger key={tab.value} value={tab.value}>
               {tab.label}
-              <span className="text-muted-foreground text-xs">{tab.count}</span>
             </TabsTrigger>
           ))}
         </TabsList>
