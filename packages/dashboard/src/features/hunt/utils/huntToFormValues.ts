@@ -38,7 +38,7 @@ export const huntToFormValues = (hunt: HuntForEdit): HuntFormValues => ({
     .sort((a, b) => a.position - b.position)
     .map(toFormPoint),
   reward: {
-    topX: hunt.reward.topX,
-    promoCode: hunt.reward.promoCode,
+    topX: hunt.reward?.topX ?? 0,
+    promoCode: hunt.reward?.promoCode ?? "",
   },
 })

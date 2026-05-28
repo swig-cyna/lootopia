@@ -1,12 +1,10 @@
 import { type RouteHandler } from "@hono/zod-openapi"
 import { type AuthenticatedContext } from "@lootopia/api/lib/hono"
-import { MAX_AR_SCORE } from "@lootopia/common/constants/hunt"
-import {
-  $huntParticipation,
-  $huntPoint,
-  $huntPointCompletion,
-  $quizQuestion,
-} from "@lootopia/db/repositories/hunt.repository"
+import { HUNT_GAME_TYPE, MAX_AR_SCORE } from "@lootopia/common/constants/hunt"
+import { $huntParticipation } from "@lootopia/db/repositories/hunt-participation.repository"
+import { $huntPointCompletion } from "@lootopia/db/repositories/hunt-point-completion.repository"
+import { $huntPoint } from "@lootopia/db/repositories/hunt-point.repository"
+import { $quizQuestion } from "@lootopia/db/repositories/quiz-question.repository"
 import * as StatusCodes from "stoker/http-status-codes"
 
 import type {
@@ -21,13 +19,13 @@ export const validatePointController: RouteHandler<
   const { id } = req.valid("param")
   const body = req.valid("json")
 
-  const huntPoint = await $huntPoint.findById(id)
+  const huntPoint = await $huntPoint.byId(id)
 
   if (!huntPoint) {
     return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
   }
 
-  const participation = await $huntParticipation.findByUserAndHunt(
+  const participation = await $huntParticipation.byUserAndHunt(
     user.id,
     huntPoint.huntId,
   )
@@ -37,8 +35,8 @@ export const validatePointController: RouteHandler<
   }
 
   const [allHuntPoints, completions] = await Promise.all([
-    $huntPoint.findByHuntIds([huntPoint.huntId]),
-    $huntPointCompletion.findByParticipationId(participation.id),
+    $huntPoint.byHuntIds([huntPoint.huntId]),
+    $huntPointCompletion.byParticipationId(participation.id).execute(),
   ])
 
   const completedPointIds = new Set(completions.map((c) => c.huntPointId))
@@ -62,8 +60,8 @@ export const validatePointController: RouteHandler<
   }
 
   const isCorrect = await (async () => {
-    if (body.gameType === "quiz") {
-      const quiz = await $quizQuestion.findByHuntPointId(id)
+    if (body.gameType === HUNT_GAME_TYPE.QUIZ) {
+      const quiz = await $quizQuestion.byHuntPointId(id)
 
       if (!quiz) {
         return false

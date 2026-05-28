@@ -266,6 +266,9 @@ importers:
       kysely:
         specifier: ^0.28.17
         version: 0.28.17
+      kysely-paginate:
+        specifier: ^0.3.1
+        version: 0.3.1(kysely@0.28.17)
       pg:
         specifier: ^8.20.0
         version: 8.20.0
@@ -3364,6 +3367,12 @@ packages:
         optional: true
       kysely-prisma-postgres:
         optional: true
+
+  kysely-paginate@0.3.1:
+    resolution: {integrity: sha512-isZh9lFExDp8C6GFXUyQLxn18tQzRtEcs7jf1DftDRBYJSZi+OdIa4gMf5THwwAM5kEaihk7+cdyv9Fr7xCvyw==}
+    engines: {node: '>= 16.14.0'}
+    peerDependencies:
+      kysely: '*'
 
   kysely@0.28.17:
     resolution: {integrity: sha512-nbD8lB9EB3wNdMhOCdx5Li8DxnLbvKByylRLcJ1h+4SkrowVeECAyZlyiKMThF7xFdRz0jSQ2MoJr+wXux2y0Q==}
@@ -7548,6 +7557,10 @@ snapshots:
     transitivePeerDependencies:
       - magicast
       - typescript
+
+  kysely-paginate@0.3.1(kysely@0.28.17):
+    dependencies:
+      kysely: 0.28.17
 
   kysely@0.28.17: {}
 

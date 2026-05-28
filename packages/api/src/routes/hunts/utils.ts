@@ -1,28 +1,7 @@
 import type { CreateHuntPointInput } from "@lootopia/api/routes/hunts/schema"
-import {
-  type Hunt,
-  $huntPoint,
-  $huntReward,
-  $quizQuestion,
-} from "@lootopia/db/repositories/hunt.repository"
-
-export const buildHuntResponse = async (hunt: Hunt) => {
-  const [huntPoints, huntRewards] = await Promise.all([
-    $huntPoint.findByHuntIds([hunt.id]),
-    $huntReward.findByHuntIds([hunt.id]),
-  ])
-
-  const quizQuestions = await $quizQuestion.findByHuntPointIds(
-    huntPoints.map((p) => p.id),
-  )
-
-  const points = huntPoints.map((point) => ({
-    ...point,
-    quizQuestion: quizQuestions.find((q) => q.huntPointId === point.id),
-  }))
-
-  return { ...hunt, points, reward: huntRewards[0] }
-}
+import { HUNT_GAME_TYPE } from "@lootopia/common/constants/hunt"
+import { $huntPoint } from "@lootopia/db/repositories/hunt-point.repository"
+import { $quizQuestion } from "@lootopia/db/repositories/quiz-question.repository"
 
 export const createHuntPoints = async (
   huntId: string,
@@ -38,7 +17,7 @@ export const createHuntPoints = async (
         gameType: point.gameType,
       }
 
-      if (point.gameType === "ar") {
+      if (point.gameType === HUNT_GAME_TYPE.AR) {
         return { ...base, arId: point.arId }
       }
 
@@ -46,22 +25,25 @@ export const createHuntPoints = async (
     }),
   )
 
-  const quizPoints = points
-    .map((point, i) => ({ point, huntPoint: huntPoints[i] }))
-    .filter(
-      (entry): entry is typeof entry & { point: { gameType: "quiz" } } =>
-        entry.point.gameType === "quiz",
-    )
+  const quizQuestions = huntPoints.flatMap((huntPoint, i) => {
+    const point = points[i]
 
-  if (quizPoints.length > 0) {
-    await $quizQuestion.create(
-      quizPoints.map(({ point, huntPoint }) => ({
+    if (point.gameType !== HUNT_GAME_TYPE.QUIZ) {
+      return []
+    }
+
+    return [
+      {
         huntPointId: huntPoint.id,
         question: point.quiz.question,
         answers: point.quiz.answers,
         correctAnswerIndex: point.quiz.correctAnswerIndex,
-      })),
-    )
+      },
+    ]
+  })
+
+  if (quizQuestions.length > 0) {
+    await $quizQuestion.create(quizQuestions)
   }
 
   return huntPoints

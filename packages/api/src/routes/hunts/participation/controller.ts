@@ -1,14 +1,11 @@
 import { type RouteHandler } from "@hono/zod-openapi"
 import { type AuthenticatedContext } from "@lootopia/api/lib/hono"
 import { paginate } from "@lootopia/api/utils/responses"
-import {
-  $hunt,
-  $huntParticipation,
-  $huntPoint,
-  $huntPointCompletion,
-  $huntReward,
-  $quizQuestion,
-} from "@lootopia/db/repositories/hunt.repository"
+import { $huntParticipation } from "@lootopia/db/repositories/hunt-participation.repository"
+import { $huntPointCompletion } from "@lootopia/db/repositories/hunt-point-completion.repository"
+import { $hunt } from "@lootopia/db/repositories/hunt.repository"
+import { type QuizQuestion } from "@lootopia/db/repositories/quiz-question.repository"
+import { paginateQuery } from "@lootopia/db/utils"
 import * as StatusCodes from "stoker/http-status-codes"
 
 import type {
@@ -18,37 +15,39 @@ import type {
   listPublishedHuntsRoute,
 } from "@lootopia/api/routes/hunts/participation/doc"
 
+const toPlayerQuizQuestion = (
+  quizQuestion: QuizQuestion | null | undefined,
+) => {
+  if (!quizQuestion) {
+    return undefined
+  }
+
+  return {
+    id: quizQuestion.id,
+    huntPointId: quizQuestion.huntPointId,
+    question: quizQuestion.question,
+    answers: quizQuestion.answers,
+  }
+}
+
 export const listPublishedHuntsController: RouteHandler<
   typeof listPublishedHuntsRoute,
   AuthenticatedContext
 > = async ({ req, json, var: { user } }) => {
   const { page, limit } = req.valid("query")
 
-  const [hunts, { count }, participations] = await Promise.all([
-    $hunt.findPublished(page, limit),
-    $hunt.countPublished(),
-    $huntParticipation.findByUser(user.id),
-  ])
+  const { result: hunts, count } = await paginateQuery(
+    $hunt.findPublished(user.id),
+    { pageSize: limit, pageIndex: page - 1 },
+    "id",
+  )
 
-  const joinedHuntIds = new Set(participations.map((p) => p.huntId))
-
-  const huntIds = hunts.map((hunt) => hunt.id)
-  const huntPoints =
-    huntIds.length > 0 ? await $huntPoint.findByHuntIds(huntIds) : []
-  const huntRewards =
-    huntIds.length > 0 ? await $huntReward.findByHuntIds(huntIds) : []
-
-  const huntsWithPoints = hunts.map((hunt) => ({
+  const result = hunts.map((hunt) => ({
     ...hunt,
-    isJoined: joinedHuntIds.has(hunt.id),
-    points: huntPoints.filter((point) => point.huntId === hunt.id),
-    reward: huntRewards.find((reward) => reward.huntId === hunt.id)!,
+    isJoined: hunt.participation !== null,
   }))
 
-  return json(
-    paginate(huntsWithPoints, Number(count), page, limit),
-    StatusCodes.OK,
-  )
+  return json(paginate(result, Number(count), page, limit), StatusCodes.OK)
 }
 
 export const listMyHuntsController: RouteHandler<
@@ -57,29 +56,13 @@ export const listMyHuntsController: RouteHandler<
 > = async ({ req, json, var: { user } }) => {
   const { page, limit } = req.valid("query")
 
-  const participations = await $huntParticipation.findByUser(user.id)
-
-  if (participations.length === 0) {
-    return json(paginate([], 0, page, limit), StatusCodes.OK)
-  }
-
-  const huntIds = participations.map((p) => p.huntId)
-  const [hunts, huntPoints, huntRewards] = await Promise.all([
-    $hunt.findByIds(huntIds),
-    $huntPoint.findByHuntIds(huntIds),
-    $huntReward.findByHuntIds(huntIds),
-  ])
-
-  const huntsWithPoints = hunts.map((hunt) => ({
-    ...hunt,
-    points: huntPoints.filter((point) => point.huntId === hunt.id),
-    reward: huntRewards.find((reward) => reward.huntId === hunt.id)!,
-  }))
-
-  return json(
-    paginate(huntsWithPoints, participations.length, page, limit),
-    StatusCodes.OK,
+  const { result: hunts, count } = await paginateQuery(
+    $hunt.byJoinedByUser(user.id),
+    { pageSize: limit, pageIndex: page - 1 },
+    "hunts.id",
   )
+
+  return json(paginate(hunts, Number(count), page, limit), StatusCodes.OK)
 }
 
 export const getPublishedHuntController: RouteHandler<
@@ -87,45 +70,22 @@ export const getPublishedHuntController: RouteHandler<
   AuthenticatedContext
 > = async ({ req, json, var: { user } }) => {
   const { huntId } = req.valid("param")
-  const hunt = await $hunt.findById(huntId)
 
-  if (!hunt || hunt.status !== "published") {
+  const [huntWithDetails, participation] = await Promise.all([
+    $hunt.byIdWithDetails(huntId),
+    $huntParticipation.byUserAndHunt(user.id, huntId),
+  ])
+
+  if (!huntWithDetails || huntWithDetails.status !== "published") {
     return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
   }
 
-  const huntPoints = await $huntPoint.findByHuntIds([hunt.id])
-
-  const quizQuestions = await $quizQuestion.findByHuntPointIds(
-    huntPoints.map((point) => point.id),
-  )
-
-  const huntPointsWithQuiz = huntPoints.map((point) => {
-    const q = quizQuestions.find((quiz) => quiz.huntPointId === point.id)
-
-    return {
-      ...point,
-      quizQuestion: q
-        ? {
-            id: q.id,
-            huntPointId: q.huntPointId,
-            question: q.question,
-            answers: q.answers,
-          }
-        : undefined,
-    }
-  })
-
-  const [participation, huntReward] = await Promise.all([
-    $huntParticipation.findByUserAndHunt(user.id, hunt.id),
-    $huntReward.findByHuntIds([hunt.id]),
-  ])
-
-  if (!huntReward[0]) {
+  if (!huntWithDetails.reward) {
     return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
   }
 
   const completions = participation
-    ? await $huntPointCompletion.findByParticipationId(participation.id)
+    ? await $huntPointCompletion.byParticipationId(participation.id).execute()
     : []
 
   const completedPointIds = completions.map((c) => c.huntPointId)
@@ -133,9 +93,11 @@ export const getPublishedHuntController: RouteHandler<
 
   return json(
     {
-      ...hunt,
-      points: huntPointsWithQuiz,
-      reward: huntReward[0],
+      ...huntWithDetails,
+      points: huntWithDetails.points.map(({ quizQuestion, ...point }) => ({
+        ...point,
+        quizQuestion: toPlayerQuizQuestion(quizQuestion),
+      })),
       completedPointIds,
       totalScore,
     },
@@ -149,13 +111,13 @@ export const joinHuntController: RouteHandler<
 > = async ({ req, json, var: { user } }) => {
   const { huntId } = req.valid("param")
 
-  const hunt = await $hunt.findById(huntId)
+  const hunt = await $hunt.byId(huntId)
 
   if (!hunt || hunt.status !== "published") {
     return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
   }
 
-  const existing = await $huntParticipation.findByUserAndHunt(user.id, huntId)
+  const existing = await $huntParticipation.byUserAndHunt(user.id, huntId)
 
   if (existing) {
     return json({ error: "Already joined this hunt" }, StatusCodes.CONFLICT)

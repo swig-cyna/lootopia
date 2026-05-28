@@ -13,7 +13,7 @@ export const requireHuntOwner: MiddlewareHandler<HuntOwnerContext> = async (
   next,
 ) => {
   const id = req.param("huntId")!
-  const hunt = await $hunt.findById(id)
+  const hunt = await $hunt.byId(id)
 
   if (!hunt) {
     return json({ error: StatusPhrases.NOT_FOUND }, StatusCodes.NOT_FOUND)

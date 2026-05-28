@@ -2,13 +2,11 @@ import { type RouteHandler } from "@hono/zod-openapi"
 import { type AuthenticatedContext } from "@lootopia/api/lib/hono"
 import { paginate } from "@lootopia/api/utils/responses"
 import { HUNT_STATUS } from "@lootopia/common/constants/hunt"
-import {
-  $hunt,
-  $huntParticipation,
-  $huntPoint,
-  $huntPointCompletion,
-  $huntReward,
-} from "@lootopia/db/repositories/hunt.repository"
+import { $huntPoint } from "@lootopia/db/repositories/hunt-point.repository"
+import { $huntReward } from "@lootopia/db/repositories/hunt-reward.repository"
+import { $hunt } from "@lootopia/db/repositories/hunt.repository"
+import { db } from "@lootopia/db"
+import { paginateQuery } from "@lootopia/db/utils"
 import * as StatusCodes from "stoker/http-status-codes"
 
 import type {
@@ -19,10 +17,7 @@ import type {
   updateHuntRoute,
   updateHuntStatusRoute,
 } from "@lootopia/api/routes/hunts/doc"
-import {
-  buildHuntResponse,
-  createHuntPoints,
-} from "@lootopia/api/routes/hunts/utils"
+import { createHuntPoints } from "@lootopia/api/routes/hunts/utils"
 
 export const createHuntController: RouteHandler<
   typeof createHuntRoute,
@@ -45,7 +40,7 @@ export const createHuntController: RouteHandler<
     }),
   ])
 
-  return json(await buildHuntResponse(hunt), StatusCodes.CREATED)
+  return json((await $hunt.byIdWithDetails(hunt.id))!, StatusCodes.CREATED)
 }
 
 export const listHuntsController: RouteHandler<
@@ -54,21 +49,44 @@ export const listHuntsController: RouteHandler<
 > = async ({ req, json, var: { user } }) => {
   const { page, limit, status, search, sort } = req.valid("query")
 
-  const [hunts, { count }, statusCounts] = await Promise.all([
-    $hunt.findByOrganizer(user.id, page, limit, { status, search, sort }),
-    $hunt.countByOrganizer(user.id, { status, search }),
-    $hunt.countByOrganizerGrouped(user.id),
+  const [{ result: hunts, count }, statusCounts] = await Promise.all([
+    paginateQuery(
+      $hunt.byOrganizer(user.id, { status, search, sort }),
+      { pageSize: limit, pageIndex: page - 1 },
+      "id",
+    ),
+    db
+      .selectFrom("hunts")
+      .select("status")
+      .select((eb) => eb.fn.countAll<number>().as("count"))
+      .where("organizerId", "=", user.id)
+      .groupBy("status")
+      .execute(),
   ])
 
   const huntIds = hunts.map((hunt) => hunt.id)
 
-  const [huntPoints, huntRewards, participationCounts, completionCounts] =
-    await Promise.all([
-      $huntPoint.findByHuntIds(huntIds),
-      $huntReward.findByHuntIds(huntIds),
-      $huntParticipation.countByHuntIds(huntIds),
-      $huntPointCompletion.countByHuntIds(huntIds),
-    ])
+  const [participationCounts, completionCounts] = await Promise.all([
+    db
+      .selectFrom("hunt_participations")
+      .select("huntId")
+      .select((eb) => eb.fn.countAll<number>().as("count"))
+      .where("huntId", "in", huntIds)
+      .groupBy("huntId")
+      .execute(),
+    db
+      .selectFrom("hunt_point_completions")
+      .innerJoin(
+        "hunt_participations",
+        "hunt_participations.id",
+        "hunt_point_completions.huntParticipationId",
+      )
+      .select("hunt_participations.huntId as huntId")
+      .select((eb) => eb.fn.countAll<number>().as("count"))
+      .where("hunt_participations.huntId", "in", huntIds)
+      .groupBy("hunt_participations.huntId")
+      .execute(),
+  ])
 
   const playerCountByHunt = new Map(
     participationCounts.map((row) => [row.huntId, Number(row.count)]),
@@ -78,21 +96,16 @@ export const listHuntsController: RouteHandler<
   )
 
   const data = hunts.map((hunt) => {
-    const points = huntPoints.filter((point) => point.huntId === hunt.id)
     const playerCount = playerCountByHunt.get(hunt.id) ?? 0
     const totalCompletions = completionCountByHunt.get(hunt.id) ?? 0
     const completionRate =
-      playerCount > 0 && points.length > 0
-        ? Math.round((totalCompletions / (playerCount * points.length)) * 100)
+      playerCount > 0 && hunt.points.length > 0
+        ? Math.round(
+            (totalCompletions / (playerCount * hunt.points.length)) * 100,
+          )
         : 0
 
-    return {
-      ...hunt,
-      points,
-      reward: huntRewards.find((reward) => reward.huntId === hunt.id)!,
-      playerCount,
-      completionRate,
-    }
+    return { ...hunt, playerCount, completionRate }
   })
 
   const publishedCount = Number(
@@ -121,13 +134,14 @@ export const getHuntController: RouteHandler<
   AuthenticatedContext
 > = async ({ req, json }) => {
   const { huntId } = req.valid("param")
-  const hunt = await $hunt.findById(huntId)
+
+  const hunt = await $hunt.byIdWithDetails(huntId)
 
   if (!hunt) {
     return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
   }
 
-  return json(await buildHuntResponse(hunt), StatusCodes.OK)
+  return json(hunt, StatusCodes.OK)
 }
 
 export const updateHuntController: RouteHandler<
@@ -146,25 +160,28 @@ export const updateHuntController: RouteHandler<
     return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
   }
 
-  if (points) {
-    await $huntPoint.deleteByHuntId(hunt.id)
-    await createHuntPoints(hunt.id, points)
-  }
+  await Promise.all([
+    points
+      ? (async () => {
+          await $huntPoint.deleteByHuntId(hunt.id)
+          await createHuntPoints(hunt.id, points)
+        })()
+      : undefined,
+    reward
+      ? $huntReward.update(reward.id, {
+          topX: reward.topX,
+          promoCode: reward.promoCode,
+        })
+      : undefined,
+  ])
 
-  if (reward) {
-    await $huntReward.update(reward.id, {
-      topX: reward.topX,
-      promoCode: reward.promoCode,
-    })
-  }
+  const huntWithDetails = await $hunt.byIdWithDetails(hunt.id)
 
-  const response = await buildHuntResponse(hunt)
-
-  if (!response.reward) {
+  if (!huntWithDetails?.reward) {
     return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
   }
 
-  return json(response, StatusCodes.OK)
+  return json(huntWithDetails, StatusCodes.OK)
 }
 
 export const deleteHuntController: RouteHandler<
@@ -191,11 +208,11 @@ export const updateHuntStatusController: RouteHandler<
     return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
   }
 
-  const response = await buildHuntResponse(hunt)
+  const huntWithDetails = await $hunt.byIdWithDetails(hunt.id)
 
-  if (!response.reward) {
+  if (!huntWithDetails?.reward) {
     return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
   }
 
-  return json(response, StatusCodes.OK)
+  return json(huntWithDetails, StatusCodes.OK)
 }

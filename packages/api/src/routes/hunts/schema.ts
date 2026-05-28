@@ -38,9 +38,9 @@ export const huntsPointSchema = z.object({
   longitude: z.number(),
   gameType: z.enum([HUNT_GAME_TYPE.QUIZ, HUNT_GAME_TYPE.AR]),
   arId: z.enum(AR_GAME_IDS).nullable().optional(),
-  createdAt: z.date(),
+  createdAt: z.string(),
   position: z.number(),
-  quizQuestion: quizQuestionSchema.optional(),
+  quizQuestion: quizQuestionSchema.nullish(),
 })
 
 export const playerHuntsPointSchema = huntsPointSchema.extend({
@@ -81,7 +81,7 @@ export const huntSchema = z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
   points: z.array(huntsPointSchema),
-  reward: huntsRewardSchema,
+  reward: huntsRewardSchema.nullable(),
 })
 
 export const playerHuntSchema = huntSchema.extend({

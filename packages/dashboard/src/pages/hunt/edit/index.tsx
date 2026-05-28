@@ -48,7 +48,7 @@ const HuntEditPage = () => {
       json: {
         ...data,
         reward: {
-          ...hunt!.reward,
+          ...hunt!.reward!,
           topX: data.reward.topX,
           promoCode: data.reward.promoCode,
         },

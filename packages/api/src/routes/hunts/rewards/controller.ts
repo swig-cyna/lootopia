@@ -1,6 +1,6 @@
 import { type RouteHandler } from "@hono/zod-openapi"
 import { type AuthenticatedContext } from "@lootopia/api/lib/hono"
-import { $huntReward } from "@lootopia/db/repositories/hunt.repository"
+import { $huntReward } from "@lootopia/db/repositories/hunt-reward.repository"
 import * as StatusCodes from "stoker/http-status-codes"
 
 import type { deleteHuntRewardRoute } from "@lootopia/api/routes/hunts/rewards/doc"
