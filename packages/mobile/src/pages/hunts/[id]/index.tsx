@@ -6,7 +6,10 @@ import DebugMenu from "@lootopia/mobile/features/map/components/DebugMenu"
 import MapCanvas from "@lootopia/mobile/features/map/components/MapCanvas"
 import MapControls from "@lootopia/mobile/features/map/components/MapControls"
 import UserMarker from "@lootopia/mobile/features/map/components/UserMarker"
-import { HuntMapProvider } from "@lootopia/mobile/features/map/context/HuntMapContext"
+import {
+  HuntMapProvider,
+  useHuntMap,
+} from "@lootopia/mobile/features/map/context/HuntMapContext"
 import { api, useQuery } from "@lootopia/mobile/lib/api"
 import { ArrowLeft, LoaderCircle } from "lucide-react"
 import { useNavigate, useParams } from "react-router"
@@ -14,6 +17,7 @@ import { useNavigate, useParams } from "react-router"
 const HuntPageContent = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const { mapReady } = useHuntMap()
 
   const {
     data: hunt,
@@ -58,13 +62,18 @@ const HuntPageContent = () => {
       />
 
       <button
-        onClick={() => navigate("/")}
+        onClick={handleGoBack}
         className="absolute left-4 top-4 z-10 rounded-full bg-white p-2 shadow-lg transition-transform hover:bg-gray-100 active:scale-95"
       >
         <ArrowLeft className="size-5 text-gray-700" />
       </button>
       <MapControls />
       {import.meta.env.DEV && <DebugMenu />}
+      {!mapReady && (
+        <div className="bg-muted absolute inset-0 z-20 flex items-center justify-center">
+          <LoaderCircle className="text-primary size-8 animate-spin" />
+        </div>
+      )}
     </div>
   )
 }

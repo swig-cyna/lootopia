@@ -9,14 +9,33 @@ import {
 } from "@lootopia/mobile/components/ui/empty"
 import HuntCardSkeleton from "@lootopia/mobile/features/hunts/components/HuntCardSkeleton"
 import MyHuntCard from "@lootopia/mobile/features/hunts/components/MyHunts/MyHuntCard"
-import { api, useQuery } from "@lootopia/mobile/lib/api"
+import useIntersectionObserver from "@lootopia/mobile/hooks/useIntersectionObserver"
+import { api, useInfiniteQuery } from "@lootopia/mobile/lib/api"
 import { LocateOff } from "lucide-react"
+import { useCallback } from "react"
 import { useNavigate } from "react-router"
 
 const MyHunts = () => {
   const navigate = useNavigate()
 
-  const { data, isPending, isError } = useQuery(api.hunts.mine, { query: {} })
+  const {
+    data,
+    isPending,
+    isError,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery(api.hunts.mine, { query: {} })
+
+  const handleFetchNext = useCallback(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage()
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage])
+
+  const sentinelRef = useIntersectionObserver(handleFetchNext, hasNextPage)
+
+  const handleExplore = () => navigate("/explore")
 
   if (isPending) {
     return <HuntCardSkeleton count={2} />
@@ -30,7 +49,9 @@ const MyHunts = () => {
     )
   }
 
-  if (data.data.length === 0) {
+  const hunts = data.pages.flatMap((page) => page.data)
+
+  if (hunts.length === 0) {
     return (
       <Empty>
         <EmptyHeader>
@@ -41,7 +62,7 @@ const MyHunts = () => {
           <EmptyDescription>Join a hunt to get started</EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
-          <Button size="lg" onClick={() => navigate("/explore")}>
+          <Button size="lg" onClick={handleExplore}>
             Explore hunts
           </Button>
         </EmptyContent>
@@ -51,9 +72,11 @@ const MyHunts = () => {
 
   return (
     <div className="flex flex-col gap-3">
-      {data.data.map((hunt) => (
+      {hunts.map((hunt) => (
         <MyHuntCard key={hunt.id} hunt={hunt} />
       ))}
+      <div ref={sentinelRef} />
+      {isFetchingNextPage && <HuntCardSkeleton count={2} />}
     </div>
   )
 }

@@ -21,11 +21,11 @@ import pointsRouter from "@lootopia/api/routes/hunts/points/route"
 const huntsRouter = createRouter<AuthenticatedContext>()
   .openapi(createHuntRoute, createHuntController)
   .openapi(listHuntsRoute, listHuntsController)
+  .route("/", participationRouter)
+  .route("/", pointsRouter)
   .openapi(getHuntRoute, getHuntController)
   .openapi(updateHuntRoute, updateHuntController)
   .openapi(deleteHuntRoute, deleteHuntController)
   .openapi(updateHuntStatusRoute, updateHuntStatusController)
-  .route("/", participationRouter)
-  .route("/", pointsRouter)
 
 export default huntsRouter

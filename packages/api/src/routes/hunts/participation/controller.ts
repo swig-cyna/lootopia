@@ -100,6 +100,7 @@ export const getPublishedHuntController: RouteHandler<
       })),
       completedPointIds,
       totalScore,
+      isJoined: Boolean(participation),
     },
     StatusCodes.OK,
   )

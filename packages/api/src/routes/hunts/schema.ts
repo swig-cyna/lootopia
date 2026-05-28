@@ -91,6 +91,7 @@ export const playerHuntSchema = huntSchema.extend({
 export const playerHuntDetailSchema = playerHuntSchema.extend({
   completedPointIds: z.array(z.string()),
   totalScore: z.number(),
+  isJoined: z.boolean(),
 })
 
 export const createHuntSchema = z.object({
