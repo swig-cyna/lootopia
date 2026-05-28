@@ -24,6 +24,7 @@ import { FormProvider, useForm } from "react-hook-form"
 type HuntFormProps = {
   defaultValues?: HuntFormValues
   onSubmit: (_data: HuntSubmitData) => Promise<void>
+  onBack?: () => void
   isPending: boolean
   submitLabel: string
 }
@@ -38,6 +39,7 @@ const EMPTY_DEFAULTS: HuntFormValues = {
 const HuntForm = ({
   defaultValues,
   onSubmit,
+  onBack,
   isPending,
   submitLabel,
 }: HuntFormProps) => {
@@ -101,9 +103,21 @@ const HuntForm = ({
             <CardFooter className="flex-col gap-3 border-t pt-4">
               <HuntReward onConfigure={handleOpenReward} />
 
-              <Button type="submit" className="w-full" disabled={isPending}>
-                {submitLabel}
-              </Button>
+              <div className="flex w-full gap-2">
+                {onBack && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="flex-1"
+                    onClick={onBack}
+                  >
+                    Back
+                  </Button>
+                )}
+                <Button type="submit" className="flex-1" disabled={isPending}>
+                  {submitLabel}
+                </Button>
+              </div>
             </CardFooter>
           </Card>
         </form>

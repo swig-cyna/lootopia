@@ -17,13 +17,14 @@ import {
   useMutation,
   useQuery,
 } from "@lootopia/dashboard/lib/api"
-import queryClient from "@lootopia/dashboard/lib/queryClient"
+import { useQueryClient } from "@tanstack/react-query"
 import { MapPinOff } from "lucide-react"
 import { useNavigate, useParams } from "react-router"
 
 const HuntEditPage = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
   const handleBack = () => navigate("/hunt")
 
@@ -38,6 +39,9 @@ const HuntEditPage = () => {
   const [updateHunt, { isPending }] = useMutation(api.hunts[":huntId"].$put, {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: getQueryKey(api.hunts) })
+      queryClient.invalidateQueries({
+        queryKey: getQueryKey(api.hunts[":huntId"], { param: { huntId: id! } }),
+      })
       navigate("/hunt")
     },
   })
@@ -89,6 +93,7 @@ const HuntEditPage = () => {
     <HuntForm
       defaultValues={huntToFormValues(hunt)}
       onSubmit={handleSubmit}
+      onBack={handleBack}
       isPending={isPending}
       submitLabel="Save changes"
     />
