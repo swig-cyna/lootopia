@@ -1,5 +1,6 @@
 import { db } from "@lootopia/db/index"
 import { type HuntRewardTable } from "@lootopia/db/models/hunt"
+import { safeIn } from "@lootopia/db/utils"
 import { type Insertable, type Selectable, type Updateable } from "kysely"
 
 export type HuntReward = Selectable<HuntRewardTable>
@@ -18,7 +19,7 @@ export const $huntReward = {
     db
       .selectFrom("hunt_rewards")
       .selectAll()
-      .where("huntId", "in", huntId)
+      .where((eb) => safeIn(eb, "huntId", huntId))
       .execute(),
 
   create: (huntReward: NewHuntReward) =>

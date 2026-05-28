@@ -2,11 +2,11 @@ import { type RouteHandler } from "@hono/zod-openapi"
 import { type AuthenticatedContext } from "@lootopia/api/lib/hono"
 import { paginate } from "@lootopia/api/utils/responses"
 import { HUNT_STATUS } from "@lootopia/common/constants/hunt"
+import { db } from "@lootopia/db"
 import { $huntPoint } from "@lootopia/db/repositories/hunt-point.repository"
 import { $huntReward } from "@lootopia/db/repositories/hunt-reward.repository"
 import { $hunt } from "@lootopia/db/repositories/hunt.repository"
-import { db } from "@lootopia/db"
-import { paginateQuery } from "@lootopia/db/utils"
+import { paginateQuery, safeIn } from "@lootopia/db/utils"
 import * as StatusCodes from "stoker/http-status-codes"
 
 import type {
@@ -71,7 +71,7 @@ export const listHuntsController: RouteHandler<
       .selectFrom("hunt_participations")
       .select("huntId")
       .select((eb) => eb.fn.countAll<number>().as("count"))
-      .where("huntId", "in", huntIds)
+      .where((eb) => safeIn(eb, "huntId", huntIds))
       .groupBy("huntId")
       .execute(),
     db
@@ -83,7 +83,7 @@ export const listHuntsController: RouteHandler<
       )
       .select("hunt_participations.huntId as huntId")
       .select((eb) => eb.fn.countAll<number>().as("count"))
-      .where("hunt_participations.huntId", "in", huntIds)
+      .where((eb) => safeIn(eb, "hunt_participations.huntId", huntIds))
       .groupBy("hunt_participations.huntId")
       .execute(),
   ])

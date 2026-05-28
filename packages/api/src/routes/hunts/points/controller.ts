@@ -7,10 +7,7 @@ import { $huntPoint } from "@lootopia/db/repositories/hunt-point.repository"
 import { $quizQuestion } from "@lootopia/db/repositories/quiz-question.repository"
 import * as StatusCodes from "stoker/http-status-codes"
 
-import type {
-  deleteHuntPointRoute,
-  validatePointRoute,
-} from "@lootopia/api/routes/hunts/points/doc"
+import type { validatePointRoute } from "@lootopia/api/routes/hunts/points/doc"
 
 export const validatePointController: RouteHandler<
   typeof validatePointRoute,
@@ -82,15 +79,4 @@ export const validatePointController: RouteHandler<
   })
 
   return json({ isCorrect }, StatusCodes.OK)
-}
-
-export const deleteHuntPointController: RouteHandler<
-  typeof deleteHuntPointRoute,
-  AuthenticatedContext
-> = async ({ req, body }) => {
-  const { pointId } = req.valid("param")
-
-  await $huntPoint.delete(pointId)
-
-  return body(null, StatusCodes.NO_CONTENT)
 }

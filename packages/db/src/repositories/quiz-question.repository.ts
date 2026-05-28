@@ -1,5 +1,6 @@
 import { db } from "@lootopia/db/index"
 import { type QuizQuestionTable } from "@lootopia/db/models/hunt"
+import { safeIn } from "@lootopia/db/utils"
 import { type Insertable, type Selectable, type Updateable } from "kysely"
 
 export type QuizQuestion = Selectable<QuizQuestionTable>
@@ -32,7 +33,7 @@ export const $quizQuestion = {
     db
       .selectFrom("quiz_questions")
       .selectAll()
-      .where("huntPointId", "in", huntPointId)
+      .where((eb) => safeIn(eb, "huntPointId", huntPointId))
       .execute(),
 
   create: (quizQuestion: NewQuizQuestion[]) =>
