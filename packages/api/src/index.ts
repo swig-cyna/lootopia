@@ -50,7 +50,7 @@ app.doc("/doc", {
 app.get(
   "/reference",
   Scalar({
-    url: "/doc",
+    url: "/api/doc",
   }),
 )
 

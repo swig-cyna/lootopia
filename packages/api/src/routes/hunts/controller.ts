@@ -1,7 +1,7 @@
 import { type RouteHandler } from "@hono/zod-openapi"
 import { type AuthenticatedContext } from "@lootopia/api/lib/hono"
 import { paginate } from "@lootopia/api/utils/responses"
-import { HUNT_STATUS, MAX_AR_SCORE } from "@lootopia/common/constants/hunt"
+import { HUNT_STATUS } from "@lootopia/common/constants/hunt"
 import {
   $hunt,
   $huntParticipation,
@@ -14,18 +14,11 @@ import * as StatusCodes from "stoker/http-status-codes"
 
 import type {
   createHuntRoute,
-  deleteHuntPointRoute,
-  deleteHuntRewardRoute,
   deleteHuntRoute,
   getHuntRoute,
-  getPublishedHuntRoute,
-  joinHuntRoute,
   listHuntsRoute,
-  listMyHuntsRoute,
-  listPublishedHuntsRoute,
   updateHuntRoute,
   updateHuntStatusRoute,
-  validatePointRoute,
 } from "@lootopia/api/routes/hunts/doc"
 
 export const createHuntController: RouteHandler<
@@ -188,67 +181,6 @@ export const getHuntController: RouteHandler<
   )
 }
 
-export const getPublishedHuntController: RouteHandler<
-  typeof getPublishedHuntRoute,
-  AuthenticatedContext
-> = async ({ req, json, var: { user } }) => {
-  const { id } = req.valid("param")
-  const hunt = await $hunt.findById(id)
-
-  if (!hunt || hunt.status !== "published") {
-    return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
-  }
-
-  const huntPoints = await $huntPoint.findByHuntIds([hunt.id])
-
-  const quizQuestions = await $quizQuestion.findByHuntPointIds(
-    huntPoints.map((point) => point.id),
-  )
-
-  const huntPointsWithQuiz = huntPoints.map((point) => {
-    const q = quizQuestions.find((quiz) => quiz.huntPointId === point.id)
-
-    return {
-      ...point,
-      quizQuestion: q
-        ? {
-            id: q.id,
-            huntPointId: q.huntPointId,
-            question: q.question,
-            answers: q.answers,
-          }
-        : undefined,
-    }
-  })
-
-  const [participation, huntReward] = await Promise.all([
-    $huntParticipation.findByUserAndHunt(user.id, hunt.id),
-    $huntReward.findByHuntIds([hunt.id]),
-  ])
-
-  if (!huntReward[0]) {
-    return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
-  }
-
-  const completions = participation
-    ? await $huntPointCompletion.findByParticipationId(participation.id)
-    : []
-
-  const completedPointIds = completions.map((c) => c.huntPointId)
-  const totalScore = completions.reduce((sum, c) => sum + c.score, 0)
-
-  return json(
-    {
-      ...hunt,
-      points: huntPointsWithQuiz,
-      reward: huntReward[0],
-      completedPointIds,
-      totalScore,
-    },
-    StatusCodes.OK,
-  )
-}
-
 export const updateHuntController: RouteHandler<
   typeof updateHuntRoute,
   AuthenticatedContext
@@ -345,190 +277,6 @@ export const deleteHuntController: RouteHandler<
   await $hunt.delete(id)
 
   return body(null, StatusCodes.NO_CONTENT)
-}
-
-export const deleteHuntPointController: RouteHandler<
-  typeof deleteHuntPointRoute,
-  AuthenticatedContext
-> = async ({ req, body }) => {
-  const { id } = req.valid("param")
-
-  await $huntPoint.delete(id)
-
-  return body(null, StatusCodes.NO_CONTENT)
-}
-
-export const deleteHuntRewardController: RouteHandler<
-  typeof deleteHuntRewardRoute,
-  AuthenticatedContext
-> = async ({ req, body }) => {
-  const { id } = req.valid("param")
-
-  await $huntReward.delete(id)
-
-  return body(null, StatusCodes.NO_CONTENT)
-}
-
-export const listPublishedHuntsController: RouteHandler<
-  typeof listPublishedHuntsRoute,
-  AuthenticatedContext
-> = async ({ req, json, var: { user } }) => {
-  const { page, limit } = req.valid("query")
-
-  const [hunts, { count }, participations] = await Promise.all([
-    $hunt.findPublished(page, limit),
-    $hunt.countPublished(),
-    $huntParticipation.findByUser(user.id),
-  ])
-
-  const joinedHuntIds = new Set(participations.map((p) => p.huntId))
-
-  const huntIds = hunts.map((hunt) => hunt.id)
-  const huntPoints =
-    huntIds.length > 0 ? await $huntPoint.findByHuntIds(huntIds) : []
-  const huntRewards =
-    huntIds.length > 0 ? await $huntReward.findByHuntIds(huntIds) : []
-
-  const huntsWithPoints = hunts.map((hunt) => ({
-    ...hunt,
-    isJoined: joinedHuntIds.has(hunt.id),
-    points: huntPoints.filter((point) => point.huntId === hunt.id),
-    reward: huntRewards.find((reward) => reward.huntId === hunt.id)!,
-  }))
-
-  return json(
-    paginate(huntsWithPoints, Number(count), page, limit),
-    StatusCodes.OK,
-  )
-}
-
-export const listMyHuntsController: RouteHandler<
-  typeof listMyHuntsRoute,
-  AuthenticatedContext
-> = async ({ req, json, var: { user } }) => {
-  const { page, limit } = req.valid("query")
-
-  const participations = await $huntParticipation.findByUser(user.id)
-
-  if (participations.length === 0) {
-    return json(paginate([], 0, page, limit), StatusCodes.OK)
-  }
-
-  const huntIds = participations.map((p) => p.huntId)
-  const [hunts, huntPoints, huntRewards] = await Promise.all([
-    $hunt.findByIds(huntIds),
-    $huntPoint.findByHuntIds(huntIds),
-    $huntReward.findByHuntIds(huntIds),
-  ])
-
-  const huntsWithPoints = hunts.map((hunt) => ({
-    ...hunt,
-    points: huntPoints.filter((point) => point.huntId === hunt.id),
-    reward: huntRewards.find((reward) => reward.huntId === hunt.id)!,
-  }))
-
-  return json(
-    paginate(huntsWithPoints, participations.length, page, limit),
-    StatusCodes.OK,
-  )
-}
-
-export const validatePointController: RouteHandler<
-  typeof validatePointRoute,
-  AuthenticatedContext
-> = async ({ req, json, var: { user } }) => {
-  const { id } = req.valid("param")
-  const body = req.valid("json")
-
-  const huntPoint = await $huntPoint.findById(id)
-
-  if (!huntPoint) {
-    return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
-  }
-
-  const participation = await $huntParticipation.findByUserAndHunt(
-    user.id,
-    huntPoint.huntId,
-  )
-
-  if (!participation) {
-    return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
-  }
-
-  const [allHuntPoints, completions] = await Promise.all([
-    $huntPoint.findByHuntIds([huntPoint.huntId]),
-    $huntPointCompletion.findByParticipationId(participation.id),
-  ])
-
-  const completedPointIds = new Set(completions.map((c) => c.huntPointId))
-
-  if (completedPointIds.has(id)) {
-    return json({ error: "Point already completed" }, StatusCodes.CONFLICT)
-  }
-
-  const previousPoints = allHuntPoints.filter(
-    (p) => p.position < huntPoint.position,
-  )
-  const allPreviousCompleted = previousPoints.every((p) =>
-    completedPointIds.has(p.id),
-  )
-
-  if (!allPreviousCompleted) {
-    return json(
-      { error: "Previous points must be completed first" },
-      StatusCodes.FORBIDDEN,
-    )
-  }
-
-  const isCorrect = await (async () => {
-    if (body.gameType === "quiz") {
-      const quiz = await $quizQuestion.findByHuntPointId(id)
-
-      if (!quiz) {
-        return false
-      }
-
-      return body.selectedAnswerIndex === quiz.correctAnswerIndex
-    }
-
-    return true
-  })()
-
-  const finalScore = isCorrect ? Math.min(body.score, MAX_AR_SCORE) : 0
-
-  await $huntPointCompletion.create({
-    huntParticipationId: participation.id,
-    huntPointId: id,
-    score: finalScore,
-  })
-
-  return json({ isCorrect }, StatusCodes.OK)
-}
-
-export const joinHuntController: RouteHandler<
-  typeof joinHuntRoute,
-  AuthenticatedContext
-> = async ({ req, json, var: { user } }) => {
-  const { id } = req.valid("param")
-
-  const hunt = await $hunt.findById(id)
-
-  if (!hunt || hunt.status !== "published") {
-    return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
-  }
-
-  const existing = await $huntParticipation.findByUserAndHunt(user.id, id)
-
-  if (existing) {
-    return json({ error: "Already joined this hunt" }, StatusCodes.CONFLICT)
-  }
-
-  const participation = await $huntParticipation.create({
-    huntId: id,
-    userId: user.id,
-  })
-
-  return json(participation, StatusCodes.CREATED)
 }
 
 export const updateHuntStatusController: RouteHandler<
