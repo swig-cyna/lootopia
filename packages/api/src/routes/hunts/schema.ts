@@ -58,6 +58,8 @@ export const createHuntPointSchema = z.discriminatedUnion("gameType", [
   }),
 ])
 
+export type CreateHuntPointInput = z.infer<typeof createHuntPointSchema>
+
 export const huntsRewardSchema = z.object({
   id: z.string(),
   huntId: z.string(),
@@ -104,7 +106,6 @@ export const createHuntSchema = z.object({
 export const updateHuntSchema = z.object({
   title: z.string().min(HUNT_TITLE_MIN).max(HUNT_TITLE_MAX).optional(),
   description: z.string().min(1).optional(),
-  status: z.enum([HUNT_STATUS.DRAFT, HUNT_STATUS.PUBLISHED]).optional(),
   points: z
     .array(createHuntPointSchema)
     .min(HUNT_POINTS_MIN)
@@ -175,3 +176,17 @@ export const paginatedPublishedHuntsSchema =
 
 export const paginatedMyHuntsSchema =
   createPaginatedResponseSchema(playerHuntSchema)
+
+export const huntIdParamSchema = z.object({
+  huntId: z.string(),
+})
+
+export const huntPointParamSchema = z.object({
+  huntId: z.string(),
+  pointId: z.string(),
+})
+
+export const huntRewardParamSchema = z.object({
+  huntId: z.string(),
+  rewardId: z.string(),
+})

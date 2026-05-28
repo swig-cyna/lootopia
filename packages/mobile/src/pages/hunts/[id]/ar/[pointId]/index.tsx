@@ -28,8 +28,8 @@ const ARGamePage = () => {
   const { id, pointId } = useParams<{ id: string; pointId: string }>()
   const navigate = useNavigate()
 
-  const { data: hunt, isPending } = useQuery(api.hunts.published[":id"], {
-    param: { id: id! },
+  const { data: hunt, isPending } = useQuery(api.hunts.published[":huntId"], {
+    param: { huntId: id! },
   })
 
   const handleBack = () => navigate(`/hunts/${id}`)

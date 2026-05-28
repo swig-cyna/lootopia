@@ -21,17 +21,20 @@ type ExploreHuntCardProps = {
 }
 
 const ExploreHuntCard = ({ hunt }: ExploreHuntCardProps) => {
-  const [joinHunt, { isPending }] = useMutation(api.hunts[":id"].join.$post, {
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: getQueryKey(api.hunts.published),
-      })
-      queryClient.invalidateQueries({ queryKey: getQueryKey(api.hunts.mine) })
+  const [joinHunt, { isPending }] = useMutation(
+    api.hunts[":huntId"].join.$post,
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: getQueryKey(api.hunts.published),
+        })
+        queryClient.invalidateQueries({ queryKey: getQueryKey(api.hunts.mine) })
+      },
     },
-  })
+  )
 
   const handleJoin = () => {
-    joinHunt({ param: { id: hunt.id } })
+    joinHunt({ param: { huntId: hunt.id } })
   }
 
   return (

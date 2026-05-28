@@ -1,6 +1,7 @@
 import { createRoute } from "@hono/zod-openapi"
 import { requireRoles } from "@lootopia/api/middlewares/auth.middlewares"
 import {
+  huntIdParamSchema,
   huntParticipationSchema,
   listHuntsQuerySchema,
   paginatedMyHuntsSchema,
@@ -10,7 +11,6 @@ import {
 import {
   createAuthResponses,
   errorResponseSchema,
-  idParamSchema,
 } from "@lootopia/api/utils/responses"
 import { ROLES } from "@lootopia/auth/constants"
 import * as StatusCodes from "stoker/http-status-codes"
@@ -59,7 +59,7 @@ export const listMyHuntsRoute = createRoute({
 
 export const getPublishedHuntRoute = createRoute({
   method: "get",
-  path: "/published/{id}",
+  path: "/published/{huntId}",
   tags: ["Hunts"],
   summary: "Get a published hunt by id",
   description:
@@ -67,7 +67,7 @@ export const getPublishedHuntRoute = createRoute({
   middleware: [requireRoles([ROLES.PLAYER, ROLES.ORGANIZER])],
   security: [{ bearerAuth: [] }],
   request: {
-    params: idParamSchema,
+    params: huntIdParamSchema,
   },
   responses: createAuthResponses({
     [StatusCodes.OK]: jsonContent(playerHuntDetailSchema, "Hunt found"),
@@ -80,14 +80,14 @@ export const getPublishedHuntRoute = createRoute({
 
 export const joinHuntRoute = createRoute({
   method: "post",
-  path: "/{id}/join",
+  path: "/{huntId}/join",
   tags: ["Hunts"],
   summary: "Join a hunt",
   description: "Join a published hunt as a player.\n\nRequired roles: player",
   middleware: [requireRoles([ROLES.PLAYER])],
   security: [{ bearerAuth: [] }],
   request: {
-    params: idParamSchema,
+    params: huntIdParamSchema,
   },
   responses: createAuthResponses({
     [StatusCodes.CREATED]: jsonContent(huntParticipationSchema, "Joined hunt"),

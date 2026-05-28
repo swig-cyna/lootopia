@@ -12,6 +12,6 @@ export interface HuntPoint {
 }
 
 export type HuntForEdit = Exclude<
-  InferResponseType<(typeof api.hunts)[":id"]["$get"]>,
+  InferResponseType<(typeof api.hunts)[":huntId"]["$get"]>,
   { error: unknown }
 >

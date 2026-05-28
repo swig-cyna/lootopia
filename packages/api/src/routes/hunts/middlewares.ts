@@ -12,7 +12,7 @@ export const requireHuntOwner: MiddlewareHandler<HuntOwnerContext> = async (
   { req, json, set, var: { user } },
   next,
 ) => {
-  const id = req.param("id")!
+  const id = req.param("huntId")!
   const hunt = await $hunt.findById(id)
 
   if (!hunt) {

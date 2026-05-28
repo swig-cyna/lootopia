@@ -86,8 +86,8 @@ export const getPublishedHuntController: RouteHandler<
   typeof getPublishedHuntRoute,
   AuthenticatedContext
 > = async ({ req, json, var: { user } }) => {
-  const { id } = req.valid("param")
-  const hunt = await $hunt.findById(id)
+  const { huntId } = req.valid("param")
+  const hunt = await $hunt.findById(huntId)
 
   if (!hunt || hunt.status !== "published") {
     return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
@@ -147,22 +147,22 @@ export const joinHuntController: RouteHandler<
   typeof joinHuntRoute,
   AuthenticatedContext
 > = async ({ req, json, var: { user } }) => {
-  const { id } = req.valid("param")
+  const { huntId } = req.valid("param")
 
-  const hunt = await $hunt.findById(id)
+  const hunt = await $hunt.findById(huntId)
 
   if (!hunt || hunt.status !== "published") {
     return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
   }
 
-  const existing = await $huntParticipation.findByUserAndHunt(user.id, id)
+  const existing = await $huntParticipation.findByUserAndHunt(user.id, huntId)
 
   if (existing) {
     return json({ error: "Already joined this hunt" }, StatusCodes.CONFLICT)
   }
 
   const participation = await $huntParticipation.create({
-    huntId: id,
+    huntId,
     userId: user.id,
   })
 

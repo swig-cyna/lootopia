@@ -2,6 +2,7 @@ import { createRoute } from "@hono/zod-openapi"
 import { requireRoles } from "@lootopia/api/middlewares/auth.middlewares"
 import { requireHuntOwner } from "@lootopia/api/routes/hunts/middlewares"
 import {
+  huntPointParamSchema,
   validatePointResponseSchema,
   validatePointSchema,
 } from "@lootopia/api/routes/hunts/schema"
@@ -50,7 +51,7 @@ export const validatePointRoute = createRoute({
 
 export const deleteHuntPointRoute = createRoute({
   method: "delete",
-  path: "/{huntId}/points/{id}",
+  path: "/{huntId}/points/{pointId}",
   tags: ["Hunts"],
   summary: "Delete a hunt point",
   description:
@@ -58,7 +59,7 @@ export const deleteHuntPointRoute = createRoute({
   middleware: [requireRoles([ROLES.ORGANIZER]), requireHuntOwner],
   security: [{ bearerAuth: [] }],
   request: {
-    params: idParamSchema,
+    params: huntPointParamSchema,
   },
   responses: createAuthResponses({
     [StatusCodes.NO_CONTENT]: { description: "Hunt point deleted" },

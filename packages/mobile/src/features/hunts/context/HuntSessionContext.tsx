@@ -12,7 +12,7 @@ import {
 } from "react"
 
 type HuntApiResponse = InferResponseType<
-  (typeof api.hunts.published)[":id"]["$get"],
+  (typeof api.hunts.published)[":huntId"]["$get"],
   200
 >
 export type HuntPoint = HuntApiResponse["points"][number]

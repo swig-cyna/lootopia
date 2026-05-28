@@ -90,9 +90,9 @@ export const deleteHuntPointController: RouteHandler<
   typeof deleteHuntPointRoute,
   AuthenticatedContext
 > = async ({ req, body }) => {
-  const { id } = req.valid("param")
+  const { pointId } = req.valid("param")
 
-  await $huntPoint.delete(id)
+  await $huntPoint.delete(pointId)
 
   return body(null, StatusCodes.NO_CONTENT)
 }

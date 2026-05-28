@@ -9,9 +9,9 @@ export const deleteHuntRewardController: RouteHandler<
   typeof deleteHuntRewardRoute,
   AuthenticatedContext
 > = async ({ req, body }) => {
-  const { id } = req.valid("param")
+  const { rewardId } = req.valid("param")
 
-  await $huntReward.delete(id)
+  await $huntReward.delete(rewardId)
 
   return body(null, StatusCodes.NO_CONTENT)
 }

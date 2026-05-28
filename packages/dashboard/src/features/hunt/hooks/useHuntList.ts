@@ -59,7 +59,7 @@ export const useHuntList = () => {
   })
 
   const [updateStatus, { isPending: isUpdatingStatus }] = useMutation(
-    api.hunts[":id"].status.$patch,
+    api.hunts[":huntId"].status.$patch,
     {
       onSuccess: () =>
         queryClient.invalidateQueries({ queryKey: getQueryKey(api.hunts) }),
@@ -67,7 +67,7 @@ export const useHuntList = () => {
   )
 
   const [removeHunt, { isPending: isDeleting }] = useMutation(
-    api.hunts[":id"].$delete,
+    api.hunts[":huntId"].$delete,
     {
       onSuccess: () =>
         queryClient.invalidateQueries({ queryKey: getQueryKey(api.hunts) }),
@@ -91,11 +91,11 @@ export const useHuntList = () => {
         ? HUNT_STATUS.DRAFT
         : HUNT_STATUS.PUBLISHED
 
-    updateStatus({ param: { id: hunt.id }, json: { status: nextStatus } })
+    updateStatus({ param: { huntId: hunt.id }, json: { status: nextStatus } })
   }
 
   const deleteHunt = (id: string) => {
-    removeHunt({ param: { id } })
+    removeHunt({ param: { huntId: id } })
   }
 
   const goToCreate = () => navigate("/hunt/create")

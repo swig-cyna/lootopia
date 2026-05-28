@@ -19,8 +19,8 @@ const HuntPageContent = () => {
     data: hunt,
     isPending,
     isError,
-  } = useQuery(api.hunts.published[":id"], {
-    param: { id: id! },
+  } = useQuery(api.hunts.published[":huntId"], {
+    param: { huntId: id! },
   })
 
   const handleGoBack = () => {

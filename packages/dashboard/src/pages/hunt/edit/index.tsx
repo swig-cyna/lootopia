@@ -31,11 +31,11 @@ const HuntEditPage = () => {
     data: hunt,
     isLoading,
     isError,
-  } = useQuery(api.hunts[":id"], {
-    param: { id: id! },
+  } = useQuery(api.hunts[":huntId"], {
+    param: { huntId: id! },
   })
 
-  const [updateHunt, { isPending }] = useMutation(api.hunts[":id"].$put, {
+  const [updateHunt, { isPending }] = useMutation(api.hunts[":huntId"].$put, {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: getQueryKey(api.hunts) })
       navigate("/hunt")
@@ -44,7 +44,7 @@ const HuntEditPage = () => {
 
   const handleSubmit = async (data: HuntSubmitData) => {
     await updateHunt({
-      param: { id: id! },
+      param: { huntId: id! },
       json: {
         ...data,
         reward: {

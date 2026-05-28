@@ -3,6 +3,7 @@ import { requireRoles } from "@lootopia/api/middlewares/auth.middlewares"
 import { requireHuntOwner } from "@lootopia/api/routes/hunts/middlewares"
 import {
   createHuntSchema,
+  huntIdParamSchema,
   huntSchema,
   listOwnHuntsQuerySchema,
   organizerHuntsResponseSchema,
@@ -12,7 +13,6 @@ import {
 import {
   createAuthResponses,
   errorResponseSchema,
-  idParamSchema,
 } from "@lootopia/api/utils/responses"
 import { ROLES } from "@lootopia/auth/constants"
 import * as StatusCodes from "stoker/http-status-codes"
@@ -58,14 +58,14 @@ export const listHuntsRoute = createRoute({
 
 export const getHuntRoute = createRoute({
   method: "get",
-  path: "/{id}",
+  path: "/{huntId}",
   tags: ["Hunts"],
   summary: "Get a hunt by id",
   description: "Get a hunt by id.\n\nRequired roles: organizer",
   middleware: [requireRoles([ROLES.ORGANIZER]), requireHuntOwner],
   security: [{ bearerAuth: [] }],
   request: {
-    params: idParamSchema,
+    params: huntIdParamSchema,
   },
   responses: createAuthResponses({
     [StatusCodes.OK]: jsonContent(huntSchema, "Hunt found"),
@@ -78,7 +78,7 @@ export const getHuntRoute = createRoute({
 
 export const updateHuntRoute = createRoute({
   method: "put",
-  path: "/{id}",
+  path: "/{huntId}",
   tags: ["Hunts"],
   summary: "Update a hunt",
   description:
@@ -86,7 +86,7 @@ export const updateHuntRoute = createRoute({
   middleware: [requireRoles([ROLES.ORGANIZER]), requireHuntOwner],
   security: [{ bearerAuth: [] }],
   request: {
-    params: idParamSchema,
+    params: huntIdParamSchema,
     body: jsonContent(updateHuntSchema, "Hunt update payload"),
   },
   responses: createAuthResponses({
@@ -100,7 +100,7 @@ export const updateHuntRoute = createRoute({
 
 export const deleteHuntRoute = createRoute({
   method: "delete",
-  path: "/{id}",
+  path: "/{huntId}",
   tags: ["Hunts"],
   summary: "Delete a hunt",
   description:
@@ -108,7 +108,7 @@ export const deleteHuntRoute = createRoute({
   middleware: [requireRoles([ROLES.ORGANIZER]), requireHuntOwner],
   security: [{ bearerAuth: [] }],
   request: {
-    params: idParamSchema,
+    params: huntIdParamSchema,
   },
   responses: createAuthResponses({
     [StatusCodes.NO_CONTENT]: { description: "Hunt deleted" },
@@ -121,7 +121,7 @@ export const deleteHuntRoute = createRoute({
 
 export const updateHuntStatusRoute = createRoute({
   method: "patch",
-  path: "/{id}/status",
+  path: "/{huntId}/status",
   tags: ["Hunts"],
   summary: "Update hunt status",
   description:
@@ -129,7 +129,7 @@ export const updateHuntStatusRoute = createRoute({
   middleware: [requireRoles([ROLES.ORGANIZER]), requireHuntOwner],
   security: [{ bearerAuth: [] }],
   request: {
-    params: idParamSchema,
+    params: huntIdParamSchema,
     body: jsonContent(updateHuntStatusSchema, "Hunt status update payload"),
   },
   responses: createAuthResponses({
