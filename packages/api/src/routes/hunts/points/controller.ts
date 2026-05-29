@@ -6,6 +6,7 @@ import { $huntPointCompletion } from "@lootopia/db/repositories/hunt-point-compl
 import { $huntPoint } from "@lootopia/db/repositories/hunt-point.repository"
 import { $quizQuestion } from "@lootopia/db/repositories/quiz-question.repository"
 import * as StatusCodes from "stoker/http-status-codes"
+import * as StatusPhrases from "stoker/http-status-phrases"
 
 import type { validatePointRoute } from "@lootopia/api/routes/hunts/points/doc"
 
@@ -19,7 +20,7 @@ export const validatePointController: RouteHandler<
   const huntPoint = await $huntPoint.byId(id)
 
   if (!huntPoint) {
-    return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
+    return json({ error: StatusPhrases.NOT_FOUND }, StatusCodes.NOT_FOUND)
   }
 
   const participation = await $huntParticipation.byUserAndHunt(
@@ -28,7 +29,7 @@ export const validatePointController: RouteHandler<
   )
 
   if (!participation) {
-    return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
+    return json({ error: StatusPhrases.NOT_FOUND }, StatusCodes.NOT_FOUND)
   }
 
   const [allHuntPoints, completions] = await Promise.all([

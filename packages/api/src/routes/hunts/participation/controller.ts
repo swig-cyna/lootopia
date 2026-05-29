@@ -1,12 +1,14 @@
 import { type RouteHandler } from "@hono/zod-openapi"
 import { type AuthenticatedContext } from "@lootopia/api/lib/hono"
 import { paginate } from "@lootopia/api/utils/responses"
+import { HUNT_STATUS } from "@lootopia/common/constants/hunt"
 import { $huntParticipation } from "@lootopia/db/repositories/hunt-participation.repository"
 import { $huntPointCompletion } from "@lootopia/db/repositories/hunt-point-completion.repository"
 import { $hunt } from "@lootopia/db/repositories/hunt.repository"
 import { type QuizQuestion } from "@lootopia/db/repositories/quiz-question.repository"
 import { paginateQuery } from "@lootopia/db/utils"
 import * as StatusCodes from "stoker/http-status-codes"
+import * as StatusPhrases from "stoker/http-status-phrases"
 
 import type {
   getPublishedHuntRoute,
@@ -76,12 +78,12 @@ export const getPublishedHuntController: RouteHandler<
     $huntParticipation.byUserAndHunt(user.id, huntId),
   ])
 
-  if (!huntWithDetails || huntWithDetails.status !== "published") {
-    return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
+  if (!huntWithDetails || huntWithDetails.status !== HUNT_STATUS.PUBLISHED) {
+    return json({ error: StatusPhrases.NOT_FOUND }, StatusCodes.NOT_FOUND)
   }
 
   if (!huntWithDetails.reward) {
-    return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
+    return json({ error: StatusPhrases.NOT_FOUND }, StatusCodes.NOT_FOUND)
   }
 
   const completions = participation
@@ -114,8 +116,8 @@ export const joinHuntController: RouteHandler<
 
   const hunt = await $hunt.byId(huntId)
 
-  if (!hunt || hunt.status !== "published") {
-    return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
+  if (!hunt || hunt.status !== HUNT_STATUS.PUBLISHED) {
+    return json({ error: StatusPhrases.NOT_FOUND }, StatusCodes.NOT_FOUND)
   }
 
   const existing = await $huntParticipation.byUserAndHunt(user.id, huntId)

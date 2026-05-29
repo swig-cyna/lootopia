@@ -67,6 +67,8 @@ export const huntsRewardSchema = z.object({
   promoCode: z.string(),
 })
 
+export type HuntsRewardInput = z.infer<typeof huntsRewardSchema>
+
 export const createHuntRewardSchema = z.object({
   topX: z.number(),
   promoCode: z.string(),

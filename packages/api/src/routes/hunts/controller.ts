@@ -8,6 +8,7 @@ import { $huntReward } from "@lootopia/db/repositories/hunt-reward.repository"
 import { $hunt } from "@lootopia/db/repositories/hunt.repository"
 import { paginateQuery, safeIn } from "@lootopia/db/utils"
 import * as StatusCodes from "stoker/http-status-codes"
+import * as StatusPhrases from "stoker/http-status-phrases"
 
 import type {
   createHuntRoute,
@@ -138,7 +139,7 @@ export const getHuntController: RouteHandler<
   const hunt = await $hunt.byIdWithDetails(huntId)
 
   if (!hunt) {
-    return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
+    return json({ error: StatusPhrases.NOT_FOUND }, StatusCodes.NOT_FOUND)
   }
 
   return json(hunt, StatusCodes.OK)
@@ -157,7 +158,7 @@ export const updateHuntController: RouteHandler<
   })
 
   if (!hunt) {
-    return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
+    return json({ error: StatusPhrases.NOT_FOUND }, StatusCodes.NOT_FOUND)
   }
 
   await Promise.all([
@@ -178,7 +179,7 @@ export const updateHuntController: RouteHandler<
   const huntWithDetails = await $hunt.byIdWithDetails(hunt.id)
 
   if (!huntWithDetails?.reward) {
-    return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
+    return json({ error: StatusPhrases.NOT_FOUND }, StatusCodes.NOT_FOUND)
   }
 
   return json(huntWithDetails, StatusCodes.OK)
@@ -205,13 +206,13 @@ export const updateHuntStatusController: RouteHandler<
   const hunt = await $hunt.update(huntId, { status })
 
   if (!hunt) {
-    return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
+    return json({ error: StatusPhrases.NOT_FOUND }, StatusCodes.NOT_FOUND)
   }
 
   const huntWithDetails = await $hunt.byIdWithDetails(hunt.id)
 
   if (!huntWithDetails?.reward) {
-    return json({ error: "Not Found" }, StatusCodes.NOT_FOUND)
+    return json({ error: StatusPhrases.NOT_FOUND }, StatusCodes.NOT_FOUND)
   }
 
   return json(huntWithDetails, StatusCodes.OK)

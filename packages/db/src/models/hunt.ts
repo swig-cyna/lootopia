@@ -1,10 +1,10 @@
-import type { Generated, JSONColumnType } from "kysely"
 import type {
   ArGameId,
   HuntGameType,
   HuntSort,
   HuntStatus,
 } from "@lootopia/common/constants/hunt"
+import type { Generated, JSONColumnType } from "kysely"
 import type { Timestamp } from "../schema"
 
 // Use Timestamp directly (not wrapped in Generated) for columns with DB defaults.
