@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
+import { ROLES } from "@lootopia/auth/constants"
 import {
   signinSchema,
   type SigninFormValues,
@@ -34,13 +35,26 @@ const SigninForm = () => {
     resolver: zodResolver(signinSchema),
   })
 
+  const handleSigninError = (ctx: { error: { message: string } }) =>
+    setError("root", { message: ctx.error.message })
+
+  const handleSigninSuccess = async (ctx: {
+    data: { user: { role: string } } | null
+  }) => {
+    if (ctx.data?.user.role === ROLES.PLAYER) {
+      await authClient.signOut()
+      setError("root", { message: "Access restricted to organizers." })
+
+      return
+    }
+
+    navigate("/")
+  }
+
   const onSubmit = (data: SigninFormValues) =>
     authClient.signIn.email(
       { email: data.email, password: data.password },
-      {
-        onSuccess: () => navigate("/"),
-        onError: (ctx) => setError("root", { message: ctx.error.message }),
-      },
+      { onSuccess: handleSigninSuccess, onError: handleSigninError },
     )
 
   return (
