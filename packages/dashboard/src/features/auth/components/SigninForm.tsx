@@ -40,7 +40,7 @@ const SigninForm = () => {
       {
         onSuccess: () => navigate("/"),
         onError: (ctx) => setError("root", { message: ctx.error.message }),
-      }
+      },
     )
 
   return (

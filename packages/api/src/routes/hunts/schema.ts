@@ -60,6 +60,21 @@ export const createHuntPointSchema = z.discriminatedUnion("gameType", [
 
 export type CreateHuntPointInput = z.infer<typeof createHuntPointSchema>
 
+export const updateHuntPointSchema = z.discriminatedUnion("gameType", [
+  basePointInputSchema.extend({
+    id: z.string().optional(),
+    gameType: z.literal(HUNT_GAME_TYPE.QUIZ),
+    quiz: quizConfigSchema,
+  }),
+  basePointInputSchema.extend({
+    id: z.string().optional(),
+    gameType: z.literal(HUNT_GAME_TYPE.AR),
+    arId: z.enum(AR_GAME_IDS, { error: "Please select an AR game" }),
+  }),
+])
+
+export type UpdateHuntPointInput = z.infer<typeof updateHuntPointSchema>
+
 export const huntsRewardSchema = z.object({
   id: z.string(),
   huntId: z.string(),
@@ -107,14 +122,13 @@ export const createHuntSchema = z.object({
 })
 
 export const updateHuntSchema = z.object({
-  title: z.string().min(HUNT_TITLE_MIN).max(HUNT_TITLE_MAX).optional(),
-  description: z.string().min(1).optional(),
+  title: z.string().min(HUNT_TITLE_MIN).max(HUNT_TITLE_MAX),
+  description: z.string(),
   points: z
-    .array(createHuntPointSchema)
+    .array(updateHuntPointSchema)
     .min(HUNT_POINTS_MIN)
-    .max(HUNT_POINTS_MAX)
-    .optional(),
-  reward: huntsRewardSchema.optional(),
+    .max(HUNT_POINTS_MAX),
+  reward: huntsRewardSchema,
 })
 
 export const validatePointSchema = z.discriminatedUnion("gameType", [

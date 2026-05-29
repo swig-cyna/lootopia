@@ -3,7 +3,6 @@ import { type AuthenticatedContext } from "@lootopia/api/lib/hono"
 import { paginate } from "@lootopia/api/utils/responses"
 import { HUNT_STATUS } from "@lootopia/common/constants/hunt"
 import { db } from "@lootopia/db"
-import { $huntPoint } from "@lootopia/db/repositories/hunt-point.repository"
 import { $huntReward } from "@lootopia/db/repositories/hunt-reward.repository"
 import { $hunt } from "@lootopia/db/repositories/hunt.repository"
 import { paginateQuery, safeIn } from "@lootopia/db/utils"
@@ -18,7 +17,10 @@ import type {
   updateHuntRoute,
   updateHuntStatusRoute,
 } from "@lootopia/api/routes/hunts/doc"
-import { createHuntPoints } from "@lootopia/api/routes/hunts/utils"
+import {
+  createHuntPoints,
+  syncHuntPoints,
+} from "@lootopia/api/routes/hunts/utils"
 
 export const createHuntController: RouteHandler<
   typeof createHuntRoute,
@@ -152,28 +154,18 @@ export const updateHuntController: RouteHandler<
   const { huntId } = req.valid("param")
   const { title, description, points, reward } = req.valid("json")
 
-  const hunt = await $hunt.update(huntId, {
-    ...(title !== undefined && { title }),
-    ...(description !== undefined && { description }),
-  })
+  const hunt = await $hunt.update(huntId, { title, description })
 
   if (!hunt) {
     return json({ error: StatusPhrases.NOT_FOUND }, StatusCodes.NOT_FOUND)
   }
 
   await Promise.all([
-    points
-      ? (async () => {
-          await $huntPoint.deleteByHuntId(hunt.id)
-          await createHuntPoints(hunt.id, points)
-        })()
-      : undefined,
-    reward
-      ? $huntReward.update(reward.id, {
-          topX: reward.topX,
-          promoCode: reward.promoCode,
-        })
-      : undefined,
+    syncHuntPoints(hunt.id, points),
+    $huntReward.update(reward.id, {
+      topX: reward.topX,
+      promoCode: reward.promoCode,
+    }),
   ])
 
   const huntWithDetails = await $hunt.byIdWithDetails(hunt.id)

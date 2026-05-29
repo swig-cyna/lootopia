@@ -13,13 +13,6 @@ export const $huntParticipation = {
       .returningAll()
       .executeTakeFirstOrThrow(),
 
-  byUser: (userId: string) =>
-    db
-      .selectFrom("hunt_participations")
-      .selectAll()
-      .where("userId", "=", userId)
-      .orderBy("joinedAt", "desc"),
-
   byUserAndHunt: (userId: string, huntId: string) =>
     db
       .selectFrom("hunt_participations")

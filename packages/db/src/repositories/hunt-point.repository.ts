@@ -34,9 +34,6 @@ export const $huntPoint = {
       .returningAll()
       .executeTakeFirst(),
 
-  deleteByHuntId: (huntId: string) =>
-    db.deleteFrom("hunt_points").where("huntId", "=", huntId).execute(),
-
   delete: (id: string) =>
     db.deleteFrom("hunt_points").where("id", "=", id).execute(),
 }
