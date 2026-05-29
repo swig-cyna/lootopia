@@ -51,6 +51,21 @@ export const $hunt = {
             .selectAll("hunt_rewards")
             .whereRef("hunt_rewards.huntId", "=", "hunts.id"),
         ).as("reward"),
+        eb
+          .selectFrom("hunt_participations")
+          .select((eb2) => eb2.fn.countAll<number>().as("count"))
+          .whereRef("hunt_participations.huntId", "=", "hunts.id")
+          .as("playerCount"),
+        eb
+          .selectFrom("hunt_point_completions")
+          .innerJoin(
+            "hunt_participations",
+            "hunt_participations.id",
+            "hunt_point_completions.huntParticipationId",
+          )
+          .select((eb2) => eb2.fn.countAll<number>().as("count"))
+          .whereRef("hunt_participations.huntId", "=", "hunts.id")
+          .as("completionCount"),
       ])
       .where("organizerId", "=", organizerId)
 
@@ -119,6 +134,7 @@ export const $hunt = {
         ).as("reward"),
       ])
       .where("hunt_participations.userId", "=", userId)
+      .where("hunts.status", "=", HUNT_STATUS.PUBLISHED)
       .orderBy("hunt_participations.joinedAt", "desc"),
 
   byIdWithDetails: (id: string) =>
@@ -169,6 +185,22 @@ export const $hunt = {
       .where("id", "=", id)
       .returningAll()
       .executeTakeFirst(),
+
+  countByStatusForOrganizer: (organizerId: string) =>
+    db
+      .selectFrom("hunts")
+      .select((eb) => [
+        eb.fn
+          .countAll<number>()
+          .filterWhere("status", "=", HUNT_STATUS.PUBLISHED)
+          .as("published"),
+        eb.fn
+          .countAll<number>()
+          .filterWhere("status", "=", HUNT_STATUS.DRAFT)
+          .as("draft"),
+      ])
+      .where("organizerId", "=", organizerId)
+      .executeTakeFirstOrThrow(),
 
   delete: (id: string) => db.deleteFrom("hunts").where("id", "=", id).execute(),
 }

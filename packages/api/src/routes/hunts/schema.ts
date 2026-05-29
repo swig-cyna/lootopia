@@ -19,59 +19,67 @@ import {
   quizConfigSchema,
 } from "@lootopia/common/schemas/hunt"
 
-export const quizQuestionSchema = z.object({
-  id: z.string(),
-  huntPointId: z.string(),
-  question: z.string(),
-  answers: z.array(z.string()),
-  correctAnswerIndex: z.number(),
-})
+// --- Response schemas ---
 
-export const playerQuizQuestionSchema = quizQuestionSchema.omit({
-  correctAnswerIndex: true,
-})
-
-export const huntsPointSchema = z.object({
+export const huntPointSummarySchema = z.object({
   id: z.string(),
-  huntId: z.string(),
   latitude: z.number(),
   longitude: z.number(),
-  gameType: z.enum([HUNT_GAME_TYPE.QUIZ, HUNT_GAME_TYPE.AR]),
-  arId: z.enum(AR_GAME_IDS).nullable().optional(),
-  createdAt: z.string(),
   position: z.number(),
-  quizQuestion: quizQuestionSchema.nullish(),
 })
 
-export const playerHuntsPointSchema = huntsPointSchema.extend({
-  quizQuestion: playerQuizQuestionSchema.optional(),
+const quizGameDetailSchema = z.object({
+  type: z.literal(HUNT_GAME_TYPE.QUIZ),
+  quiz: z.object({
+    question: z.string(),
+    answers: z.array(z.string()),
+    correctIndex: z.number(),
+  }),
 })
 
-export const createHuntPointSchema = z.discriminatedUnion("gameType", [
-  basePointInputSchema.extend({
-    gameType: z.literal(HUNT_GAME_TYPE.QUIZ),
-    quiz: quizConfigSchema,
+const quizGamePlayerSchema = z.object({
+  type: z.literal(HUNT_GAME_TYPE.QUIZ),
+  quiz: z.object({
+    question: z.string(),
+    answers: z.array(z.string()),
   }),
-  basePointInputSchema.extend({
-    gameType: z.literal(HUNT_GAME_TYPE.AR),
-    arId: z.enum(AR_GAME_IDS, { error: "Please select an AR game" }),
-  }),
-])
+})
+
+const arGameSchema = z.object({
+  type: z.literal(HUNT_GAME_TYPE.AR),
+  arId: z.enum(AR_GAME_IDS),
+})
+
+export const huntPointDetailSchema = huntPointSummarySchema.extend({
+  game: z.discriminatedUnion("type", [quizGameDetailSchema, arGameSchema]),
+})
+
+export const huntPointDetailPlayerSchema = huntPointSummarySchema.extend({
+  game: z.discriminatedUnion("type", [quizGamePlayerSchema, arGameSchema]),
+})
+
+// --- Input schemas ---
+
+const quizGameInputSchema = z.object({
+  type: z.literal(HUNT_GAME_TYPE.QUIZ),
+  quiz: quizConfigSchema,
+})
+
+const arGameInputSchema = z.object({
+  type: z.literal(HUNT_GAME_TYPE.AR),
+  arId: z.enum(AR_GAME_IDS, { error: "Please select an AR game" }),
+})
+
+export const createHuntPointSchema = basePointInputSchema.extend({
+  game: z.discriminatedUnion("type", [quizGameInputSchema, arGameInputSchema]),
+})
 
 export type CreateHuntPointInput = z.infer<typeof createHuntPointSchema>
 
-export const updateHuntPointSchema = z.discriminatedUnion("gameType", [
-  basePointInputSchema.extend({
-    id: z.string().optional(),
-    gameType: z.literal(HUNT_GAME_TYPE.QUIZ),
-    quiz: quizConfigSchema,
-  }),
-  basePointInputSchema.extend({
-    id: z.string().optional(),
-    gameType: z.literal(HUNT_GAME_TYPE.AR),
-    arId: z.enum(AR_GAME_IDS, { error: "Please select an AR game" }),
-  }),
-])
+export const updateHuntPointSchema = basePointInputSchema.extend({
+  id: z.string().optional(),
+  game: z.discriminatedUnion("type", [quizGameInputSchema, arGameInputSchema]),
+})
 
 export type UpdateHuntPointInput = z.infer<typeof updateHuntPointSchema>
 
@@ -97,12 +105,12 @@ export const huntSchema = z.object({
   organizerId: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
-  points: z.array(huntsPointSchema),
+  points: z.array(huntPointDetailSchema),
   reward: huntsRewardSchema.nullable(),
 })
 
-export const playerHuntSchema = huntSchema.extend({
-  points: z.array(playerHuntsPointSchema),
+export const playerHuntSchema = huntSchema.omit({ reward: true }).extend({
+  points: z.array(huntPointDetailPlayerSchema),
 })
 
 export const playerHuntDetailSchema = playerHuntSchema.extend({
@@ -162,7 +170,8 @@ export const listOwnHuntsQuerySchema = paginationParamsSchema.extend({
     .default(HUNT_SORT.RECENT),
 })
 
-export const organizerHuntSchema = huntSchema.extend({
+export const organizerHuntSchema = huntSchema.omit({ points: true }).extend({
+  points: z.array(huntPointSummarySchema),
   playerCount: z.number(),
   completionRate: z.number(),
 })
@@ -184,7 +193,13 @@ export const huntParticipationSchema = z.object({
   joinedAt: z.date(),
 })
 
-export const publishedHuntSchema = playerHuntSchema.extend({
+const huntListBaseSchema = huntSchema
+  .omit({ points: true, reward: true })
+  .extend({
+    points: z.array(huntPointSummarySchema),
+  })
+
+export const publishedHuntSchema = huntListBaseSchema.extend({
   isJoined: z.boolean(),
 })
 
@@ -192,7 +207,7 @@ export const paginatedPublishedHuntsSchema =
   createPaginatedResponseSchema(publishedHuntSchema)
 
 export const paginatedMyHuntsSchema =
-  createPaginatedResponseSchema(playerHuntSchema)
+  createPaginatedResponseSchema(huntListBaseSchema)
 
 export const huntIdParamSchema = z.object({
   huntId: z.string(),

@@ -13,14 +13,14 @@ export const quizConfigSchema = z
     answers: z
       .array(z.string().min(1, "Answer text is required"))
       .min(QUIZ_ANSWERS_MIN, `At least ${QUIZ_ANSWERS_MIN} answers required`),
-    correctAnswerIndex: z
+    correctIndex: z
       .number({ error: "Please select a correct answer" })
       .int()
       .min(0, "Please select a correct answer"),
   })
-  .refine((data) => data.correctAnswerIndex < data.answers.length, {
+  .refine((data) => data.correctIndex < data.answers.length, {
     message: "Correct answer index must be a valid index in the answers array",
-    path: ["correctAnswerIndex"],
+    path: ["correctIndex"],
   })
 
 export const arConfigSchema = z.object({

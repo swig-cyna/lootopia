@@ -4,7 +4,7 @@ import { Badge } from "@lootopia/dashboard/components/ui/badge"
 import { Button } from "@lootopia/dashboard/components/ui/button"
 import type { HuntFormValues } from "@lootopia/dashboard/features/hunt/schema/hunt"
 import HuntPointsListDeleteDialog from "./HuntPointsListDeleteDialog"
-import { HUNT_GAME_TYPE } from "@lootopia/dashboard/features/hunt/utils/constants"
+import { HUNT_GAME_TYPE } from "@lootopia/common/constants/hunt"
 import { GripVertical, SquarePen, Trash2 } from "lucide-react"
 import { useState } from "react"
 
@@ -85,8 +85,8 @@ const HuntPointsListRow = ({
         </span>
 
         <div className="min-w-0 flex-1">
-          <Badge variant={GAME_TYPE_VARIANT[point.gameType]}>
-            {GAME_TYPE_LABEL[point.gameType]}
+          <Badge variant={GAME_TYPE_VARIANT[point.game.type]}>
+            {GAME_TYPE_LABEL[point.game.type]}
           </Badge>
           <p className="text-muted-foreground mt-1 truncate text-xs">
             {formatCoords(point.latitude, point.longitude)}

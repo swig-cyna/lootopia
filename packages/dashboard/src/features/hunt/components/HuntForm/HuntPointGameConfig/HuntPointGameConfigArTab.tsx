@@ -1,16 +1,16 @@
 import { zodResolver } from "@hookform/resolvers/zod"
+import { AR_GAMES, HUNT_GAME_TYPE } from "@lootopia/common/constants/hunt"
+import {
+  arConfigSchema,
+  type ArConfigValues,
+} from "@lootopia/common/schemas/hunt"
 import { Button } from "@lootopia/dashboard/components/ui/button"
 import { FieldError } from "@lootopia/dashboard/components/ui/field"
 import {
   RadioGroup,
   RadioGroupItem,
 } from "@lootopia/dashboard/components/ui/radio-group"
-import {
-  arConfigSchema,
-  type ArConfigValues,
-} from "@lootopia/common/schemas/hunt"
 import type { HuntFormValues } from "@lootopia/dashboard/features/hunt/schema/hunt"
-import { AR_GAMES } from "@lootopia/common/constants/hunt"
 import { cn } from "@lootopia/dashboard/lib/utils"
 import {
   Controller,
@@ -31,7 +31,7 @@ const HuntPointGameConfigArTab = ({
   const { getValues, setValue } = useFormContext<HuntFormValues>()
 
   const point = getValues("points").find((p) => p.id === pointId)
-  const existing = point?.gameType === "ar" ? point : undefined
+  const existing = point?.game?.type === "ar" ? point.game : undefined
 
   const methods = useForm<ArConfigValues>({
     resolver: zodResolver(arConfigSchema),
@@ -44,7 +44,7 @@ const HuntPointGameConfigArTab = ({
       "points",
       points.map((p) =>
         p.id === pointId
-          ? { ...p, gameType: "ar" as const, arId: data.arId }
+          ? { ...p, game: { type: HUNT_GAME_TYPE.AR, arId: data.arId } }
           : p,
       ) as HuntFormValues["points"],
     )

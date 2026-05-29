@@ -5,14 +5,6 @@ import {
   type HuntStatus,
 } from "@lootopia/common/constants/hunt"
 
-export const HUNT_GAME_TYPE = {
-  QUIZ: "quiz",
-  AR: "ar",
-  NONE: "none",
-} as const
-
-export type HuntGameType = (typeof HUNT_GAME_TYPE)[keyof typeof HUNT_GAME_TYPE]
-
 export const HUNT_STATUS_BADGE: Record<
   HuntStatus,
   { label: string; className: string }

@@ -1,3 +1,4 @@
+import { HUNT_GAME_TYPE } from "@lootopia/common/constants/hunt"
 import { Button } from "@lootopia/mobile/components/ui/button"
 import {
   Empty,
@@ -57,7 +58,7 @@ const BalloonARGame = ({
     try {
       await validatePoint({
         param: { id: pointId },
-        json: { gameType: "ar", score: gameState.score },
+        json: { gameType: HUNT_GAME_TYPE.AR, score: gameState.score },
       })
       onValidate()
     } catch (error) {

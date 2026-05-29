@@ -18,6 +18,7 @@ import {
   type HuntFormValues,
   type HuntSubmitData,
 } from "@lootopia/dashboard/features/hunt/schema/hunt"
+import { HUNT_GAME_TYPE } from "@lootopia/common/constants/hunt"
 import { useRef, useState } from "react"
 import { FormProvider, useForm } from "react-hook-form"
 
@@ -54,11 +55,8 @@ const HuntForm = ({
 
   const handleSubmit = methods.handleSubmit(async (data) => {
     const points = data.points
-      .filter(
-        (p): p is Exclude<(typeof data.points)[number], { gameType: "none" }> =>
-          p.gameType !== "none",
-      )
-      .map(({ id: _id, ...point }) => point)
+      .filter((p) => p.game.type !== HUNT_GAME_TYPE.NONE)
+      .map(({ id: _id, ...point }) => point) as HuntSubmitData["points"]
 
     try {
       await onSubmit({

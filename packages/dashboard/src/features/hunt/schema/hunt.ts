@@ -1,5 +1,6 @@
 import {
   AR_GAME_IDS,
+  HUNT_GAME_TYPE,
   HUNT_POINTS_MIN,
   HUNT_TITLE_MAX,
   HUNT_TITLE_MIN,
@@ -9,10 +10,29 @@ import {
   quizConfigSchema,
   rewardConfigSchema,
 } from "@lootopia/common/schemas/hunt"
-import { HUNT_GAME_TYPE } from "@lootopia/dashboard/features/hunt/utils/constants"
 import { z } from "zod"
 
 const basePointSchema = basePointInputSchema.extend({ id: z.string() })
+
+const quizGameSchema = z.object({
+  type: z.literal(HUNT_GAME_TYPE.QUIZ),
+  quiz: quizConfigSchema,
+})
+
+const arGameSchema = z.object({
+  type: z.literal(HUNT_GAME_TYPE.AR),
+  arId: z.enum(AR_GAME_IDS),
+})
+
+const noneGameSchema = z.object({
+  type: z.literal(HUNT_GAME_TYPE.NONE),
+})
+
+const pointGameSchema = z.discriminatedUnion("type", [
+  quizGameSchema,
+  arGameSchema,
+  noneGameSchema,
+])
 
 export const huntSchema = z.object({
   title: z
@@ -23,24 +43,7 @@ export const huntSchema = z.object({
     .string()
     .max(200, "Description must be less than 200 characters"),
   points: z
-    .array(
-      z.discriminatedUnion("gameType", [
-        z.object({
-          ...basePointSchema.shape,
-          gameType: z.literal(HUNT_GAME_TYPE.QUIZ),
-          quiz: quizConfigSchema,
-        }),
-        z.object({
-          ...basePointSchema.shape,
-          gameType: z.literal(HUNT_GAME_TYPE.AR),
-          arId: z.enum(AR_GAME_IDS),
-        }),
-        z.object({
-          ...basePointSchema.shape,
-          gameType: z.literal(HUNT_GAME_TYPE.NONE),
-        }),
-      ]),
-    )
+    .array(basePointSchema.extend({ game: pointGameSchema }))
     .min(HUNT_POINTS_MIN, "You must place at least 3 points")
     .refine(
       (points) => points.every((point, index) => point.position === index + 1),
@@ -48,7 +51,7 @@ export const huntSchema = z.object({
     )
     .superRefine((points, ctx) => {
       const hasUnconfigured = points.some(
-        (point) => point.gameType === HUNT_GAME_TYPE.NONE,
+        (point) => point.game.type === HUNT_GAME_TYPE.NONE,
       )
 
       if (hasUnconfigured) {
@@ -59,11 +62,11 @@ export const huntSchema = z.object({
       }
 
       points.forEach((point, index) => {
-        if (point.gameType === HUNT_GAME_TYPE.NONE) {
+        if (point.game.type === HUNT_GAME_TYPE.NONE) {
           ctx.addIssue({
             code: "custom",
             message: "All points must have a game type",
-            path: [index, "gameType"],
+            path: [index, "game", "type"],
           })
         }
       })
@@ -73,24 +76,17 @@ export const huntSchema = z.object({
 
 export type HuntFormValues = z.infer<typeof huntSchema>
 
-export type HuntPointDraft = Extract<
-  HuntFormValues["points"][number],
-  { gameType: "none" }
->
+type HuntFormPoint = HuntFormValues["points"][number]
+type HuntFormPointGame = HuntFormPoint["game"]
 
-type QuizPointFormValues = Extract<
-  HuntFormValues["points"][number],
-  { gameType: "quiz" }
->
-type ArPointFormValues = Extract<
-  HuntFormValues["points"][number],
-  { gameType: "ar" }
->
-
-type HuntPointSubmit =
-  | Omit<QuizPointFormValues, "id">
-  | Omit<ArPointFormValues, "id">
+export type HuntPointDraft = Omit<HuntFormPoint, "game"> & {
+  game: Extract<HuntFormPointGame, { type: "none" }>
+}
 
 export type HuntSubmitData = Omit<HuntFormValues, "points"> & {
-  points: HuntPointSubmit[]
+  points: Array<
+    Omit<HuntFormPoint, "id" | "game"> & {
+      game: Exclude<HuntFormPointGame, { type: "none" }>
+    }
+  >
 }

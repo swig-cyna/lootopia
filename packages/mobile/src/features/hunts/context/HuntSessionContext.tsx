@@ -16,7 +16,9 @@ type HuntApiResponse = InferResponseType<
   200
 >
 export type HuntPoint = HuntApiResponse["points"][number]
-export type QuizQuestion = NonNullable<HuntPoint["quizQuestion"]>
+export type QuizQuestion = NonNullable<
+  Extract<HuntPoint["game"], { type: "quiz" }>["quiz"]
+>
 
 type HuntSessionContextValue = {
   sortedPoints: HuntPoint[]

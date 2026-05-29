@@ -1,3 +1,4 @@
+import { HUNT_GAME_TYPE } from "@lootopia/common/constants/hunt"
 import { Button } from "@lootopia/mobile/components/ui/button"
 import {
   Empty,
@@ -6,7 +7,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@lootopia/mobile/components/ui/empty"
-import type { QuizQuestion } from "@lootopia/mobile/features/hunts/context/HuntSessionContext"
+import type { HuntPoint } from "@lootopia/mobile/features/hunts/context/HuntSessionContext"
 import { api, useMutation } from "@lootopia/mobile/lib/api"
 import { cn } from "@lootopia/mobile/lib/utils"
 import { CheckCircle, Timer, XCircle } from "lucide-react"
@@ -24,7 +25,7 @@ type QuizState = {
 }
 
 type QuizGameProps = {
-  quiz: QuizQuestion
+  point: HuntPoint
   onValidate: (_score: number) => void
 }
 
@@ -63,7 +64,13 @@ const formatElapsed = (ms: number) => {
   return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`
 }
 
-const QuizGame = ({ quiz, onValidate }: QuizGameProps) => {
+const QuizGame = ({ point, onValidate }: QuizGameProps) => {
+  if (point.game.type !== HUNT_GAME_TYPE.QUIZ) {
+    return null
+  }
+
+  const { quiz } = point.game
+
   const [state, setState] = useState<QuizState>({
     started: false,
     selected: null,
@@ -114,7 +121,7 @@ const QuizGame = ({ quiz, onValidate }: QuizGameProps) => {
     )
 
     const result = await validatePoint({
-      param: { id: quiz.huntPointId },
+      param: { id: point.id },
       json: { gameType: "quiz", selectedAnswerIndex: state.selected, score },
     })
 

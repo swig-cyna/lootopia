@@ -1,14 +1,16 @@
+import { HUNT_GAME_TYPE } from "@lootopia/common/constants/hunt"
 import { Button } from "@lootopia/mobile/components/ui/button"
+import type { HuntPoint } from "@lootopia/mobile/features/hunts/context/HuntSessionContext"
 import { api, useMutation } from "@lootopia/mobile/lib/api"
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router"
 
 type ARGameProps = {
-  pointId: string
+  point: HuntPoint
   onValidate: (_score: number) => void
 }
 
-const ARGame = ({ pointId, onValidate }: ARGameProps) => {
+const ARGame = ({ point, onValidate }: ARGameProps) => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const [isARSupported, setIsARSupported] = useState<boolean | null>(null)
@@ -29,12 +31,12 @@ const ARGame = ({ pointId, onValidate }: ARGameProps) => {
       .catch(() => setIsARSupported(false))
   }, [])
 
-  const handleStart = () => navigate(`/hunts/${id}/ar/${pointId}`)
+  const handleStart = () => navigate(`/hunts/${id}/ar/${point.id}`)
 
   const handleSkip = async () => {
     await validatePoint({
-      param: { id: pointId },
-      json: { gameType: "ar", score: 0 },
+      param: { id: point.id },
+      json: { gameType: HUNT_GAME_TYPE.AR, score: 0 },
     })
     onValidate(0)
   }

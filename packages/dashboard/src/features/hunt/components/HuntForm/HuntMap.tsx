@@ -1,6 +1,6 @@
 import { Card } from "@lootopia/dashboard/components/ui/card"
 import type { HuntFormValues } from "@lootopia/dashboard/features/hunt/schema/hunt"
-import { HUNT_GAME_TYPE } from "@lootopia/dashboard/features/hunt/utils/constants"
+import { HUNT_GAME_TYPE } from "@lootopia/common/constants/hunt"
 import { SearchBox } from "@mapbox/search-js-react"
 import mapboxgl from "mapbox-gl"
 import "mapbox-gl/dist/mapbox-gl.css"
@@ -75,7 +75,7 @@ const HuntMap = ({ handleRef }: HuntMapProps) => {
         latitude: p.lat,
         longitude: p.lng,
         position: index + 1,
-        gameType: HUNT_GAME_TYPE.NONE,
+        game: { type: HUNT_GAME_TYPE.NONE },
       }
     })
 
