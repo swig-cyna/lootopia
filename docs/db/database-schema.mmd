@@ -3,9 +3,13 @@ erDiagram
     user ||--o{ account : "has"
     user ||--o| session : "impersonates"
     user ||--o{ hunts : "organizes"
+    user ||--o{ hunt_participations : "joins"
     hunts ||--o{ hunt_points : "has"
     hunts ||--o| hunt_rewards : "has"
+    hunts ||--o{ hunt_participations : "has"
     hunt_points ||--o| quiz_questions : "has"
+    hunt_points ||--o{ hunt_point_completions : "completed via"
+    hunt_participations ||--o{ hunt_point_completions : "has"
 
     user {
         string id PK
@@ -74,7 +78,9 @@ erDiagram
         string huntId FK
         float8 latitude
         float8 longitude
+        integer position
         string gameType
+        string arId
         timestamp createdAt
     }
 
@@ -91,4 +97,19 @@ erDiagram
         string question
         jsonb answers
         integer correctAnswerIndex
+    }
+
+    hunt_participations {
+        string id PK
+        string huntId FK
+        string userId FK
+        timestamp joinedAt
+    }
+
+    hunt_point_completions {
+        string id PK
+        string huntParticipationId FK
+        string huntPointId FK
+        integer score
+        timestamp completedAt
     }

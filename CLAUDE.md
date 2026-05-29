@@ -47,3 +47,4 @@ The following conventions apply to **all code written in this project**, always.
 | `/mapbox`                | Mapbox GL JS, markers, SearchBox                                                 |
 | `/backend-architecture`  | Hono + zod-openapi, route structure, auth middlewares                            |
 | `/code-quality`          | Named handlers, curry functions, early returns, lookup objects, no prop drilling |
+| `/doc`                   | Update `docs/` to reflect current code — run after changes to any package        |
