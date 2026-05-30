@@ -13,9 +13,9 @@ import {
 } from "@lootopia/dashboard/components/ui/radio-group"
 import {
   quizConfigSchema,
-  type HuntFormValues,
   type QuizConfigValues,
-} from "@lootopia/dashboard/features/hunt/schema/hunt"
+} from "@lootopia/common/schemas/hunt"
+import type { HuntFormValues } from "@lootopia/dashboard/features/hunt/schema/hunt"
 import { Plus, Trash2 } from "lucide-react"
 import {
   Controller,
@@ -37,14 +37,14 @@ const HuntPointGameConfigQuizTab = ({
   const { getValues, setValue } = useFormContext<HuntFormValues>()
 
   const point = getValues("points").find((p) => p.id === pointId)
-  const existing = point?.gameType === "quiz" ? point.quiz : undefined
+  const existing = point?.game?.type === "quiz" ? point.game.quiz : undefined
 
   const methods = useForm<QuizConfigValues>({
     resolver: zodResolver(quizConfigSchema),
     defaultValues: existing ?? {
       question: "",
       answers: ["", ""],
-      correctAnswerIndex: NO_ANSWER_SELECTED,
+      correctIndex: NO_ANSWER_SELECTED,
     },
   })
 
@@ -55,12 +55,12 @@ const HuntPointGameConfigQuizTab = ({
   }
 
   const handleRemoveAnswer = (index: number) => () => {
-    const current = methods.getValues("correctAnswerIndex")
+    const current = methods.getValues("correctIndex")
 
     if (current === index) {
-      methods.setValue("correctAnswerIndex", NO_ANSWER_SELECTED)
+      methods.setValue("correctIndex", NO_ANSWER_SELECTED)
     } else if (current > index) {
-      methods.setValue("correctAnswerIndex", current - 1)
+      methods.setValue("correctIndex", current - 1)
     }
 
     methods.setValue(
@@ -74,7 +74,9 @@ const HuntPointGameConfigQuizTab = ({
     setValue(
       "points",
       points.map((p) =>
-        p.id === pointId ? { ...p, gameType: "quiz" as const, quiz: data } : p,
+        p.id === pointId
+          ? { ...p, game: { type: "quiz" as const, quiz: data } }
+          : p,
       ) as HuntFormValues["points"],
     )
     onSave()
@@ -94,7 +96,7 @@ const HuntPointGameConfigQuizTab = ({
             <FieldLabel>Answers</FieldLabel>
             <Controller
               control={methods.control}
-              name="correctAnswerIndex"
+              name="correctIndex"
               render={({ field }) => (
                 <RadioGroup
                   value={field.value >= 0 ? String(field.value) : ""}
@@ -127,7 +129,7 @@ const HuntPointGameConfigQuizTab = ({
             <FieldError
               errors={[
                 methods.formState.errors.answers?.root,
-                methods.formState.errors.correctAnswerIndex,
+                methods.formState.errors.correctIndex,
               ]}
             />
 

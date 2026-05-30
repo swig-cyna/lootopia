@@ -7,13 +7,28 @@ import {
 } from "@lootopia/mobile/components/ui/empty"
 import ExploreHuntCard from "@lootopia/mobile/features/hunts/components/Explore/ExploreHuntCard"
 import HuntCardSkeleton from "@lootopia/mobile/features/hunts/components/HuntCardSkeleton"
-import { api, useQuery } from "@lootopia/mobile/lib/api"
+import useIntersectionObserver from "@lootopia/mobile/hooks/useIntersectionObserver"
+import { api, useInfiniteQuery } from "@lootopia/mobile/lib/api"
 import { Map } from "lucide-react"
+import { useCallback } from "react"
 
 const Explore = () => {
-  const { data, isPending, isError } = useQuery(api.hunts.published, {
-    query: {},
-  })
+  const {
+    data,
+    isPending,
+    isError,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery(api.hunts.published, { query: {} })
+
+  const handleFetchNext = useCallback(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage()
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage])
+
+  const sentinelRef = useIntersectionObserver(handleFetchNext, hasNextPage)
 
   if (isPending) {
     return <HuntCardSkeleton />
@@ -27,7 +42,9 @@ const Explore = () => {
     )
   }
 
-  if (data.data.length === 0) {
+  const hunts = data.pages.flatMap((page) => page.data)
+
+  if (hunts.length === 0) {
     return (
       <Empty>
         <EmptyHeader>
@@ -45,9 +62,11 @@ const Explore = () => {
 
   return (
     <div className="flex flex-col gap-3">
-      {data.data.map((hunt) => (
+      {hunts.map((hunt) => (
         <ExploreHuntCard key={hunt.id} hunt={hunt} />
       ))}
+      <div ref={sentinelRef} />
+      {isFetchingNextPage && <HuntCardSkeleton />}
     </div>
   )
 }

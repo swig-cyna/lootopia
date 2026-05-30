@@ -17,9 +17,9 @@ import {
 import { Input } from "@lootopia/dashboard/components/ui/input"
 import {
   rewardConfigSchema,
-  type HuntFormValues,
   type RewardConfigValues,
-} from "@lootopia/dashboard/features/hunt/schema/hunt"
+} from "@lootopia/common/schemas/hunt"
+import type { HuntFormValues } from "@lootopia/dashboard/features/hunt/schema/hunt"
 import { useForm, useFormContext } from "react-hook-form"
 
 const DEFAULT_TOP_X = 1

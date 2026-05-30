@@ -1,4 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod"
+import { ROLES } from "@lootopia/auth/constants"
+import {
+  signinSchema,
+  type SigninFormValues,
+} from "@lootopia/common/schemas/auth"
 import { Button } from "@lootopia/dashboard/components/ui/button"
 import {
   Card,
@@ -15,10 +20,6 @@ import {
   FieldLabel,
 } from "@lootopia/dashboard/components/ui/field"
 import { Input } from "@lootopia/dashboard/components/ui/input"
-import {
-  signinSchema,
-  type SigninFormValues,
-} from "@lootopia/dashboard/features/auth/schema/signin"
 import authClient from "@lootopia/dashboard/features/auth/utils/auth-client"
 import { useForm } from "react-hook-form"
 import { useNavigate } from "react-router"
@@ -34,20 +35,27 @@ const SigninForm = () => {
     resolver: zodResolver(signinSchema),
   })
 
-  const onSubmit = async (data: SigninFormValues) => {
-    await authClient.signIn.email(
-      { email: data.email, password: data.password },
-      {
-        onError: (ctx) => {
-          setError("root", { message: ctx.error.message })
-        },
-        onSuccess: async () => {
-          await authClient.getSession()
-          navigate("/")
-        },
-      },
-    )
+  const handleSigninError = (ctx: { error: { message: string } }) =>
+    setError("root", { message: ctx.error.message })
+
+  const handleSigninSuccess = async (ctx: {
+    data: { user: { role: string } } | null
+  }) => {
+    if (ctx.data?.user.role === ROLES.PLAYER) {
+      await authClient.signOut()
+      setError("root", { message: "Access restricted to organizers." })
+
+      return
+    }
+
+    navigate("/")
   }
+
+  const onSubmit = (data: SigninFormValues) =>
+    authClient.signIn.email(
+      { email: data.email, password: data.password },
+      { onSuccess: handleSigninSuccess, onError: handleSigninError },
+    )
 
   return (
     <Card className="w-full max-w-sm">

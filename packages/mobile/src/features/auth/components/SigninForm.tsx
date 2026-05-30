@@ -10,7 +10,7 @@ import { Input } from "@lootopia/mobile/components/ui/input"
 import {
   signinSchema,
   type SigninFormValues,
-} from "@lootopia/mobile/features/auth/schema/signin"
+} from "@lootopia/common/schemas/auth"
 import authClient from "@lootopia/mobile/features/auth/utils/auth-client"
 import { useForm } from "react-hook-form"
 import { useNavigate } from "react-router"
@@ -26,20 +26,14 @@ const SigninForm = () => {
     resolver: standardSchemaResolver(signinSchema),
   })
 
-  const onSubmit = async (data: SigninFormValues) => {
-    await authClient.signIn.email(
+  const onSubmit = (data: SigninFormValues) =>
+    authClient.signIn.email(
       { email: data.email, password: data.password },
       {
-        onError: (ctx) => {
-          setError("root", { message: ctx.error.message })
-        },
-        onSuccess: async () => {
-          await authClient.getSession()
-          navigate("/")
-        },
+        onSuccess: () => navigate("/"),
+        onError: (ctx) => setError("root", { message: ctx.error.message }),
       },
     )
-  }
 
   return (
     <div className="flex w-full flex-col gap-8">

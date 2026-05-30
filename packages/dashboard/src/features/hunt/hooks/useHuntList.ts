@@ -1,13 +1,21 @@
 import {
-  HUNT_LIST_PAGE_SIZE,
   HUNT_SORT,
   HUNT_STATUS,
-  SEARCH_DEBOUNCE_MS,
   type HuntSort,
   type HuntStatus,
+} from "@lootopia/common/constants/hunt"
+import {
+  HUNT_LIST_PAGE_SIZE,
+  SEARCH_DEBOUNCE_MS,
 } from "@lootopia/dashboard/features/hunt/utils/constants"
 import { useDebouncedValue } from "@lootopia/dashboard/hooks/useDebouncedValue"
-import { api, useMutation, useQuery } from "@lootopia/dashboard/lib/api"
+import {
+  api,
+  getQueryKey,
+  useMutation,
+  useQuery,
+} from "@lootopia/dashboard/lib/api"
+import queryClient from "@lootopia/dashboard/lib/queryClient"
 import type { InferResponseType } from "hono/client"
 import { useState } from "react"
 import { useNavigate } from "react-router"
@@ -51,13 +59,19 @@ export const useHuntList = () => {
   })
 
   const [updateStatus, { isPending: isUpdatingStatus }] = useMutation(
-    api.hunts[":id"].status.$patch,
-    { onSuccess: () => query.invalidate() },
+    api.hunts[":huntId"].status.$patch,
+    {
+      onSuccess: () =>
+        queryClient.invalidateQueries({ queryKey: getQueryKey(api.hunts) }),
+    },
   )
 
   const [removeHunt, { isPending: isDeleting }] = useMutation(
-    api.hunts[":id"].$delete,
-    { onSuccess: () => query.invalidate() },
+    api.hunts[":huntId"].$delete,
+    {
+      onSuccess: () =>
+        queryClient.invalidateQueries({ queryKey: getQueryKey(api.hunts) }),
+    },
   )
 
   const setStatus = (status?: HuntStatus) =>
@@ -77,11 +91,11 @@ export const useHuntList = () => {
         ? HUNT_STATUS.DRAFT
         : HUNT_STATUS.PUBLISHED
 
-    updateStatus({ param: { id: hunt.id }, json: { status: nextStatus } })
+    updateStatus({ param: { huntId: hunt.id }, json: { status: nextStatus } })
   }
 
   const deleteHunt = (id: string) => {
-    removeHunt({ param: { id } })
+    removeHunt({ param: { huntId: id } })
   }
 
   const goToCreate = () => navigate("/hunt/create")

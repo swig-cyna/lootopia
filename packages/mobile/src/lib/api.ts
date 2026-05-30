@@ -1,8 +1,10 @@
 import type { AppType } from "@lootopia/api/routes/route"
 import queryClient from "@lootopia/mobile/lib/queryClient"
 import {
+  type InfiniteData,
   type UndefinedInitialDataOptions,
   type UseMutationOptions,
+  useInfiniteQuery as useReactInfiniteQuery,
   useMutation as useReactMutation,
   useQuery as useReactQuery,
 } from "@tanstack/react-query"
@@ -51,7 +53,13 @@ type QueryRequest = { $get: HonoClientFunction; $url: (_args?: any) => URL }
 export const getQueryKey = <TRequest extends QueryRequest>(
   request: TRequest,
   queryArgs?: InferRequestType<TRequest["$get"]>,
-) => [request.$url().toString(), JSON.stringify(queryArgs)]
+) => {
+  if (queryArgs === undefined) {
+    return [request.$url().toString()]
+  }
+
+  return [request.$url().toString(), JSON.stringify(queryArgs)]
+}
 
 export const useQuery = <TRequest extends QueryRequest>(
   request: TRequest,
@@ -82,6 +90,36 @@ export const useQuery = <TRequest extends QueryRequest>(
   }
 }
 
+export const useInfiniteQuery = <TRequest extends QueryRequest>(
+  request: TRequest,
+  queryArgs?: InferRequestType<TRequest["$get"]>,
+) =>
+  useReactInfiniteQuery<
+    OkResponse<InferResponseType<TRequest["$get"]>>,
+    Error,
+    InfiniteData<OkResponse<InferResponseType<TRequest["$get"]>>>,
+    unknown[],
+    number
+  >({
+    queryKey: getQueryKey(request, queryArgs),
+    queryFn: async ({ pageParam }) => {
+      const args = {
+        ...queryArgs,
+        query: { ...(queryArgs as any)?.query, page: String(pageParam) },
+      }
+      const res = await request.$get(args as any)
+
+      return res.json() as Promise<
+        OkResponse<InferResponseType<TRequest["$get"]>>
+      >
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage: any) =>
+      lastPage?.metadata?.hasNext
+        ? (lastPage.metadata.page as number) + 1
+        : undefined,
+  })
+
 export const useMutation = <TRequest extends HonoClientFunction>(
   request: TRequest,
   mutationArgs?: Omit<
@@ -96,8 +134,11 @@ export const useMutation = <TRequest extends HonoClientFunction>(
   const { mutateAsync, ...rest } = useReactMutation({
     mutationFn: async (variables) => {
       const res = await request(variables)
+      const text = await res.text()
 
-      return res.json() as Promise<OkResponse<InferResponseType<TRequest>>>
+      return (text ? JSON.parse(text) : null) as OkResponse<
+        InferResponseType<TRequest>
+      >
     },
     ...mutationArgs,
   })

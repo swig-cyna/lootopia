@@ -11,14 +11,20 @@ import { Loader } from "@lootopia/dashboard/components/ui/loader"
 import HuntForm from "@lootopia/dashboard/features/hunt/components/HuntForm"
 import type { HuntSubmitData } from "@lootopia/dashboard/features/hunt/schema/hunt"
 import { huntToFormValues } from "@lootopia/dashboard/features/hunt/utils/huntToFormValues"
-import { api, useMutation, useQuery } from "@lootopia/dashboard/lib/api"
-import queryClient from "@lootopia/dashboard/lib/queryClient"
+import {
+  api,
+  getQueryKey,
+  useMutation,
+  useQuery,
+} from "@lootopia/dashboard/lib/api"
+import { useQueryClient } from "@tanstack/react-query"
 import { MapPinOff } from "lucide-react"
 import { useNavigate, useParams } from "react-router"
 
 const HuntEditPage = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
   const handleBack = () => navigate("/hunt")
 
@@ -26,24 +32,27 @@ const HuntEditPage = () => {
     data: hunt,
     isLoading,
     isError,
-  } = useQuery(api.hunts[":id"], {
-    param: { id: id! },
+  } = useQuery(api.hunts[":huntId"], {
+    param: { huntId: id! },
   })
 
-  const [updateHunt, { isPending }] = useMutation(api.hunts[":id"].$put, {
+  const [updateHunt, { isPending }] = useMutation(api.hunts[":huntId"].$put, {
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [api.hunts.$url().toString()] })
+      queryClient.invalidateQueries({ queryKey: getQueryKey(api.hunts) })
+      queryClient.invalidateQueries({
+        queryKey: getQueryKey(api.hunts[":huntId"], { param: { huntId: id! } }),
+      })
       navigate("/hunt")
     },
   })
 
   const handleSubmit = async (data: HuntSubmitData) => {
     await updateHunt({
-      param: { id: id! },
+      param: { huntId: id! },
       json: {
         ...data,
         reward: {
-          ...hunt!.reward,
+          ...hunt!.reward!,
           topX: data.reward.topX,
           promoCode: data.reward.promoCode,
         },
@@ -84,6 +93,7 @@ const HuntEditPage = () => {
     <HuntForm
       defaultValues={huntToFormValues(hunt)}
       onSubmit={handleSubmit}
+      onBack={handleBack}
       isPending={isPending}
       submitLabel="Save changes"
     />

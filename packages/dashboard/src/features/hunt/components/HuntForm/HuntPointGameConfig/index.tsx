@@ -11,7 +11,7 @@ import {
   TabsTrigger,
 } from "@lootopia/dashboard/components/ui/tabs"
 import type { HuntFormValues } from "@lootopia/dashboard/features/hunt/schema/hunt"
-import { HUNT_GAME_TYPE } from "@lootopia/dashboard/features/hunt/utils/constants"
+import { HUNT_GAME_TYPE } from "@lootopia/common/constants/hunt"
 import { useFormContext } from "react-hook-form"
 import HuntPointGameConfigArTab from "./HuntPointGameConfigArTab"
 import HuntPointGameConfigQuizTab from "./HuntPointGameConfigQuizTab"
@@ -29,7 +29,7 @@ const HuntPointGameConfig = ({
 
   const point = getValues("points").find((p) => p.id === pointId)
   const defaultTab =
-    point?.gameType === HUNT_GAME_TYPE.AR
+    point?.game?.type === HUNT_GAME_TYPE.AR
       ? HUNT_GAME_TYPE.AR
       : HUNT_GAME_TYPE.QUIZ
 

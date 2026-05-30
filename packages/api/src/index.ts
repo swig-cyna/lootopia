@@ -45,12 +45,13 @@ app.doc("/doc", {
     version: "1.0.0",
     title: "API",
   },
+  servers: [{ url: "/api" }],
 })
 
 app.get(
   "/reference",
   Scalar({
-    url: "/doc",
+    url: "/api/doc",
   }),
 )
 

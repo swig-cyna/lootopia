@@ -47,7 +47,6 @@ docker-compose up -d
 ```
 
 6. Configure S3 access keys:
-
    - Open [http://localhost:9001](http://localhost:9001)
    - Login with credentials from `.env` (S3_USER / S3_PASSWORD)
    - Navigate to **Access Keys** in sidebar
@@ -80,21 +79,38 @@ Start all services:
 pnpm dev
 ```
 
-Start API only:
+Or start packages individually:
 
 ```bash
-pnpm dev:api
+pnpm dev:api        # API only
+pnpm dev:dashboard  # Dashboard only
+pnpm dev:mobile     # Mobile only
 ```
 
-API will be available at [http://localhost:3001](http://localhost:3001)
+### URLs
 
-API documentation at [http://localhost:3001/docs](http://localhost:3001/docs)
+| Service   | URL                                                                  | Audience            |
+| --------- | -------------------------------------------------------------------- | ------------------- |
+| API       | [https://localhost:3000](https://localhost:3000)                     | —                   |
+| API docs  | [https://localhost:3000/reference](https://localhost:3000/reference) | —                   |
+| Dashboard | [https://localhost:3001](https://localhost:3001)                     | Organizers / Admins |
+| Mobile    | [https://localhost:3002](https://localhost:3002)                     | Players             |
+
+### HTTPS in development
+
+Both frontends use a self-signed certificate (`@vitejs/plugin-basic-ssl`). Your browser will show a security warning on first access — **click "Advanced" → "Proceed anyway"** (or equivalent in your browser).
+
+> HTTPS is required in development because browser APIs such as geolocation and camera access are only available on secure origins. Without it, these features are silently blocked by the browser.
 
 ## Documentation
 
-### API Documentation
-
-Complete guides for API development: [docs/api/](docs/api/)
+| Guide                              | Description                                              |
+| ---------------------------------- | -------------------------------------------------------- |
+| [docs/api/](docs/api/)             | API routes, services, mappers, auth middlewares          |
+| [docs/frontend/](docs/frontend/)   | Dashboard & Mobile — routing, data fetching, forms       |
+| [docs/db/](docs/db/)               | Kysely, repositories, migrations, query utilities        |
+| [docs/auth/](docs/auth/)           | Better Auth — server config, client, roles               |
+| [docs/common/](docs/common/)       | Shared constants, schemas, and types                     |
 
 ## Scripts
 

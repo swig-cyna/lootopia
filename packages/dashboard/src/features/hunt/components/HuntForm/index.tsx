@@ -18,12 +18,14 @@ import {
   type HuntFormValues,
   type HuntSubmitData,
 } from "@lootopia/dashboard/features/hunt/schema/hunt"
+import { HUNT_GAME_TYPE } from "@lootopia/common/constants/hunt"
 import { useRef, useState } from "react"
 import { FormProvider, useForm } from "react-hook-form"
 
 type HuntFormProps = {
   defaultValues?: HuntFormValues
   onSubmit: (_data: HuntSubmitData) => Promise<void>
+  onBack?: () => void
   isPending: boolean
   submitLabel: string
 }
@@ -38,6 +40,7 @@ const EMPTY_DEFAULTS: HuntFormValues = {
 const HuntForm = ({
   defaultValues,
   onSubmit,
+  onBack,
   isPending,
   submitLabel,
 }: HuntFormProps) => {
@@ -52,11 +55,8 @@ const HuntForm = ({
 
   const handleSubmit = methods.handleSubmit(async (data) => {
     const points = data.points
-      .filter(
-        (p): p is Exclude<(typeof data.points)[number], { gameType: "none" }> =>
-          p.gameType !== "none",
-      )
-      .map(({ id: _id, ...point }) => point)
+      .filter((p) => p.game.type !== HUNT_GAME_TYPE.NONE)
+      .map(({ id: _id, ...point }) => point) as HuntSubmitData["points"]
 
     try {
       await onSubmit({
@@ -87,8 +87,8 @@ const HuntForm = ({
         <form onSubmit={handleSubmit} className="flex h-full gap-4">
           <HuntMap handleRef={mapHandleRef} />
 
-          <Card className="flex w-96 shrink-0 flex-col">
-            <CardContent className="flex flex-1 flex-col gap-4 overflow-y-auto">
+          <Card className="flex h-full w-96 shrink-0 flex-col">
+            <CardContent className="flex min-h-0 flex-1 flex-col gap-4 overflow-hidden">
               <HuntDetails />
 
               <HuntPointsList
@@ -101,9 +101,21 @@ const HuntForm = ({
             <CardFooter className="flex-col gap-3 border-t pt-4">
               <HuntReward onConfigure={handleOpenReward} />
 
-              <Button type="submit" className="w-full" disabled={isPending}>
-                {submitLabel}
-              </Button>
+              <div className="flex w-full gap-2">
+                {onBack && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="flex-1"
+                    onClick={onBack}
+                  >
+                    Back
+                  </Button>
+                )}
+                <Button type="submit" className="flex-1" disabled={isPending}>
+                  {submitLabel}
+                </Button>
+              </div>
             </CardFooter>
           </Card>
         </form>

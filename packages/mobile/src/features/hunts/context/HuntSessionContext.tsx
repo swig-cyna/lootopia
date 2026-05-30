@@ -1,3 +1,4 @@
+import { VALIDATION_RADIUS_M } from "@lootopia/common/constants/hunt"
 import { useHuntMap } from "@lootopia/mobile/features/map/context/HuntMapContext"
 import { getDistance } from "@lootopia/mobile/features/map/utils/distance"
 import { api } from "@lootopia/mobile/lib/api"
@@ -10,14 +11,14 @@ import {
   type ReactNode,
 } from "react"
 
-const VALIDATION_RADIUS_M = 10
-
 type HuntApiResponse = InferResponseType<
-  (typeof api.hunts.published)[":id"]["$get"],
+  (typeof api.hunts.published)[":huntId"]["$get"],
   200
 >
 export type HuntPoint = HuntApiResponse["points"][number]
-export type QuizQuestion = NonNullable<HuntPoint["quizQuestion"]>
+export type QuizQuestion = NonNullable<
+  Extract<HuntPoint["game"], { type: "quiz" }>["quiz"]
+>
 
 type HuntSessionContextValue = {
   sortedPoints: HuntPoint[]

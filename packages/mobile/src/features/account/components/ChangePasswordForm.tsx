@@ -48,9 +48,7 @@ const ChangePasswordForm = () => {
   }
 
   return (
-    <section className="flex flex-col gap-4">
-      <h2 className="text-lg font-semibold">Change password</h2>
-
+    <div className="flex flex-col gap-4">
       <form id="password-form" onSubmit={handleSubmit(onSubmit)}>
         <FieldGroup>
           <Field>
@@ -101,7 +99,7 @@ const ChangePasswordForm = () => {
       >
         Update password
       </Button>
-    </section>
+    </div>
   )
 }
 

@@ -1,30 +1,14 @@
+import type {
+  ArGameId,
+  HuntGameType,
+  HuntSort,
+  HuntStatus,
+} from "@lootopia/common/constants/hunt"
 import type { Generated, JSONColumnType } from "kysely"
 import type { Timestamp } from "../schema"
 
 // Use Timestamp directly (not wrapped in Generated) for columns with DB defaults.
 // Generated<T> is for non-ColumnType types only (e.g. Generated<boolean>, Generated<HuntStatus>).
-
-export const HUNT_STATUS = {
-  DRAFT: "draft",
-  PUBLISHED: "published",
-} as const
-
-export type HuntStatus = (typeof HUNT_STATUS)[keyof typeof HUNT_STATUS]
-
-export const HUNT_SORT = {
-  RECENT: "recent",
-  OLDEST: "oldest",
-  TITLE: "title",
-} as const
-
-export type HuntSort = (typeof HUNT_SORT)[keyof typeof HUNT_SORT]
-
-export const HUNT_GAME_TYPE = {
-  QUIZ: "quiz",
-  AR: "ar",
-} as const
-
-export type HuntGameType = (typeof HUNT_GAME_TYPE)[keyof typeof HUNT_GAME_TYPE]
 
 export interface HuntTable {
   id: Generated<string>
@@ -42,7 +26,7 @@ export interface HuntPointTable {
   latitude: number
   longitude: number
   gameType: HuntGameType
-  arId: string | null
+  arId: ArGameId | null
   createdAt: Timestamp
   position: number
 }

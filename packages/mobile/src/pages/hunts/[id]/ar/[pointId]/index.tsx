@@ -1,4 +1,8 @@
-import { AR_GAME_IDS, type ArGameId } from "@lootopia/common/constants/hunt"
+import {
+  AR_GAME_IDS,
+  HUNT_GAME_TYPE,
+  type ArGameId,
+} from "@lootopia/common/constants/hunt"
 import { BalloonARGame } from "@lootopia/mobile/features/games/balloons"
 import { api, useQuery } from "@lootopia/mobile/lib/api"
 import queryClient from "@lootopia/mobile/lib/queryClient"
@@ -28,8 +32,8 @@ const ARGamePage = () => {
   const { id, pointId } = useParams<{ id: string; pointId: string }>()
   const navigate = useNavigate()
 
-  const { data: hunt, isPending } = useQuery(api.hunts.published[":id"], {
-    param: { id: id! },
+  const { data: hunt, isPending } = useQuery(api.hunts.published[":huntId"], {
+    param: { huntId: id! },
   })
 
   const handleBack = () => navigate(`/hunts/${id}`)
@@ -52,12 +56,14 @@ const ARGamePage = () => {
   }
 
   const point = hunt?.points.find((p) => p.id === pointId)
+  const arId =
+    point?.game.type === HUNT_GAME_TYPE.AR ? point.game.arId : undefined
 
-  if (!isValidArGameId(point?.arId)) {
+  if (!isValidArGameId(arId)) {
     return null
   }
 
-  const GameComponent = AR_GAME_REGISTRY[point.arId]
+  const GameComponent = AR_GAME_REGISTRY[arId]
 
   return (
     <GameComponent

@@ -4,10 +4,11 @@ Complete guide for developing with the API.
 
 ## Table of Contents
 
-### Getting Started
-
-- [Creating Routes](creating-routes.md) - Complete guide for creating new API endpoints
-- [Authentication & Authorization](authentication.md) - Role-based access control and auth response helpers
+- [Creating Routes](creating-routes.md) — schema, doc, controller, route.ts
+- [Services & Mappers](services.md) — `$$service` pattern, mappers, business logic layer
+- [Ownership Middlewares](middlewares.md) — `requireHuntOwner`, extended context types
+- [Pagination](pagination.md) — `paginationParamsSchema`, `paginateQuery`, `paginate`
+- [Authentication & Authorization](authentication.md) — roles, `requireRoles`, `createAuthResponses`
 
 ## Quick Links
 
@@ -23,30 +24,40 @@ Every route follows this pattern:
 
 ```
 packages/api/src/routes/your-route/
-├── schema.ts    # Zod validation schemas
-├── doc.ts       # OpenAPI route definitions
-└── route.ts     # Route handlers
+├── schema.ts        # Zod schemas (request + response)
+├── doc.ts           # OpenAPI route definitions
+├── controller.ts    # HTTP handlers — thin, delegates to service
+├── route.ts         # Assembly: connects doc + controller + sub-routers
+├── mappers.ts       # (optional) DB model → API response transformations
+├── middlewares.ts   # (optional) route-specific middlewares & context types
+└── sub-resource/    # (optional) sub-routes mounted in route.ts
 ```
 
 ### Key Concepts
 
+#### Architecture
+
+- `controller.ts` is thin — all business logic goes in a **service** (`src/services/`)
+- DB repositories are called only from services, never from controllers
+- **Mappers** transform DB models into API response shapes (hide sensitive fields, reshape data)
+
 #### Authentication
 
-- `requireAuth` - Requires user to be authenticated (401 if not)
-- `requireRoles([...])` - Requires specific roles (403 if wrong role, admin bypasses all)
-- `createAuthResponses()` - Auto-adds 401/403 to OpenAPI spec for protected routes
+- `requireAuth` — requires user to be authenticated (401 if not)
+- `requireRoles([...])` — requires specific roles (403 if wrong role, admin bypasses all)
+- `createAuthResponses()` — auto-adds 401/403 to OpenAPI spec for protected routes
 
-#### Roles (from `@lootopia/auth`)
+#### Roles (from `@lootopia/auth/constants`)
 
-- `ROLES.PLAYER` - Standard player
-- `ROLES.ORGANIZER` - Organizer
-- `ROLES.ADMIN` - Administrator (bypasses all role checks)
+- `ROLES.PLAYER` — Standard player
+- `ROLES.ORGANIZER` — Organizer
+- `ROLES.ADMIN` — Administrator (bypasses all role checks)
 
 #### Request Validation
 
-- Path params: `c.req.valid("param")`
-- Query params: `c.req.valid("query")`
-- Body: `c.req.valid("json")`
+- Path params: `req.valid("param")`
+- Query params: `req.valid("query")`
+- Body: `req.valid("json")`
 
 #### Status Codes
 
@@ -54,6 +65,8 @@ packages/api/src/routes/your-route/
 import * as StatusCodes from "stoker/http-status-codes"
 import * as StatusPhrases from "stoker/http-status-phrases"
 ```
+
+Always use `StatusPhrases` for error message strings — never hardcode raw strings.
 
 ## Examples
 

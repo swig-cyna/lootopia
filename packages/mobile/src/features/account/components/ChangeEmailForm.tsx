@@ -15,8 +15,6 @@ import authClient from "@lootopia/mobile/features/auth/utils/auth-client"
 import { useForm } from "react-hook-form"
 
 const ChangeEmailForm = () => {
-  const { data: session } = authClient.useSession()
-
   const {
     register,
     handleSubmit,
@@ -39,14 +37,7 @@ const ChangeEmailForm = () => {
   }
 
   return (
-    <section className="flex flex-col gap-4">
-      <div>
-        <h2 className="text-lg font-semibold">Change email</h2>
-        <p className="text-muted-foreground text-sm">
-          Current: {session?.user.email}
-        </p>
-      </div>
-
+    <div className="flex flex-col gap-4">
       <form id="email-form" onSubmit={handleSubmit(onSubmit)}>
         <FieldGroup>
           <Field>
@@ -73,7 +64,7 @@ const ChangeEmailForm = () => {
       >
         Change email
       </Button>
-    </section>
+    </div>
   )
 }
 

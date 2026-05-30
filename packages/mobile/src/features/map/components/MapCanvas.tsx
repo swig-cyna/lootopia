@@ -33,7 +33,6 @@ const MapCanvas = () => {
       center: [2.3522, 48.8566],
       zoom: 13,
       maxZoom: 18,
-      minZoom: 10,
     })
 
     map.on("load", () => {

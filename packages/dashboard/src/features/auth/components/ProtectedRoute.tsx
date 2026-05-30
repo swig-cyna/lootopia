@@ -1,3 +1,4 @@
+import { ROLES } from "@lootopia/auth/constants"
 import authClient from "@lootopia/dashboard/features/auth/utils/auth-client"
 import { Navigate, Outlet } from "react-router"
 
@@ -9,6 +10,10 @@ const ProtectedRoute = () => {
   }
 
   if (!session) {
+    return <Navigate to="/signin" replace />
+  }
+
+  if (session.user.role === ROLES.PLAYER) {
     return <Navigate to="/signin" replace />
   }
 

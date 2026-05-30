@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from "@lootopia/mobile/components/ui/card"
 import { api } from "@lootopia/mobile/lib/api"
-import { ChevronRight } from "lucide-react"
+import { ChevronRight, MapPin } from "lucide-react"
 import type { InferResponseType } from "hono/client"
 import { useNavigate } from "react-router"
 
@@ -28,18 +28,23 @@ const MyHuntCard = ({ hunt }: MyHuntCardProps) => {
       onClick={() => navigate(`/hunts/${hunt.id}`)}
     >
       <CardHeader>
-        <div className="flex items-start justify-between gap-2">
-          <div className="min-w-0 flex-1">
-            <CardTitle>{hunt.title}</CardTitle>
-            <CardDescription>{hunt.description}</CardDescription>
+        <div className="flex min-w-0 items-start justify-between gap-2">
+          <div className="min-w-0 flex-1 overflow-hidden">
+            <CardTitle className="truncate">{hunt.title}</CardTitle>
+            <CardDescription className="truncate">
+              {hunt.description}
+            </CardDescription>
           </div>
           <ChevronRight className="text-muted-foreground mt-0.5 size-5 shrink-0" />
         </div>
       </CardHeader>
       <CardContent>
-        <p className="text-muted-foreground text-xs">
-          {hunt.points.length} point{hunt.points.length !== 1 ? "s" : ""}
-        </p>
+        <div className="flex items-center gap-1.5">
+          <MapPin className="text-muted-foreground size-3.5" />
+          <span className="text-muted-foreground text-xs">
+            {hunt.points.length} point{hunt.points.length !== 1 ? "s" : ""}
+          </span>
+        </div>
       </CardContent>
     </Card>
   )

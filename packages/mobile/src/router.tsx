@@ -4,6 +4,7 @@ import ExplorePage from "@lootopia/mobile/pages/(tabs)/explore/index"
 import IndexPage from "@lootopia/mobile/pages/(tabs)/index"
 import ErrorPage from "@lootopia/mobile/pages/error"
 import NotFoundPage from "@lootopia/mobile/pages/not-found"
+import ExploreDetailPage from "@lootopia/mobile/pages/explore/[huntId]"
 import ARGamePage from "@lootopia/mobile/pages/hunts/[id]/ar/[pointId]"
 import HuntPage from "@lootopia/mobile/pages/hunts/[id]"
 import SigninPage from "@lootopia/mobile/pages/signin"
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
                 element: <AccountPage />,
               },
             ],
+          },
+          {
+            path: "/explore/:huntId",
+            element: <ExploreDetailPage />,
           },
           {
             path: "/hunts/:id",
