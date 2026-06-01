@@ -8,27 +8,27 @@ import {
 } from "@lootopia/mobile/components/ui/field"
 import { Input } from "@lootopia/mobile/components/ui/input"
 import {
-  signinSchema,
-  type SigninFormValues,
+  signupSchema,
+  type SignupFormValues,
 } from "@lootopia/common/schemas/auth"
 import authClient from "@lootopia/mobile/features/auth/utils/auth-client"
 import { useForm } from "react-hook-form"
 import { Link, useNavigate } from "react-router"
 
-const SigninForm = () => {
+const SignupForm = () => {
   const navigate = useNavigate()
   const {
     register,
     handleSubmit,
     setError,
     formState: { errors, isSubmitting },
-  } = useForm<SigninFormValues>({
-    resolver: standardSchemaResolver(signinSchema),
+  } = useForm<SignupFormValues>({
+    resolver: standardSchemaResolver(signupSchema),
   })
 
-  const onSubmit = (data: SigninFormValues) =>
-    authClient.signIn.email(
-      { email: data.email, password: data.password },
+  const onSubmit = (data: SignupFormValues) =>
+    authClient.signUp.email(
+      { name: data.name, email: data.email, password: data.password },
       {
         onSuccess: () => navigate("/"),
         onError: (ctx) => setError("root", { message: ctx.error.message }),
@@ -38,14 +38,25 @@ const SigninForm = () => {
   return (
     <div className="flex w-full flex-col gap-8">
       <div>
-        <h1 className="text-2xl font-bold">Sign in</h1>
+        <h1 className="text-2xl font-bold">Create an account</h1>
         <p className="text-muted-foreground mt-1 text-sm">
-          Sign in to your account
+          Sign up to start exploring hunts
         </p>
       </div>
 
-      <form id="signin-form" onSubmit={handleSubmit(onSubmit)}>
+      <form id="signup-form" onSubmit={handleSubmit(onSubmit)}>
         <FieldGroup>
+          <Field>
+            <FieldLabel htmlFor="name">Name</FieldLabel>
+            <Input
+              id="name"
+              type="text"
+              autoComplete="name"
+              {...register("name")}
+            />
+            <FieldError errors={[errors.name]} />
+          </Field>
+
           <Field>
             <FieldLabel htmlFor="email">Email</FieldLabel>
             <Input
@@ -62,10 +73,21 @@ const SigninForm = () => {
             <Input
               id="password"
               type="password"
-              autoComplete="current-password"
+              autoComplete="new-password"
               {...register("password")}
             />
             <FieldError errors={[errors.password]} />
+          </Field>
+
+          <Field>
+            <FieldLabel htmlFor="confirmPassword">Confirm password</FieldLabel>
+            <Input
+              id="confirmPassword"
+              type="password"
+              autoComplete="new-password"
+              {...register("confirmPassword")}
+            />
+            <FieldError errors={[errors.confirmPassword]} />
           </Field>
 
           {errors.root && <FieldError>{errors.root.message}</FieldError>}
@@ -74,22 +96,22 @@ const SigninForm = () => {
 
       <Button
         type="submit"
-        form="signin-form"
+        form="signup-form"
         className="w-full"
         size="lg"
         loading={isSubmitting}
       >
-        Sign in
+        Create account
       </Button>
 
       <p className="text-muted-foreground text-center text-sm">
-        Don&apos;t have an account?{" "}
-        <Link to="/signup" className="text-foreground underline">
-          Create one
+        Already have an account?{" "}
+        <Link to="/signin" className="text-foreground underline">
+          Sign in
         </Link>
       </p>
     </div>
   )
 }
 
-export default SigninForm
+export default SignupForm
