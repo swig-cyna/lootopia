@@ -1,7 +1,8 @@
 import { VALIDATION_RADIUS_M } from "@lootopia/common/constants/hunt"
 import { useHuntMap } from "@lootopia/mobile/features/map/context/HuntMapContext"
 import { getDistance } from "@lootopia/mobile/features/map/utils/distance"
-import { api } from "@lootopia/mobile/lib/api"
+import { api, getQueryKey } from "@lootopia/mobile/lib/api"
+import queryClient from "@lootopia/mobile/lib/queryClient"
 import type { InferResponseType } from "hono/client"
 import {
   createContext,
@@ -100,9 +101,21 @@ export const HuntSessionProvider = ({ children }: { children: ReactNode }) => {
       return
     }
 
-    setCompletedIds((prev) => new Set([...prev, activePoint.id]))
+    const nextCompletedIds = new Set([...completedIds, activePoint.id])
+    setCompletedIds(nextCompletedIds)
     setTotalScore((prev) => prev + score)
     setActivePoint(null)
+
+    const huntCompleted =
+      points.length > 0 && nextCompletedIds.size >= points.length
+
+    if (huntCompleted && huntId) {
+      queryClient.invalidateQueries({
+        queryKey: getQueryKey(api.hunts.published[":huntId"], {
+          param: { huntId },
+        }),
+      })
+    }
   }
 
   return (
