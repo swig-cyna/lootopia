@@ -20,8 +20,15 @@ import HuntListThumbnail from "@lootopia/dashboard/features/hunt/components/Hunt
 import type { OrganizerHunt } from "@lootopia/dashboard/features/hunt/hooks/useHuntList"
 import { HUNT_STATUS_BADGE } from "@lootopia/dashboard/features/hunt/utils/constants"
 import { cn } from "@lootopia/dashboard/lib/utils"
-import { Eye, EyeOff, MoreVertical, Pencil, Trash2 } from "lucide-react"
-import { useState } from "react"
+import {
+  BarChart3,
+  Eye,
+  EyeOff,
+  MoreVertical,
+  Pencil,
+  Trash2,
+} from "lucide-react"
+import { type MouseEvent, useState } from "react"
 
 const DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
   day: "numeric",
@@ -33,7 +40,7 @@ const formatDate = (value: string | Date) =>
 
 const HuntListRow = ({ hunt }: { hunt: OrganizerHunt }) => {
   const { data } = useHuntListContext()
-  const { toggleStatus, deleteHunt, goToEdit, isMutating } = data
+  const { toggleStatus, deleteHunt, goToEdit, goToStats, isMutating } = data
 
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
@@ -41,6 +48,15 @@ const HuntListRow = ({ hunt }: { hunt: OrganizerHunt }) => {
   const isPublished = hunt.status === HUNT_STATUS.PUBLISHED
   const isDraft = hunt.status === HUNT_STATUS.DRAFT
   const statusBadge = HUNT_STATUS_BADGE[hunt.status]
+
+  const handleRowClick = () => {
+    goToStats(hunt.id)
+  }
+
+  const handleViewStats = () => {
+    goToStats(hunt.id)
+    setIsMenuOpen(false)
+  }
 
   const handleEdit = () => {
     goToEdit(hunt.id)
@@ -64,8 +80,12 @@ const HuntListRow = ({ hunt }: { hunt: OrganizerHunt }) => {
     setIsConfirmOpen(false)
   }
 
+  const stopPropagation = (e: MouseEvent) => {
+    e.stopPropagation()
+  }
+
   return (
-    <TableRow>
+    <TableRow onClick={handleRowClick} className="cursor-pointer">
       <TableCell>
         <div className="flex min-w-0 items-center gap-3">
           <HuntListThumbnail points={hunt.points} />
@@ -112,7 +132,7 @@ const HuntListRow = ({ hunt }: { hunt: OrganizerHunt }) => {
         {formatDate(hunt.createdAt)}
       </TableCell>
 
-      <TableCell>
+      <TableCell onClick={stopPropagation}>
         <Popover open={isMenuOpen} onOpenChange={setIsMenuOpen}>
           <PopoverTrigger asChild>
             <Button variant="ghost" size="icon">
@@ -120,6 +140,14 @@ const HuntListRow = ({ hunt }: { hunt: OrganizerHunt }) => {
             </Button>
           </PopoverTrigger>
           <PopoverContent align="end" className="w-44 p-1">
+            <button
+              type="button"
+              onClick={handleViewStats}
+              className="hover:bg-muted flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm"
+            >
+              <BarChart3 className="size-4" />
+              Statistics
+            </button>
             {isDraft && (
               <button
                 type="button"
