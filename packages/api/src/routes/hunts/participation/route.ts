@@ -1,11 +1,13 @@
 import { createRouter, type AuthenticatedContext } from "@lootopia/api/lib/hono"
 import {
+  claimRewardController,
   getPublishedHuntController,
   joinHuntController,
   listMyHuntsController,
   listPublishedHuntsController,
 } from "@lootopia/api/routes/hunts/participation/controller"
 import {
+  claimRewardRoute,
   getPublishedHuntRoute,
   joinHuntRoute,
   listMyHuntsRoute,
@@ -17,5 +19,6 @@ const participationRouter = createRouter<AuthenticatedContext>()
   .openapi(listMyHuntsRoute, listMyHuntsController)
   .openapi(getPublishedHuntRoute, getPublishedHuntController)
   .openapi(joinHuntRoute, joinHuntController)
+  .openapi(claimRewardRoute, claimRewardController)
 
 export default participationRouter
