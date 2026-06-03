@@ -79,10 +79,9 @@ export const $huntStats = {
       .select((eb) => [
         "pt.id as pointId",
         "pt.position as position",
-        "pt.gameType as gameType",
         eb.fn.count("hpc.id").as("completions"),
       ])
-      .groupBy(["pt.id", "pt.position", "pt.gameType"])
+      .groupBy(["pt.id", "pt.position"])
       .orderBy("pt.position", "asc")
       .execute(),
 

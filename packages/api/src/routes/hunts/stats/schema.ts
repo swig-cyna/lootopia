@@ -9,7 +9,6 @@ const registrationPointSchema = z.object({
 const pointFunnelEntrySchema = z.object({
   pointId: z.string(),
   position: z.number(),
-  gameType: z.string(),
   completions: z.number(),
 })
 

@@ -52,7 +52,6 @@ export const $$huntStats = {
       pointFunnel: pointFunnel.map((point) => ({
         pointId: point.pointId,
         position: point.position,
-        gameType: point.gameType,
         completions: Number(point.completions),
       })),
       registrations: registrations.map((entry) => ({
