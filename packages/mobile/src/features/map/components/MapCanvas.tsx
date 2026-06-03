@@ -20,21 +20,6 @@ const HIDDEN_LAYERS = [
 const MapCanvas = () => {
   const { onMapReady } = useHuntMap()
   const containerRef = useRef<HTMLDivElement>(null)
-  const mapRef = useRef<mapboxgl.Map | null>(null)
-
-  useEffect(() => {
-    if (!containerRef.current) {
-      return undefined
-    }
-
-    const observer = new ResizeObserver(() => {
-      mapRef.current?.resize()
-    })
-
-    observer.observe(containerRef.current)
-
-    return () => observer.disconnect()
-  }, [])
 
   useEffect(() => {
     if (!containerRef.current) {
@@ -50,7 +35,11 @@ const MapCanvas = () => {
       maxZoom: 18,
     })
 
-    mapRef.current = map
+    const observer = new ResizeObserver(() => {
+      map.resize()
+    })
+
+    observer.observe(containerRef.current)
 
     map.on("load", () => {
       HIDDEN_LAYERS.forEach((layer) => {
@@ -62,8 +51,8 @@ const MapCanvas = () => {
     })
 
     return () => {
+      observer.disconnect()
       map.remove()
-      mapRef.current = null
     }
   }, [])
 
