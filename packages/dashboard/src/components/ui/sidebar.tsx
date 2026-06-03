@@ -21,7 +21,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@lootopia/dashboard/components/ui/tooltip"
-import { useIsMobile } from "@lootopia/dashboard/hooks/use-mobile"
+import { useIsMobile } from "@lootopia/dashboard/hooks/useMobile"
 import { cn } from "@lootopia/dashboard/lib/utils"
 import { PanelLeftIcon } from "lucide-react"
 
