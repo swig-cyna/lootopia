@@ -61,6 +61,13 @@ export interface HuntPointCompletionTable {
   completedAt: Timestamp
 }
 
+export interface HuntRewardClaimTable {
+  id: Generated<string>
+  huntRewardId: string
+  userId: string
+  claimedAt: Timestamp
+}
+
 export interface ListOrganizerHuntsOptions {
   status?: HuntStatus
   search?: string
