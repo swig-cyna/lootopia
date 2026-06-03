@@ -21,8 +21,8 @@ export const $huntParticipation = {
       .where("huntId", "=", huntId)
       .executeTakeFirst(),
 
-  myRank: (huntId: string, userId: string) =>
-    db
+  myRank: async (huntId: string, userId: string) => {
+    const scoresQuery = db
       .selectFrom("hunt_participations as hp")
       .leftJoin(
         "hunt_point_completions as hpc",
@@ -42,23 +42,32 @@ export const $huntParticipation = {
       ])
       .where("hp.huntId", "=", huntId)
       .groupBy("hp.userId")
-      .orderBy("totalScore", "desc")
-      .execute()
-      .then((rows) => {
-        const index = rows.findIndex((r) => r.userId === userId)
 
-        if (index === -1) {
-          return null
-        }
+    const rankedQuery = db
+      .selectFrom(scoresQuery.as("sq"))
+      .select([
+        "userId",
+        "totalScore",
+        "completedPoints",
+        sql<number>`row_number() over (order by "totalScore" desc)`.as("rank"),
+      ])
 
-        const row = rows[index]
+    const row = await db
+      .selectFrom(rankedQuery.as("rq"))
+      .selectAll()
+      .where("userId", "=", userId)
+      .executeTakeFirst()
 
-        return {
-          rank: index + 1,
-          totalScore: Number(row.totalScore),
-          completedPoints: Number(row.completedPoints),
-        }
-      }),
+    if (!row) {
+      return null
+    }
+
+    return {
+      rank: Number(row.rank),
+      totalScore: Number(row.totalScore),
+      completedPoints: Number(row.completedPoints),
+    }
+  },
 
   leaderboard: (huntId: string, search?: string) =>
     db
