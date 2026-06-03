@@ -1,5 +1,6 @@
 import HuntNextPointPanel from "@lootopia/mobile/features/hunts/components/HuntSession/HuntNextPointPanel"
 import HuntProgressBar from "@lootopia/mobile/features/hunts/components/HuntSession/HuntPointsList"
+import HuntRewardPanel from "@lootopia/mobile/features/hunts/components/HuntSession/HuntRewardPanel"
 import { useHuntSession } from "@lootopia/mobile/features/hunts/context/HuntSessionContext"
 
 const HuntInfoPanel = () => {
@@ -10,8 +11,11 @@ const HuntInfoPanel = () => {
       {nextPoint ? (
         <HuntNextPointPanel />
       ) : (
-        <div className="bg-muted rounded-xl p-3 text-center">
-          <p className="text-primary text-sm font-medium">Hunt complete!</p>
+        <div className="flex flex-col gap-3">
+          <div className="bg-muted rounded-xl p-3 text-center">
+            <p className="text-primary text-sm font-medium">Hunt complete!</p>
+          </div>
+          <HuntRewardPanel />
         </div>
       )}
 

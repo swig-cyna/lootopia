@@ -2,6 +2,7 @@ import HuntInfoPanel from "@lootopia/mobile/features/hunts/components/HuntSessio
 import GameSheet from "@lootopia/mobile/features/hunts/components/GameSheet"
 import {
   type HuntPoint,
+  type HuntReward,
   useHuntSession,
 } from "@lootopia/mobile/features/hunts/context/HuntSessionContext"
 import HuntPointsOverlay from "@lootopia/mobile/features/map/components/HuntPointsOverlay"
@@ -12,6 +13,7 @@ type HuntSessionProps = {
   points: HuntPoint[]
   completedPointIds: string[]
   totalScore: number
+  reward: HuntReward
 }
 
 const HuntSession = ({
@@ -19,12 +21,19 @@ const HuntSession = ({
   points,
   completedPointIds,
   totalScore,
+  reward,
 }: HuntSessionProps) => {
   const { setHuntData, activePoint, validatePoint } = useHuntSession()
 
   useEffect(() => {
-    setHuntData(points, completedPointIds, totalScore)
-  }, [huntId, completedPointIds.length, totalScore])
+    setHuntData({ points, completedPointIds, totalScore, huntId, reward })
+  }, [
+    huntId,
+    completedPointIds.length,
+    totalScore,
+    reward?.claimed,
+    reward?.eligible,
+  ])
 
   return (
     <>
