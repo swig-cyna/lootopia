@@ -1,6 +1,6 @@
 import LeaderboardList from "@lootopia/mobile/features/hunts/components/LeaderboardList"
-import LeaderboardMyRank from "@lootopia/mobile/features/hunts/components/LeaderboardList/LeaderboardMyRank"
 import { LeaderboardListProvider } from "@lootopia/mobile/features/hunts/components/LeaderboardList/LeaderboardList.context"
+import LeaderboardMyRank from "@lootopia/mobile/features/hunts/components/LeaderboardList/LeaderboardMyRank"
 import { useLeaderboard } from "@lootopia/mobile/features/hunts/hooks/useLeaderboard"
 import { ArrowLeft } from "lucide-react"
 import { useNavigate, useParams } from "react-router"
@@ -16,7 +16,7 @@ const LeaderboardPage = () => {
   return (
     <LeaderboardListProvider data={leaderboard}>
       <div className="flex h-svh flex-col">
-        <div className="flex items-center gap-3 border-b px-4 pb-4 pt-5">
+        <div className="flex items-center gap-3 px-4 pt-5">
           <button
             onClick={handleGoBack}
             className="rounded-full p-1.5 transition-colors hover:bg-gray-100 active:bg-gray-200"

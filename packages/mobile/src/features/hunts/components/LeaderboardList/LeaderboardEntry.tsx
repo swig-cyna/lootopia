@@ -13,6 +13,7 @@ type Entry = {
 type LeaderboardEntryProps = {
   entry: Entry
   isCurrentUser?: boolean
+  entryRef?: (_node: HTMLDivElement | null) => void
 }
 
 const RANK_COLOR: Record<number, string> = {
@@ -24,8 +25,10 @@ const RANK_COLOR: Record<number, string> = {
 const LeaderboardEntry = ({
   entry,
   isCurrentUser = false,
+  entryRef,
 }: LeaderboardEntryProps) => (
   <div
+    ref={entryRef}
     className={cn(
       "bg-muted flex items-center gap-3 rounded-xl px-3 py-2.5",
       isCurrentUser && "border-primary border-2",
@@ -49,7 +52,14 @@ const LeaderboardEntry = ({
       )}
     </div>
 
-    <span className="flex-1 truncate text-sm font-medium">{entry.name}</span>
+    <div className="flex min-w-0 flex-1 items-center gap-2">
+      <span className="truncate text-sm font-medium">{entry.name}</span>
+      {isCurrentUser && (
+        <span className="bg-primary text-foreground shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold">
+          You
+        </span>
+      )}
+    </div>
 
     <div className="flex flex-col items-end">
       <span className="text-primary text-sm font-semibold">

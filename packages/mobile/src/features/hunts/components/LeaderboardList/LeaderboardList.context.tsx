@@ -21,6 +21,8 @@ type LeaderboardListData = {
   entries: LeaderboardEntry[]
   myRank: MyRank
   currentUserId: string | null
+  myEntryRef: (_node: HTMLDivElement | null) => void
+  isMyEntryVisible: boolean
   isPending: boolean
   isError: boolean
   hasNextPage: boolean

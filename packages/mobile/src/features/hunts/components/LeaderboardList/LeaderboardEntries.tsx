@@ -1,4 +1,3 @@
-import { Skeleton } from "@lootopia/mobile/components/ui/skeleton"
 import {
   Empty,
   EmptyDescription,
@@ -6,6 +5,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@lootopia/mobile/components/ui/empty"
+import { Skeleton } from "@lootopia/mobile/components/ui/skeleton"
 import LeaderboardEntry from "@lootopia/mobile/features/hunts/components/LeaderboardList/LeaderboardEntry"
 import { useLeaderboardList } from "@lootopia/mobile/features/hunts/components/LeaderboardList/LeaderboardList.context"
 import useIntersectionObserver from "@lootopia/mobile/hooks/useIntersectionObserver"
@@ -59,13 +59,18 @@ const LeaderboardEntries = () => {
 
   return (
     <div className="flex flex-col gap-2">
-      {data.entries.map((entry) => (
-        <LeaderboardEntry
-          key={entry.userId}
-          entry={entry}
-          isCurrentUser={entry.userId === data.currentUserId}
-        />
-      ))}
+      {data.entries.map((entry) => {
+        const isCurrentUser = entry.userId === data.currentUserId
+
+        return (
+          <LeaderboardEntry
+            key={entry.userId}
+            entry={entry}
+            isCurrentUser={isCurrentUser}
+            entryRef={isCurrentUser ? data.myEntryRef : undefined}
+          />
+        )
+      })}
       <div ref={sentinelRef} />
       {data.isFetchingNextPage && (
         <Skeleton className="h-14 w-full rounded-xl" />

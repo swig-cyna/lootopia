@@ -17,7 +17,7 @@ const LeaderboardSearch = () => {
         placeholder="Search a player..."
         value={data.search}
         onChange={handleChange}
-        className="pl-9"
+        className="py-5 pl-9"
       />
     </div>
   )
