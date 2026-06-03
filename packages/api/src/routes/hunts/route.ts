@@ -15,6 +15,7 @@ import {
   updateHuntRoute,
   updateHuntStatusRoute,
 } from "@lootopia/api/routes/hunts/doc"
+import leaderboardRouter from "@lootopia/api/routes/hunts/leaderboard/route"
 import participationRouter from "@lootopia/api/routes/hunts/participation/route"
 import pointsRouter from "@lootopia/api/routes/hunts/points/route"
 import statsRouter from "@lootopia/api/routes/hunts/stats/route"
@@ -25,6 +26,7 @@ const huntsRouter = createRouter<AuthenticatedContext>()
   .route("/", participationRouter)
   .route("/", pointsRouter)
   .route("/", statsRouter)
+  .route("/", leaderboardRouter)
   .openapi(getHuntRoute, getHuntController)
   .openapi(updateHuntRoute, updateHuntController)
   .openapi(deleteHuntRoute, deleteHuntController)

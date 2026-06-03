@@ -43,11 +43,11 @@ const TabsLayout = () => {
   const { pathname } = useLocation()
 
   return (
-    <div className="flex flex-1 flex-col">
-      <div className="flex flex-1 p-4">
+    <div className="flex h-svh flex-col">
+      <div className="flex-1 overflow-y-auto p-4">
         <Outlet />
       </div>
-      <div className="h-18 bg-muted sticky bottom-0 flex w-full justify-around">
+      <div className="bg-muted h-18 flex w-full shrink-0 justify-around">
         {tabs.map((tab) => (
           <TabButton key={tab.to} {...tab} active={pathname === tab.to} />
         ))}
