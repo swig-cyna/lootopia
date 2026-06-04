@@ -7,6 +7,7 @@ export const CHART_HEIGHT = 280
 const DAY_FORMATTER = new Intl.DateTimeFormat("en-US", {
   day: "numeric",
   month: "short",
+  timeZone: "UTC",
 })
 
 export const formatChartDay = (day: string) =>
