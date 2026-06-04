@@ -50,7 +50,9 @@ const isWithinTopX = (
         return scoreDiff
       }
 
-      return (a.finishedAt?.getTime() ?? 0) - (b.finishedAt?.getTime() ?? 0)
+      const timeA = a.finishedAt ? a.finishedAt.getTime() : Number.MAX_SAFE_INTEGER
+      const timeB = b.finishedAt ? b.finishedAt.getTime() : Number.MAX_SAFE_INTEGER
+      return timeA - timeB
     })
     .findIndex((ranking) => ranking.participationId === participationId)
 
