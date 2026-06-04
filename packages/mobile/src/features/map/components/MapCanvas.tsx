@@ -35,6 +35,12 @@ const MapCanvas = () => {
       maxZoom: 18,
     })
 
+    const observer = new ResizeObserver(() => {
+      map.resize()
+    })
+
+    observer.observe(containerRef.current)
+
     map.on("load", () => {
       HIDDEN_LAYERS.forEach((layer) => {
         if (map.getLayer(layer)) {
@@ -45,6 +51,7 @@ const MapCanvas = () => {
     })
 
     return () => {
+      observer.disconnect()
       map.remove()
     }
   }, [])

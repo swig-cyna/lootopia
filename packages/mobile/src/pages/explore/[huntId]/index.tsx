@@ -21,14 +21,20 @@ import {
   useQuery,
 } from "@lootopia/mobile/lib/api"
 import queryClient from "@lootopia/mobile/lib/queryClient"
-import { ArrowLeft, CheckCircle2, LoaderCircle, MapPin } from "lucide-react"
+import {
+  ArrowLeft,
+  CheckCircle2,
+  ChevronRight,
+  LoaderCircle,
+  MapPin,
+  Trophy,
+} from "lucide-react"
 import { useNavigate, useParams } from "react-router"
 
 const ExploreDetailContent = () => {
   const { huntId } = useParams<{ huntId: string }>()
   const navigate = useNavigate()
   const { mapReady } = useHuntMap()
-
   const {
     data: hunt,
     isPending,
@@ -57,6 +63,7 @@ const ExploreDetailContent = () => {
   const handleGoBack = () => navigate("/explore")
   const handleJoin = () => joinHunt({ param: { huntId: huntId! } })
   const handleStart = () => navigate(`/hunts/${huntId}`)
+  const handleLeaderboard = () => navigate(`/hunts/${huntId}/leaderboard`)
 
   if (isPending) {
     return (
@@ -105,11 +112,21 @@ const ExploreDetailContent = () => {
       <div className="flex-1 overflow-y-auto p-5">
         <div className="flex items-start justify-between gap-3">
           <h1 className="text-2xl font-semibold">{hunt.title}</h1>
-          <div className="bg-muted flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1">
-            <MapPin className="text-muted-foreground size-3" />
-            <span className="text-muted-foreground text-xs font-medium">
-              {hunt.points.length}
-            </span>
+          <div className="flex shrink-0 items-center gap-1.5">
+            {hunt.isJoined && (
+              <div className="flex items-center gap-1 rounded-full bg-green-100 px-2.5 py-1">
+                <CheckCircle2 className="size-3 text-green-600" />
+                <span className="text-xs font-medium text-green-600">
+                  Joined
+                </span>
+              </div>
+            )}
+            <div className="bg-muted flex items-center gap-1 rounded-full px-2.5 py-1">
+              <MapPin className="text-muted-foreground size-3" />
+              <span className="text-muted-foreground text-xs font-medium">
+                {hunt.points.length}
+              </span>
+            </div>
           </div>
         </div>
         <p className="text-muted-foreground mt-1 text-sm">{hunt.description}</p>
@@ -137,12 +154,16 @@ const ExploreDetailContent = () => {
             Join hunt
           </Button>
         )}
-        {hunt.isJoined && (
-          <div className="flex items-center justify-center gap-1.5 text-xs text-green-600">
-            <CheckCircle2 className="size-3.5" />
-            You already joined this hunt
+        <button
+          onClick={handleLeaderboard}
+          className="flex w-full items-center justify-between rounded-xl border px-3 py-2.5"
+        >
+          <div className="flex items-center gap-2">
+            <Trophy className="text-primary size-4" />
+            <span className="text-sm font-medium">Leaderboard</span>
           </div>
-        )}
+          <ChevronRight className="text-muted-foreground size-4" />
+        </button>
       </div>
     </div>
   )

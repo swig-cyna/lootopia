@@ -50,8 +50,13 @@ const isWithinTopX = (
         return scoreDiff
       }
 
-      const timeA = a.finishedAt ? a.finishedAt.getTime() : Number.MAX_SAFE_INTEGER
-      const timeB = b.finishedAt ? b.finishedAt.getTime() : Number.MAX_SAFE_INTEGER
+      const timeA = a.finishedAt
+        ? a.finishedAt.getTime()
+        : Number.MAX_SAFE_INTEGER
+      const timeB = b.finishedAt
+        ? b.finishedAt.getTime()
+        : Number.MAX_SAFE_INTEGER
+
       return timeA - timeB
     })
     .findIndex((ranking) => ranking.participationId === participationId)
@@ -473,5 +478,39 @@ export const $$hunt = {
     })
 
     return { promoCode: hunt.reward.promoCode } as const
+  },
+  leaderboard: async (
+    userId: string,
+    huntId: string,
+    query: PaginationQuery & { search?: string },
+  ) => {
+    const { page, limit, search } = query
+
+    const hunt = await $hunt.byId(huntId)
+
+    if (!hunt || hunt.status !== HUNT_STATUS.PUBLISHED) {
+      return "not_found" as const
+    }
+
+    const [{ result: rows, count }, myRank] = await Promise.all([
+      paginateQuery(
+        $huntParticipation.leaderboard(huntId, search),
+        { pageSize: limit, pageIndex: page - 1 },
+        "hp.userId",
+      ),
+      $huntParticipation.myRank(huntId, userId),
+    ])
+
+    const offset = (page - 1) * limit
+    const data = rows.map((row, i) => ({
+      rank: offset + i + 1,
+      userId: row.userId,
+      name: row.name,
+      image: row.image,
+      totalScore: Number(row.totalScore),
+      completedPoints: Number(row.completedPoints),
+    }))
+
+    return { ...paginate(data, Number(count), page, limit), myRank }
   },
 }

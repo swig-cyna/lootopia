@@ -22,10 +22,12 @@ type MyHuntCardProps = {
 const MyHuntCard = ({ hunt }: MyHuntCardProps) => {
   const navigate = useNavigate()
 
+  const handleOpen = () => navigate(`/explore/${hunt.id}`)
+
   return (
     <Card
       className="hover:bg-muted/50 cursor-pointer transition-colors active:scale-[0.99]"
-      onClick={() => navigate(`/hunts/${hunt.id}`)}
+      onClick={handleOpen}
     >
       <CardHeader>
         <div className="flex min-w-0 items-start justify-between gap-2">
