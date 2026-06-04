@@ -8,6 +8,8 @@ import {
   type CreateHuntPointInput,
   type UpdateHuntPointInput,
   createHuntSchema,
+  finisherRankingSchema,
+  rewardStateSchema,
   updateHuntSchema,
   updateHuntStatusSchema,
 } from "@lootopia/api/routes/hunts/schema"
@@ -16,11 +18,15 @@ import { HUNT_GAME_TYPE, HUNT_STATUS } from "@lootopia/common/constants/hunt"
 import { $huntParticipation } from "@lootopia/db/repositories/hunt-participation.repository"
 import { $huntPointCompletion } from "@lootopia/db/repositories/hunt-point-completion.repository"
 import { $huntPoint } from "@lootopia/db/repositories/hunt-point.repository"
+import { $huntRewardClaim } from "@lootopia/db/repositories/hunt-reward-claim.repository"
 import { $huntReward } from "@lootopia/db/repositories/hunt-reward.repository"
+import { $huntStats } from "@lootopia/db/repositories/hunt-stats.repository"
 import { $hunt } from "@lootopia/db/repositories/hunt.repository"
 import { $quizQuestion } from "@lootopia/db/repositories/quiz-question.repository"
 import { paginateQuery } from "@lootopia/db/utils"
 
+type FinisherRanking = z.infer<typeof finisherRankingSchema>
+type RewardState = z.infer<typeof rewardStateSchema>
 type CreateHuntData = z.infer<typeof createHuntSchema>
 type UpdateHuntData = z.infer<typeof updateHuntSchema>
 type UpdateHuntStatusData = z.infer<typeof updateHuntStatusSchema>
@@ -29,6 +35,28 @@ type ListHuntsQuery = PaginationQuery & {
   status?: "draft" | "published"
   search?: string
   sort?: "recent" | "oldest" | "title"
+}
+
+const isWithinTopX = (
+  rankings: FinisherRanking[],
+  participationId: string,
+  topX: number,
+) => {
+  const rank = [...rankings]
+    .sort((a, b) => {
+      const scoreDiff = Number(b.score ?? 0) - Number(a.score ?? 0)
+
+      if (scoreDiff !== 0) {
+        return scoreDiff
+      }
+
+      const timeA = a.finishedAt ? a.finishedAt.getTime() : Number.MAX_SAFE_INTEGER
+      const timeB = b.finishedAt ? b.finishedAt.getTime() : Number.MAX_SAFE_INTEGER
+      return timeA - timeB
+    })
+    .findIndex((ranking) => ranking.participationId === participationId)
+
+  return rank >= 0 && rank < topX
 }
 
 const createHuntPoints = async (
@@ -144,6 +172,55 @@ const syncHuntPoints = async (
       ? createHuntPoints(huntId, toCreate as CreateHuntPointInput[])
       : undefined,
   ])
+}
+
+const resolveRewardState = async (
+  hunt: { id: string; reward: RewardState | null; points: { id: string }[] },
+  participation: { id: string; userId: string } | undefined,
+  completedCount: number,
+) => {
+  if (!hunt.reward) {
+    return null
+  }
+
+  const { reward } = hunt
+  const base = { topX: reward.topX }
+
+  if (!participation) {
+    return { ...base, claimed: false, eligible: false }
+  }
+
+  const claim = await $huntRewardClaim.byRewardAndUser(
+    reward.id,
+    participation.userId,
+  )
+
+  if (claim) {
+    return {
+      ...base,
+      claimed: true,
+      eligible: false,
+      promoCode: reward.promoCode,
+    }
+  }
+
+  const isFinisher =
+    hunt.points.length > 0 && completedCount >= hunt.points.length
+
+  if (!isFinisher) {
+    return { ...base, claimed: false, eligible: false }
+  }
+
+  const rankings = await $huntStats.finisherRankings(
+    hunt.id,
+    hunt.points.length,
+  )
+
+  return {
+    ...base,
+    claimed: false,
+    eligible: isWithinTopX(rankings, participation.id, reward.topX),
+  }
 }
 
 export const $$hunt = {
@@ -317,11 +394,18 @@ export const $$hunt = {
       ? await $huntPointCompletion.byParticipationId(participation.id).execute()
       : []
 
+    const reward = await resolveRewardState(
+      huntWithDetails,
+      participation,
+      completions.length,
+    )
+
     return {
       ...mapHuntDetailPlayer(huntWithDetails),
       completedPointIds: completions.map((c) => c.huntPointId),
       totalScore: completions.reduce((sum, c) => sum + c.score, 0),
       isJoined: Boolean(participation),
+      reward,
     }
   },
 
@@ -339,5 +423,55 @@ export const $$hunt = {
     }
 
     return $huntParticipation.create({ huntId, userId })
+  },
+
+  claimReward: async (userId: string, huntId: string) => {
+    const hunt = await $hunt.byIdWithDetails(huntId)
+
+    if (!hunt || hunt.status !== HUNT_STATUS.PUBLISHED || !hunt.reward) {
+      return "not_found" as const
+    }
+
+    const participation = await $huntParticipation.byUserAndHunt(userId, huntId)
+
+    if (!participation) {
+      return "not_finished" as const
+    }
+
+    const existing = await $huntRewardClaim.byRewardAndUser(
+      hunt.reward.id,
+      userId,
+    )
+
+    if (existing) {
+      return "already_claimed" as const
+    }
+
+    const completions = await $huntPointCompletion
+      .byParticipationId(participation.id)
+      .execute()
+
+    const isFinisher =
+      hunt.points.length > 0 && completions.length >= hunt.points.length
+
+    if (!isFinisher) {
+      return "not_finished" as const
+    }
+
+    const rankings = await $huntStats.finisherRankings(
+      hunt.id,
+      hunt.points.length,
+    )
+
+    if (!isWithinTopX(rankings, participation.id, hunt.reward.topX)) {
+      return "not_eligible" as const
+    }
+
+    await $huntRewardClaim.create({
+      huntRewardId: hunt.reward.id,
+      userId,
+    })
+
+    return { promoCode: hunt.reward.promoCode } as const
   },
 }

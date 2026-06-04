@@ -113,11 +113,33 @@ export const playerHuntSchema = huntSchema.omit({ reward: true }).extend({
   points: z.array(huntPointDetailPlayerSchema),
 })
 
+export const playerRewardSchema = z
+  .object({
+    topX: z.number(),
+    claimed: z.boolean(),
+    eligible: z.boolean(),
+    promoCode: z.string().optional(),
+  })
+  .nullable()
+
 export const playerHuntDetailSchema = playerHuntSchema.extend({
   completedPointIds: z.array(z.string()),
   totalScore: z.number(),
   isJoined: z.boolean(),
+  reward: playerRewardSchema,
 })
+
+export const claimRewardResponseSchema = z.object({
+  promoCode: z.string(),
+})
+
+export const finisherRankingSchema = z.object({
+  participationId: z.string(),
+  score: z.number().nullable(),
+  finishedAt: z.date().nullable(),
+})
+
+export const rewardStateSchema = huntsRewardSchema.omit({ huntId: true })
 
 export const createHuntSchema = z.object({
   title: z.string().min(HUNT_TITLE_MIN).max(HUNT_TITLE_MAX),

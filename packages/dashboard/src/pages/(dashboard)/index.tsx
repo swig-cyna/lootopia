@@ -1,7 +1,5 @@
-const IndexPage = () => (
-  <div>
-    <h1>Index</h1>
-  </div>
-)
+import OrganizerStats from "@lootopia/dashboard/features/analytics/components/OrganizerStats"
+
+const IndexPage = () => <OrganizerStats />
 
 export default IndexPage

@@ -5,6 +5,7 @@ import * as StatusCodes from "stoker/http-status-codes"
 import * as StatusPhrases from "stoker/http-status-phrases"
 
 import type {
+  claimRewardRoute,
   getPublishedHuntRoute,
   joinHuntRoute,
   listMyHuntsRoute,
@@ -54,6 +55,37 @@ export const joinHuntController: RouteHandler<
 
   if (result === "already_joined") {
     return json({ error: "Already joined this hunt" }, StatusCodes.CONFLICT)
+  }
+
+  return json(result, StatusCodes.CREATED)
+}
+
+export const claimRewardController: RouteHandler<
+  typeof claimRewardRoute,
+  AuthenticatedContext
+> = async ({ req, json, var: { user } }) => {
+  const result = await $$hunt.claimReward(user.id, req.valid("param").huntId)
+
+  if (result === "not_found") {
+    return json({ error: StatusPhrases.NOT_FOUND }, StatusCodes.NOT_FOUND)
+  }
+
+  if (result === "already_claimed") {
+    return json({ error: "Reward already claimed" }, StatusCodes.CONFLICT)
+  }
+
+  if (result === "not_finished") {
+    return json(
+      { error: "Finish the hunt to claim its reward" },
+      StatusCodes.UNPROCESSABLE_ENTITY,
+    )
+  }
+
+  if (result === "not_eligible") {
+    return json(
+      { error: "You are not within the top players for this reward" },
+      StatusCodes.FORBIDDEN,
+    )
   }
 
   return json(result, StatusCodes.CREATED)

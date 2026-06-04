@@ -17,12 +17,14 @@ import {
 } from "@lootopia/api/routes/hunts/doc"
 import participationRouter from "@lootopia/api/routes/hunts/participation/route"
 import pointsRouter from "@lootopia/api/routes/hunts/points/route"
+import statsRouter from "@lootopia/api/routes/hunts/stats/route"
 
 const huntsRouter = createRouter<AuthenticatedContext>()
   .openapi(createHuntRoute, createHuntController)
   .openapi(listHuntsRoute, listHuntsController)
   .route("/", participationRouter)
   .route("/", pointsRouter)
+  .route("/", statsRouter)
   .openapi(getHuntRoute, getHuntController)
   .openapi(updateHuntRoute, updateHuntController)
   .openapi(deleteHuntRoute, deleteHuntController)

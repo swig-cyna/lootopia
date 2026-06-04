@@ -1,7 +1,8 @@
 import { VALIDATION_RADIUS_M } from "@lootopia/common/constants/hunt"
 import { useHuntMap } from "@lootopia/mobile/features/map/context/HuntMapContext"
 import { getDistance } from "@lootopia/mobile/features/map/utils/distance"
-import { api } from "@lootopia/mobile/lib/api"
+import { api, getQueryKey } from "@lootopia/mobile/lib/api"
+import queryClient from "@lootopia/mobile/lib/queryClient"
 import type { InferResponseType } from "hono/client"
 import {
   createContext,
@@ -16,9 +17,18 @@ type HuntApiResponse = InferResponseType<
   200
 >
 export type HuntPoint = HuntApiResponse["points"][number]
+export type HuntReward = HuntApiResponse["reward"]
 export type QuizQuestion = NonNullable<
   Extract<HuntPoint["game"], { type: "quiz" }>["quiz"]
 >
+
+export type HuntSessionData = {
+  points: HuntPoint[]
+  completedPointIds: string[]
+  totalScore: number
+  huntId: string
+  reward: HuntReward
+}
 
 type HuntSessionContextValue = {
   sortedPoints: HuntPoint[]
@@ -26,12 +36,10 @@ type HuntSessionContextValue = {
   totalScore: number
   nextPoint: HuntPoint | null
   activePoint: HuntPoint | null
+  huntId: string
+  reward: HuntReward
   validatePoint: (_score: number) => void
-  setHuntData: (
-    _points: HuntPoint[],
-    _completedPointIds: string[],
-    _totalScore: number,
-  ) => void
+  setHuntData: (_data: HuntSessionData) => void
 }
 
 const HuntSessionContext = createContext<HuntSessionContextValue | null>(null)
@@ -53,6 +61,8 @@ export const HuntSessionProvider = ({ children }: { children: ReactNode }) => {
   const [completedIds, setCompletedIds] = useState<Set<string>>(new Set())
   const [totalScore, setTotalScore] = useState(0)
   const [activePoint, setActivePoint] = useState<HuntPoint | null>(null)
+  const [huntId, setHuntId] = useState("")
+  const [reward, setReward] = useState<HuntReward>(null)
 
   const sortedPoints = [...points].sort((a, b) => a.position - b.position)
   const nextPoint = sortedPoints.find((p) => !completedIds.has(p.id)) ?? null
@@ -72,14 +82,18 @@ export const HuntSessionProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [userPosition, nextPoint?.id])
 
-  const setHuntData = (
-    newPoints: HuntPoint[],
-    completedPointIds: string[],
-    initialTotalScore: number,
-  ) => {
+  const setHuntData = ({
+    points: newPoints,
+    completedPointIds,
+    totalScore: initialTotalScore,
+    huntId: newHuntId,
+    reward: newReward,
+  }: HuntSessionData) => {
     setPoints(newPoints)
     setCompletedIds(new Set(completedPointIds))
     setTotalScore(initialTotalScore)
+    setHuntId(newHuntId)
+    setReward(newReward)
   }
 
   const validatePoint = (score: number) => {
@@ -87,9 +101,21 @@ export const HuntSessionProvider = ({ children }: { children: ReactNode }) => {
       return
     }
 
-    setCompletedIds((prev) => new Set([...prev, activePoint.id]))
+    const nextCompletedIds = new Set([...completedIds, activePoint.id])
+    setCompletedIds(nextCompletedIds)
     setTotalScore((prev) => prev + score)
     setActivePoint(null)
+
+    const huntCompleted =
+      points.length > 0 && nextCompletedIds.size >= points.length
+
+    if (huntCompleted && huntId) {
+      queryClient.invalidateQueries({
+        queryKey: getQueryKey(api.hunts.published[":huntId"], {
+          param: { huntId },
+        }),
+      })
+    }
   }
 
   return (
@@ -100,6 +126,8 @@ export const HuntSessionProvider = ({ children }: { children: ReactNode }) => {
         totalScore,
         nextPoint,
         activePoint,
+        huntId,
+        reward,
         validatePoint,
         setHuntData,
       }}

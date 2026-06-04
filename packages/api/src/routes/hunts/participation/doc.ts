@@ -1,6 +1,7 @@
 import { createRoute } from "@hono/zod-openapi"
 import { requireRoles } from "@lootopia/api/middlewares/auth.middlewares"
 import {
+  claimRewardResponseSchema,
   huntIdParamSchema,
   huntParticipationSchema,
   listHuntsQuerySchema,
@@ -98,6 +99,38 @@ export const joinHuntRoute = createRoute({
     [StatusCodes.CONFLICT]: jsonContent(
       errorResponseSchema,
       "Already joined this hunt",
+    ),
+  }),
+})
+
+export const claimRewardRoute = createRoute({
+  method: "post",
+  path: "/{huntId}/reward/claim",
+  tags: ["Hunts"],
+  summary: "Claim a hunt reward",
+  description:
+    "Claim the reward for a finished hunt if the player ranks within the top X.\n\nRequired roles: player",
+  middleware: [requireRoles([ROLES.PLAYER])],
+  security: [{ bearerAuth: [] }],
+  request: {
+    params: huntIdParamSchema,
+  },
+  responses: createAuthResponses({
+    [StatusCodes.CREATED]: jsonContent(
+      claimRewardResponseSchema,
+      "Reward claimed",
+    ),
+    [StatusCodes.NOT_FOUND]: jsonContent(
+      errorResponseSchema,
+      StatusPhrases.NOT_FOUND,
+    ),
+    [StatusCodes.CONFLICT]: jsonContent(
+      errorResponseSchema,
+      "Reward already claimed",
+    ),
+    [StatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
+      errorResponseSchema,
+      "Hunt not finished",
     ),
   }),
 })

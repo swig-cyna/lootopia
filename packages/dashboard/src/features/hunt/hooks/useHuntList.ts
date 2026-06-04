@@ -102,6 +102,8 @@ export const useHuntList = () => {
 
   const goToEdit = (id: string) => navigate(`/hunt/${id}/edit`)
 
+  const goToStats = (id: string) => navigate(`/hunt/${id}/stats`)
+
   return {
     hunts: query.data?.data ?? [],
     counts: query.data?.counts ?? EMPTY_COUNTS,
@@ -118,5 +120,6 @@ export const useHuntList = () => {
     isMutating: isUpdatingStatus || isDeleting,
     goToCreate,
     goToEdit,
+    goToStats,
   }
 }
