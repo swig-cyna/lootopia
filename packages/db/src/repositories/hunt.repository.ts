@@ -80,6 +80,60 @@ export const $hunt = {
     return query.orderBy(order.column, order.direction)
   },
 
+  findAll: (options: ListOrganizerHuntsOptions = {}) => {
+    const order = HUNT_SORT_ORDER[options.sort ?? HUNT_SORT.RECENT]
+
+    let query = db
+      .selectFrom("hunts")
+      .selectAll("hunts")
+      .select((eb) => [
+        jsonArrayFrom(
+          eb
+            .selectFrom("hunt_points")
+            .selectAll("hunt_points")
+            .whereRef("hunt_points.huntId", "=", "hunts.id")
+            .orderBy("hunt_points.createdAt", "asc"),
+        ).as("points"),
+        jsonObjectFrom(
+          eb
+            .selectFrom("hunt_rewards")
+            .selectAll("hunt_rewards")
+            .whereRef("hunt_rewards.huntId", "=", "hunts.id"),
+        ).as("reward"),
+        jsonObjectFrom(
+          eb
+            .selectFrom("user")
+            .select(["user.id", "user.name", "user.email"])
+            .whereRef("user.id", "=", "hunts.organizerId"),
+        ).as("organizer"),
+        eb
+          .selectFrom("hunt_participations")
+          .select((eb2) => eb2.fn.countAll<number>().as("count"))
+          .whereRef("hunt_participations.huntId", "=", "hunts.id")
+          .as("playerCount"),
+        eb
+          .selectFrom("hunt_point_completions")
+          .innerJoin(
+            "hunt_participations",
+            "hunt_participations.id",
+            "hunt_point_completions.huntParticipationId",
+          )
+          .select((eb2) => eb2.fn.countAll<number>().as("count"))
+          .whereRef("hunt_participations.huntId", "=", "hunts.id")
+          .as("completionCount"),
+      ])
+
+    if (options.status) {
+      query = query.where("status", "=", options.status)
+    }
+
+    if (options.search) {
+      query = query.where("title", "ilike", `%${options.search}%`)
+    }
+
+    return query.orderBy(order.column, order.direction)
+  },
+
   findPublished: (userId: string) =>
     db
       .selectFrom("hunts")
@@ -200,6 +254,21 @@ export const $hunt = {
           .as("draft"),
       ])
       .where("organizerId", "=", organizerId)
+      .executeTakeFirstOrThrow(),
+
+  countByStatus: () =>
+    db
+      .selectFrom("hunts")
+      .select((eb) => [
+        eb.fn
+          .countAll<number>()
+          .filterWhere("status", "=", HUNT_STATUS.PUBLISHED)
+          .as("published"),
+        eb.fn
+          .countAll<number>()
+          .filterWhere("status", "=", HUNT_STATUS.DRAFT)
+          .as("draft"),
+      ])
       .executeTakeFirstOrThrow(),
 
   delete: (id: string) => db.deleteFrom("hunts").where("id", "=", id).execute(),
