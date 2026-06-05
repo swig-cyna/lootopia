@@ -1,1 +1,1 @@
-{"root":["./src/client.ts","./src/constants.ts","./src/env.ts","./src/server.ts"],"version":"5.9.3"}
+{"root":["./src/client.ts","./src/constants.ts","./src/env.ts","./src/permissions.ts","./src/server.ts"],"version":"5.9.3"}
