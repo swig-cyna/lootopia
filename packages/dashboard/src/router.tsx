@@ -1,4 +1,7 @@
+import AdminProtectedRoute from "@lootopia/dashboard/features/auth/components/AdminProtectedRoute"
 import ProtectedRoute from "@lootopia/dashboard/features/auth/components/ProtectedRoute"
+import AdminHuntsPage from "@lootopia/dashboard/pages/admin/hunts"
+import AdminUsersPage from "@lootopia/dashboard/pages/admin/users"
 import IndexPage from "@lootopia/dashboard/pages/(dashboard)/index"
 import DashboardLayout from "@lootopia/dashboard/pages/(dashboard)/layout"
 import ErrorPage from "@lootopia/dashboard/pages/error"
@@ -39,6 +42,19 @@ const router = createBrowserRouter([
               {
                 path: "/hunt/:id/stats",
                 element: <HuntStatsPage />,
+              },
+              {
+                element: <AdminProtectedRoute />,
+                children: [
+                  {
+                    path: "/admin/users",
+                    element: <AdminUsersPage />,
+                  },
+                  {
+                    path: "/admin/hunts",
+                    element: <AdminHuntsPage />,
+                  },
+                ],
               },
             ],
           },
