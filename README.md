@@ -13,8 +13,8 @@ Modern monorepo backend built with Hono, Kysely, Better Auth, and TypeScript.
 
 ## Prerequisites
 
-- Node.js 20+
-- pnpm 9+
+- Node.js 24+
+- pnpm 10+
 - Docker & Docker Compose
 
 ## Installation
@@ -43,7 +43,7 @@ Copy the generated secret to `BETTER_AUTH_SECRET` in `.env`
 5. Start Docker services:
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 6. Configure S3 access keys:
@@ -89,12 +89,12 @@ pnpm dev:mobile     # Mobile only
 
 ### URLs
 
-| Service   | URL                                                                  | Audience            |
-| --------- | -------------------------------------------------------------------- | ------------------- |
-| API       | [https://localhost:3000](https://localhost:3000)                     | —                   |
-| API docs  | [https://localhost:3000/reference](https://localhost:3000/reference) | —                   |
-| Dashboard | [https://localhost:3001](https://localhost:3001)                     | Organizers / Admins |
-| Mobile    | [https://localhost:3002](https://localhost:3002)                     | Players             |
+| Service                  | URL                                                                          | Audience            |
+| ------------------------ | ---------------------------------------------------------------------------- | ------------------- |
+| Dashboard                | [https://localhost:3001](https://localhost:3001)                             | Organizers / Admins |
+| Mobile                   | [https://localhost:3002](https://localhost:3002)                             | Players             |
+| API docs (via dashboard) | [https://localhost:3001/api/reference](https://localhost:3001/api/reference) | —                   |
+| API docs (via mobile)    | [https://localhost:3002/api/reference](https://localhost:3002/api/reference) | —                   |
 
 ### HTTPS in development
 
@@ -104,13 +104,13 @@ Both frontends use a self-signed certificate (`@vitejs/plugin-basic-ssl`). Your 
 
 ## Documentation
 
-| Guide                              | Description                                              |
-| ---------------------------------- | -------------------------------------------------------- |
-| [docs/api/](docs/api/)             | API routes, services, mappers, auth middlewares          |
-| [docs/frontend/](docs/frontend/)   | Dashboard & Mobile — routing, data fetching, forms       |
-| [docs/db/](docs/db/)               | Kysely, repositories, migrations, query utilities        |
-| [docs/auth/](docs/auth/)           | Better Auth — server config, client, roles               |
-| [docs/common/](docs/common/)       | Shared constants, schemas, and types                     |
+| Guide                            | Description                                        |
+| -------------------------------- | -------------------------------------------------- |
+| [docs/api/](docs/api/)           | API routes, services, mappers, auth middlewares    |
+| [docs/frontend/](docs/frontend/) | Dashboard & Mobile — routing, data fetching, forms |
+| [docs/db/](docs/db/)             | Kysely, repositories, migrations, query utilities  |
+| [docs/auth/](docs/auth/)         | Better Auth — server config, client, roles         |
+| [docs/common/](docs/common/)     | Shared constants, schemas, and types               |
 
 ## Scripts
 
