@@ -14,13 +14,11 @@
     "format": "pnpm -r --parallel --reporter=append-only run format",
     "format:fix": "pnpm -r --parallel --reporter=append-only run format:fix",
     "kysely": "dotenv -e .env -- pnpm --filter db kysely",
-    "s3:create": "dotenv -e .env -- node scripts/create-bucket.mjs",
     "prod:up": "docker compose -f compose.prod.yml up --build -d",
     "prod:down": "docker compose -f compose.prod.yml down"
   },
   "devDependencies": {
     "dotenv-cli": "^11.0.0",
-    "minio": "^8.0.7",
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.6.14",
     "typescript": "^5.9.3"

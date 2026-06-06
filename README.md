@@ -7,7 +7,6 @@ Modern monorepo backend built with Hono, Kysely, Better Auth, and TypeScript.
 - **Runtime**: Node.js with TypeScript
 - **Framework**: Hono + OpenAPI
 - **Database**: PostgreSQL with Kysely
-- **Storage**: RustFS (S3-compatible)
 - **Auth**: Better Auth
 - **Package Manager**: pnpm
 
@@ -46,26 +45,13 @@ Copy the generated secret to `BETTER_AUTH_SECRET` in `.env`
 docker compose up -d
 ```
 
-6. Configure S3 access keys:
-   - Open [http://localhost:9001](http://localhost:9001)
-   - Login with credentials from `.env` (S3_USER / S3_PASSWORD)
-   - Navigate to **Access Keys** in sidebar
-   - Create new access key
-   - Copy the keys to `S3_ACCESS_KEY` and `S3_SECRET_KEY` in `.env`
-
-7. Create S3 bucket:
-
-```bash
-pnpm s3:create
-```
-
-8. Run database migrations:
+6. Run database migrations:
 
 ```bash
 pnpm kysely migrate:latest
 ```
 
-9. Seed database (optional):
+7. Seed database (optional):
 
 ```bash
 pnpm kysely seed:run
@@ -119,7 +105,6 @@ Both frontends use a self-signed certificate (`@vitejs/plugin-basic-ssl`). Your 
 - `pnpm build` - Build all packages
 - `pnpm start` - Start all packages in production mode
 - `pnpm kysely` - Run Kysely CLI commands
-- `pnpm s3:create` - Create S3 bucket with policy
 - `pnpm clean` - Remove all node_modules and dist folders
 
 ## Database
@@ -155,8 +140,6 @@ pnpm kysely seed:run
 ## Docker Services
 
 - PostgreSQL: `localhost:5432`
-- RustFS Console: [http://localhost:9001](http://localhost:9001)
-- RustFS API: `localhost:9000`
 
 ## Environment Variables
 

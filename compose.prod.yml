@@ -13,42 +13,6 @@ services:
     networks:
       - app-network
 
-  fix-permissions-rustfs:
-    image: alpine
-    container_name: fix-permissions-rustfs
-    command: >
-      sh -c "
-        chown -R 10001:10001 /data &&
-        chown -R 10001:10001 /logs &&
-        chown -R 10001:10001 /conf
-      "
-    volumes:
-      - ./docker.prod/rustfs/data:/data
-      - ./docker.prod/rustfs/logs:/logs
-      - ./docker.prod/rustfs/conf:/conf
-    restart: "no"
-
-  bucket:
-    image: rustfs/rustfs:latest
-    container_name: lootopia-bucket
-    restart: unless-stopped
-    user: "10001:10001"
-    depends_on:
-      fix-permissions-rustfs:
-        condition: service_completed_successfully
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-    environment:
-      - RUSTFS_ACCESS_KEY=${S3_USER}
-      - RUSTFS_SECRET_KEY=${S3_PASSWORD}
-    volumes:
-      - ./docker.prod/rustfs/data:/data
-      - ./docker.prod/rustfs/logs:/logs
-      - ./docker.prod/rustfs/conf:/etc/rustfs
-    networks:
-      - app-network
-
   nginx:
     container_name: lootopia-proxy
     build:
@@ -92,7 +56,6 @@ services:
       - POSTGRES_PORT=5432
     depends_on:
       - db
-      - bucket
     networks:
       - app-network
 
