@@ -8,12 +8,14 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.json ./
 COPY packages/api/package.json ./packages/api/
 COPY packages/auth/package.json ./packages/auth/
 COPY packages/db/package.json ./packages/db/
+COPY packages/common/package.json ./packages/common/
 
 RUN pnpm install --frozen-lockfile
 
 COPY packages/api ./packages/api
 COPY packages/auth ./packages/auth
 COPY packages/db ./packages/db
+COPY packages/common ./packages/common
 
 RUN pnpm --filter @lootopia/api build
 

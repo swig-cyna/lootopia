@@ -10,6 +10,7 @@ COPY packages/mobile/package.json ./packages/mobile/
 COPY packages/api/package.json ./packages/api/
 COPY packages/auth/package.json ./packages/auth/
 COPY packages/db/package.json ./packages/db/
+COPY packages/common/package.json ./packages/common/
 
 RUN pnpm install --frozen-lockfile
 
