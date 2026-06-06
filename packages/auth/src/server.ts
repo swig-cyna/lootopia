@@ -4,8 +4,16 @@ import { dialect } from "@lootopia/db"
 import { betterAuth } from "better-auth"
 import { admin, openAPI } from "better-auth/plugins"
 
+const cookieAttributes = () => {
+  if (process.env.NODE_ENV === "production") {
+    return { sameSite: "none" as const, secure: true, partitioned: true }
+  }
+
+  return { sameSite: "lax" as const, secure: false }
+}
+
 export const auth = betterAuth({
-  baseURL: env.WEB_BASE_URL,
+  baseURL: `https://${env.MOBILE_DOMAIN}`,
 
   database: {
     dialect,
@@ -13,10 +21,7 @@ export const auth = betterAuth({
   },
   basePath: "/auth",
   advanced: {
-    defaultCookieAttributes:
-      process.env.NODE_ENV === "production"
-        ? { sameSite: "none", secure: true, partitioned: true }
-        : { sameSite: "lax", secure: false },
+    defaultCookieAttributes: cookieAttributes(),
     disableOriginCheck: true,
   },
   emailAndPassword: {

@@ -1,11 +1,9 @@
 import { serve } from "@hono/node-server"
-import env from "@lootopia/api/env"
 import { createRouter } from "@lootopia/api/lib/hono"
 import { authMiddleware } from "@lootopia/api/middlewares/auth.middlewares"
 import router from "@lootopia/api/routes/route"
 import { auth } from "@lootopia/auth/server"
 import { Scalar } from "@scalar/hono-api-reference"
-import { cors } from "hono/cors"
 import { HTTPException } from "hono/http-exception"
 import { logger } from "hono/logger"
 import * as StatusCodes from "stoker/http-status-codes"
@@ -13,12 +11,6 @@ import * as StatusPhrases from "stoker/http-status-phrases"
 
 const app = createRouter()
 
-app.use(
-  cors({
-    origin: env.WEB_ORIGINS.split(","),
-    credentials: true,
-  }),
-)
 app.use(authMiddleware)
 app.use(logger())
 
