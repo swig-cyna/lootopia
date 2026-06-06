@@ -1,4 +1,5 @@
 import { z } from "@hono/zod-openapi"
+import { mapAdminHunt } from "@lootopia/api/routes/admin/hunts/mappers"
 import {
   mapHuntDetail,
   mapHuntDetailPlayer,
@@ -285,6 +286,31 @@ export const $$hunt = {
 
     return {
       ...paginate(data, Number(count), page, limit),
+      counts: {
+        all: publishedCount + draftCount,
+        published: publishedCount,
+        draft: draftCount,
+      },
+    }
+  },
+
+  listAll: async (query: ListHuntsQuery) => {
+    const { page, limit, status, search, sort } = query
+
+    const [{ result: hunts, count }, { published, draft }] = await Promise.all([
+      paginateQuery(
+        $hunt.findAll({ status, search, sort }),
+        { pageSize: limit, pageIndex: page - 1 },
+        "id",
+      ),
+      $hunt.countByStatus(),
+    ])
+
+    const publishedCount = Number(published)
+    const draftCount = Number(draft)
+
+    return {
+      ...paginate(hunts.map(mapAdminHunt), Number(count), page, limit),
       counts: {
         all: publishedCount + draftCount,
         published: publishedCount,
