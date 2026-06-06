@@ -22,10 +22,8 @@ import {
 import { Input } from "@lootopia/dashboard/components/ui/input"
 import authClient from "@lootopia/dashboard/features/auth/utils/auth-client"
 import { useForm } from "react-hook-form"
-import { useNavigate } from "react-router"
 
 const SigninForm = () => {
-  const navigate = useNavigate()
   const {
     register,
     handleSubmit,
@@ -44,11 +42,7 @@ const SigninForm = () => {
     if (ctx.data?.user.role === ROLES.PLAYER) {
       await authClient.signOut()
       setError("root", { message: "Access restricted to organizers." })
-
-      return
     }
-
-    navigate("/")
   }
 
   const onSubmit = (data: SigninFormValues) =>

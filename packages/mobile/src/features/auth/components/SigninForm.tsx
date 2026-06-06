@@ -13,10 +13,9 @@ import {
 } from "@lootopia/common/schemas/auth"
 import authClient from "@lootopia/mobile/features/auth/utils/auth-client"
 import { useForm } from "react-hook-form"
-import { Link, useNavigate } from "react-router"
+import { Link } from "react-router"
 
 const SigninForm = () => {
-  const navigate = useNavigate()
   const {
     register,
     handleSubmit,
@@ -30,7 +29,6 @@ const SigninForm = () => {
     authClient.signIn.email(
       { email: data.email, password: data.password },
       {
-        onSuccess: () => navigate("/"),
         onError: (ctx) => setError("root", { message: ctx.error.message }),
       },
     )
