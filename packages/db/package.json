@@ -24,12 +24,12 @@
     "@eslint/js": "^10.0.1",
     "@types/node": "^25.9.1",
     "@types/pg": "^8.20.0",
-    "eslint": "^10.4.0",
+    "eslint": "^10.4.1",
     "globals": "^17.6.0",
-    "kysely-ctl": "^0.20.0",
+    "kysely-ctl": "^0.21.0",
     "tsconfig-paths": "^4.2.0",
-    "tsx": "^4.22.3",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.60.0"
+    "tsx": "^4.22.4",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.60.1"
   }
 }
