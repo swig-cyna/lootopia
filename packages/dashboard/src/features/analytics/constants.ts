@@ -1,5 +1,7 @@
 export const CHART_PRIMARY_COLOR = "var(--color-primary)"
+
 export const CHART_GRID_COLOR = "var(--color-border)"
+
 export const CHART_AXIS_COLOR = "var(--color-muted-foreground)"
 
 export const CHART_HEIGHT = 280

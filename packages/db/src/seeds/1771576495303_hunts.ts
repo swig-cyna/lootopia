@@ -1,4 +1,5 @@
 import type { Kysely } from "kysely"
+import type { Database } from "@lootopia/db/schema"
 
 const daysAgo = (n: number) => new Date(Date.now() - n * 24 * 60 * 60 * 1000)
 
@@ -201,7 +202,7 @@ const HUNTS: HuntConfig[] = [
 ]
 
 async function createHunt(
-  db: Kysely<any>,
+  db: Kysely<Database>,
   data: HuntSeedData,
 ): Promise<{ id: string; title: string; status: string } | undefined> {
   const { hunt, points, quizQuestions, reward } = data
@@ -270,7 +271,7 @@ async function createHunt(
   }
 }
 
-export async function seed(db: Kysely<any>): Promise<void> {
+export async function seed(db: Kysely<Database>): Promise<void> {
   const organizer = await db
     .selectFrom("user")
     .select(["id", "name"])

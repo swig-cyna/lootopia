@@ -3,7 +3,7 @@ import mapboxgl from "mapbox-gl"
 import { useEffect, useRef } from "react"
 import { createPortal } from "react-dom"
 
-interface HuntPointMarkerProps {
+type HuntPointMarkerProps = {
   map: mapboxgl.Map
   position: [number, number]
   label: string
@@ -30,6 +30,7 @@ const HuntPointMarker = ({
     return () => {
       markerRef.current?.remove()
     }
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [map])
 
   return createPortal(

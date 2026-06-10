@@ -139,7 +139,11 @@ export const finisherRankingSchema = z.object({
   finishedAt: z.date().nullable(),
 })
 
+export type FinisherRanking = z.infer<typeof finisherRankingSchema>
+
 export const rewardStateSchema = huntsRewardSchema.omit({ huntId: true })
+
+export type RewardState = z.infer<typeof rewardStateSchema>
 
 export const createHuntSchema = z.object({
   title: z.string().min(HUNT_TITLE_MIN).max(HUNT_TITLE_MAX),
@@ -151,6 +155,8 @@ export const createHuntSchema = z.object({
   reward: createHuntRewardSchema,
 })
 
+export type CreateHuntData = z.infer<typeof createHuntSchema>
+
 export const updateHuntSchema = z.object({
   title: z.string().min(HUNT_TITLE_MIN).max(HUNT_TITLE_MAX),
   description: z.string(),
@@ -160,6 +166,8 @@ export const updateHuntSchema = z.object({
     .max(HUNT_POINTS_MAX),
   reward: huntsRewardSchema,
 })
+
+export type UpdateHuntData = z.infer<typeof updateHuntSchema>
 
 export const validatePointSchema = z.discriminatedUnion("gameType", [
   z.object({
@@ -176,6 +184,8 @@ export const validatePointSchema = z.discriminatedUnion("gameType", [
 export const updateHuntStatusSchema = z.object({
   status: z.enum([HUNT_STATUS.DRAFT, HUNT_STATUS.PUBLISHED]),
 })
+
+export type UpdateHuntStatusData = z.infer<typeof updateHuntStatusSchema>
 
 export const validatePointResponseSchema = z.object({
   isCorrect: z.boolean(),

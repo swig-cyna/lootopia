@@ -8,7 +8,7 @@ export const AR_GAMES = [
     label: "Balloon Popping",
     description: "Pop as many balloons as possible before the timer runs out.",
   },
-] satisfies { id: ArGameId; label: string; description: string }[]
+] satisfies Array<{ id: ArGameId; label: string; description: string }>
 
 export const HUNT_STATUS = {
   DRAFT: "draft",
@@ -34,9 +34,15 @@ export const HUNT_GAME_TYPE = {
 export type HuntGameType = (typeof HUNT_GAME_TYPE)[keyof typeof HUNT_GAME_TYPE]
 
 export const HUNT_POINTS_MIN = 3
+
 export const HUNT_POINTS_MAX = 5
+
 export const HUNT_TITLE_MIN = 2
+
 export const HUNT_TITLE_MAX = 255
+
 export const QUIZ_ANSWERS_MIN = 2
+
 export const MAX_AR_SCORE = 2000
+
 export const VALIDATION_RADIUS_M = 10

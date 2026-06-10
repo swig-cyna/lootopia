@@ -33,6 +33,7 @@ const ProfileForm = () => {
     if (session?.user.name) {
       reset({ name: session.user.name })
     }
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.user.name])
 
   const onSubmit = async (data: ProfileFormValues) => {

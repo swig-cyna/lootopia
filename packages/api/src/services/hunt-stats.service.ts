@@ -9,7 +9,7 @@ const percentage = (part: number, total: number) =>
   total > 0 ? Math.round((part / total) * 100) : 0
 
 const countFromRows = (
-  rows: { huntId: string; count: number }[],
+  rows: Array<{ huntId: string; count: number }>,
   huntId: string,
 ) => Number(rows.find((row) => row.huntId === huntId)?.count ?? 0)
 

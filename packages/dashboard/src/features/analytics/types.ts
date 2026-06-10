@@ -12,5 +12,7 @@ export type HuntStats = Exclude<
 >
 
 export type RegistrationPoint = OrganizerStats["registrations"][number]
+
 export type TopHunt = OrganizerStats["topHunts"][number]
+
 export type PointFunnelEntry = HuntStats["pointFunnel"][number]

@@ -3,6 +3,7 @@ import { type HuntPointCompletionTable } from "@lootopia/db/models/hunt"
 import { type Insertable, type Selectable } from "kysely"
 
 export type HuntPointCompletion = Selectable<HuntPointCompletionTable>
+
 export type NewHuntPointCompletion = Insertable<HuntPointCompletionTable>
 
 export const $huntPointCompletion = {

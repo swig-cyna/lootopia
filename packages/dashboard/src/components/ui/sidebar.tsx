@@ -1,4 +1,4 @@
-/* eslint-disable max-lines */
+/* oxlint-disable max-lines */
 "use client"
 
 import { cva, type VariantProps } from "class-variance-authority"
@@ -93,7 +93,7 @@ function SidebarProvider({
   // Helper to toggle the sidebar.
   const toggleSidebar = React.useCallback(
     () =>
-      isMobile ? setOpenMobile((open) => !open) : setOpen((open) => !open),
+      isMobile ? setOpenMobile((prev) => !prev) : setOpen((prev) => !prev),
     [isMobile, setOpen, setOpenMobile],
   )
 
@@ -525,7 +525,7 @@ function SidebarMenuButton({
   }
 
   if (typeof tooltip === "string") {
-    // eslint-disable-next-line no-param-reassign
+    // oxlint-disable-next-line no-param-reassign
     tooltip = {
       children: tooltip,
     }

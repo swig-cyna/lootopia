@@ -1,5 +1,6 @@
 {
   "name": "lootopia",
+  "type": "module",
   "scripts": {
     "dev": "dotenv -e .env -- pnpm -r --parallel dev",
     "dev:web": "dotenv -e .env -- pnpm --filter web dev",
@@ -9,16 +10,19 @@
     "build": "dotenv -e .env -- pnpm -r run build",
     "start": "dotenv -e .env -- pnpm -r --parallel run start",
     "clean": "pnpm -r exec rm -rf dist node_modules",
-    "lint": "pnpm -r --parallel --reporter=append-only run lint",
-    "lint:fix": "pnpm -r --parallel --reporter=append-only run lint:fix",
-    "format": "pnpm -r --parallel --reporter=append-only run format",
-    "format:fix": "pnpm -r --parallel --reporter=append-only run format:fix",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "format": "prettier --check packages --log-level warn",
+    "format:fix": "prettier --write packages --log-level warn",
     "kysely": "dotenv -e .env -- pnpm --filter db kysely",
     "prod:up": "docker compose -f compose.prod.yml up --build -d",
     "prod:down": "docker compose -f compose.prod.yml down"
   },
   "devDependencies": {
+    "@stylistic/eslint-plugin": "^5.10.0",
     "dotenv-cli": "^11.0.0",
+    "oxlint": "^1.69.0",
+    "oxlint-tsgolint": "^0.23.0",
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.8.0",
     "typescript": "^6.0.3"

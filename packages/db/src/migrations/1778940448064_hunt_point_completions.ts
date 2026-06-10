@@ -1,6 +1,7 @@
-import { Kysely, sql } from "kysely"
+import { sql, type Kysely } from "kysely"
+import type { Database } from "@lootopia/db/schema"
 
-export async function up(db: Kysely<any>): Promise<void> {
+export async function up(db: Kysely<Database>): Promise<void> {
   await db.schema
     .createTable("hunt_point_completions")
     .addColumn("id", "text", (col) =>
@@ -31,6 +32,6 @@ export async function up(db: Kysely<any>): Promise<void> {
     .execute()
 }
 
-export async function down(db: Kysely<any>): Promise<void> {
+export async function down(db: Kysely<Database>): Promise<void> {
   await db.schema.dropTable("hunt_point_completions").execute()
 }

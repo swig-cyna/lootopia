@@ -1,6 +1,7 @@
-import { Kysely, sql } from "kysely"
+import { sql, type Kysely } from "kysely"
+import type { Database } from "@lootopia/db/schema"
 
-export async function up(db: Kysely<any>): Promise<void> {
+export async function up(db: Kysely<Database>): Promise<void> {
   await db.schema
     .createType("hunt_status")
     .asEnum(["draft", "published"])
@@ -93,7 +94,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .execute()
 }
 
-export async function down(db: Kysely<any>): Promise<void> {
+export async function down(db: Kysely<Database>): Promise<void> {
   await db.schema.dropTable("quiz_questions").execute()
   await db.schema.dropTable("hunt_rewards").execute()
   await db.schema.dropTable("hunt_points").execute()

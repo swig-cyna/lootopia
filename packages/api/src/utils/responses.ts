@@ -44,6 +44,9 @@ export const createPaginatedResponseSchema = <T extends z.ZodTypeAny>(
     metadata: paginationMetadataSchema,
   })
 
+export type PaginationQuery = z.infer<typeof paginationParamsSchema>
+
+// oxlint-disable-next-line max-params
 export const paginate = <T>(
   data: T[],
   total: number,

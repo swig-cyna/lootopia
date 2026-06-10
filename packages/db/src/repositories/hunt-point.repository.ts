@@ -4,7 +4,9 @@ import { safeIn } from "@lootopia/db/utils"
 import { type Insertable, type Selectable, type Updateable } from "kysely"
 
 export type HuntPoint = Selectable<HuntPointTable>
+
 export type NewHuntPoint = Insertable<HuntPointTable>
+
 export type HuntPointUpdate = Updateable<HuntPointTable>
 
 export const $huntPoint = {

@@ -18,10 +18,11 @@ const UserMarkerInner = ({ map }: { map: mapboxgl.Map }) => {
       .setLngLat(userPosition)
       .addTo(map)
 
-    // eslint-disable-next-line consistent-return
+    // oxlint-disable-next-line consistent-return
     return () => {
       markerRef.current?.remove()
     }
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [map])
 
   useEffect(() => {

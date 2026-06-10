@@ -27,7 +27,7 @@ const useIntersectionObserver = (onIntersect: () => void, enabled = true) => {
 
     observer.observe(el)
 
-    // eslint-disable-next-line consistent-return
+    // oxlint-disable-next-line consistent-return
     return () => {
       observer.disconnect()
     }

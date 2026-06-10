@@ -3,9 +3,11 @@ import { type QuizQuestionTable } from "@lootopia/db/models/hunt"
 import { type Insertable, type Selectable, type Updateable } from "kysely"
 
 export type QuizQuestion = Selectable<QuizQuestionTable>
+
 export type NewQuizQuestion = Omit<Insertable<QuizQuestionTable>, "answers"> & {
   answers: string[]
 }
+
 export type QuizQuestionUpdate = Omit<
   Updateable<QuizQuestionTable>,
   "answers"

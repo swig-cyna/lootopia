@@ -6,6 +6,8 @@ allowBuilds:
   esbuild: true
   msw: false
   prisma: false
+  oxlint: true
+  oxlint-tsgolint: true
 
 onlyBuiltDependencies:
   - esbuild

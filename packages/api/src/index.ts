@@ -40,12 +40,8 @@ app.doc("/doc", {
   servers: [{ url: "/api" }],
 })
 
-app.get(
-  "/reference",
-  Scalar({
-    url: "/api/doc",
-  }),
-)
+// oxlint-disable-next-line new-cap
+app.get("/reference", Scalar({ url: "/api/doc" }))
 
 app.on(["POST", "GET"], "/auth/*", (c) => auth.handler(c.req.raw))
 

@@ -1,14 +1,13 @@
 import type { Kysely } from "kysely"
+import type { Database } from "@lootopia/db/schema"
 
-// `any` is required here since migrations should be frozen in time. alternatively, keep a "snapshot" db interface.
-export async function up(db: Kysely<any>): Promise<void> {
+export async function up(db: Kysely<Database>): Promise<void> {
   await db.schema
     .alterTable("hunt_points")
     .addColumn("position", "integer")
     .execute()
 }
 
-// `any` is required here since migrations should be frozen in time. alternatively, keep a "snapshot" db interface.
-export async function down(db: Kysely<any>): Promise<void> {
+export async function down(db: Kysely<Database>): Promise<void> {
   await db.schema.alterTable("hunt_points").dropColumn("position").execute()
 }

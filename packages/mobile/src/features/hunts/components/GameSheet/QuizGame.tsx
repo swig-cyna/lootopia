@@ -65,12 +65,6 @@ const formatElapsed = (ms: number) => {
 }
 
 const QuizGame = ({ point, onValidate }: QuizGameProps) => {
-  if (point.game.type !== HUNT_GAME_TYPE.QUIZ) {
-    return null
-  }
-
-  const { quiz } = point.game
-
   const [state, setState] = useState<QuizState>({
     started: false,
     selected: null,
@@ -98,6 +92,12 @@ const QuizGame = ({ point, onValidate }: QuizGameProps) => {
 
     return () => clearInterval(interval)
   }, [state.started])
+
+  if (point.game.type !== HUNT_GAME_TYPE.QUIZ) {
+    return null
+  }
+
+  const { quiz } = point.game
 
   const handleStart = () => {
     setState((prev) => ({ ...prev, started: true }))

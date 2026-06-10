@@ -213,6 +213,7 @@ const HuntMap = ({ handleRef }: HuntMapProps) => {
     initExistingMarkers(map)
 
     return () => map.remove()
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
