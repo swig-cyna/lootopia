@@ -24,7 +24,7 @@ const HuntReward = ({ onConfigure }: HuntRewardProps) => {
         onClick={onConfigure}
         className={cn(
           "flex w-full items-center gap-3 rounded-lg border p-3 text-left transition-colors",
-          "hover:bg-accent focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2",
+          "hover:bg-accent focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none",
         )}
       >
         <span className="bg-primary text-primary flex size-10 shrink-0 items-center justify-center rounded-md">

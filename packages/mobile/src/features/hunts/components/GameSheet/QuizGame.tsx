@@ -157,7 +157,7 @@ const QuizGame = ({ point, onValidate }: QuizGameProps) => {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
-        <p className="text-sm font-medium leading-snug">{quiz.question}</p>
+        <p className="text-sm leading-snug font-medium">{quiz.question}</p>
         {!submitted && (
           <span className="text-muted-foreground font-mono text-xs tabular-nums">
             {formatElapsed(state.elapsed)}

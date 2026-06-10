@@ -87,7 +87,7 @@ const HuntPointsList = ({
             items={points.map((p) => p.id)}
             strategy={verticalListSortingStrategy}
           >
-            <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden">
+            <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-x-hidden overflow-y-auto">
               {points.map((point) => (
                 <HuntPointsListRow
                   key={point.id}

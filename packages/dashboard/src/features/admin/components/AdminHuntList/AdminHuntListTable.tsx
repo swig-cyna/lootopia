@@ -37,7 +37,7 @@ const AdminHuntListTable = () => {
             {COLUMN_HEADERS.map((header) => (
               <TableHead
                 key={header}
-                className="text-muted-foreground text-xs font-medium uppercase tracking-wide"
+                className="text-muted-foreground text-xs font-medium tracking-wide uppercase"
               >
                 {header}
               </TableHead>

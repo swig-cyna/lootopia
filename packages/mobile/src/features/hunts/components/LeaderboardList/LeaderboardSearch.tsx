@@ -12,7 +12,7 @@ const LeaderboardSearch = () => {
 
   return (
     <div className="relative">
-      <Search className="text-muted-foreground absolute left-3 top-1/2 size-4 -translate-y-1/2" />
+      <Search className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
       <Input
         placeholder="Search a player..."
         value={data.search}

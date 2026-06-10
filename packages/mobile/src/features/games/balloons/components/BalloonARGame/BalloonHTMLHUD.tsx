@@ -57,16 +57,16 @@ export const BalloonHTMLHUD = () => {
 
   return (
     <div className="pointer-events-none fixed inset-0">
-      <div className="absolute bottom-0 left-0 right-0 flex items-center justify-around bg-black/60 px-6 py-3">
+      <div className="absolute right-0 bottom-0 left-0 flex items-center justify-around bg-black/60 px-6 py-3">
         <div className="text-center">
-          <p className="text-xs uppercase tracking-widest text-white/70">
+          <p className="text-xs tracking-widest text-white/70 uppercase">
             Score
           </p>
           <p className="text-xl font-semibold text-white">{data.score}</p>
         </div>
         <div className="h-8 w-px bg-white/20" />
         <div className="text-center">
-          <p className="text-xs uppercase tracking-widest text-yellow-400/80">
+          <p className="text-xs tracking-widest text-yellow-400/80 uppercase">
             Time
           </p>
           <p className="text-xl font-semibold text-yellow-400">
@@ -75,7 +75,7 @@ export const BalloonHTMLHUD = () => {
         </div>
         <div className="h-8 w-px bg-white/20" />
         <div className="text-center">
-          <p className="text-xs uppercase tracking-widest text-white/70">
+          <p className="text-xs tracking-widest text-white/70 uppercase">
             Left
           </p>
           <p className="text-xl font-semibold text-white">{data.remaining}</p>

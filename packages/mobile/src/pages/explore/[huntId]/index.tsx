@@ -98,7 +98,7 @@ const ExploreDetailContent = () => {
         <ExplorePointsOverlay points={hunt.points} />
         <button
           onClick={handleGoBack}
-          className="absolute left-4 top-4 z-10 rounded-full bg-white p-2 shadow-lg transition-transform hover:bg-gray-100 active:scale-95"
+          className="absolute top-4 left-4 z-10 rounded-full bg-white p-2 shadow-lg transition-transform hover:bg-gray-100 active:scale-95"
         >
           <ArrowLeft className="size-5 text-gray-700" />
         </button>

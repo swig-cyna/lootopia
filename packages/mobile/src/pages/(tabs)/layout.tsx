@@ -47,7 +47,7 @@ const TabsLayout = () => {
       <div className="flex-1 overflow-y-auto p-4">
         <Outlet />
       </div>
-      <div className="bg-muted h-18 flex w-full shrink-0 justify-around">
+      <div className="bg-muted flex h-18 w-full shrink-0 justify-around">
         {tabs.map((tab) => (
           <TabButton key={tab.to} {...tab} active={pathname === tab.to} />
         ))}

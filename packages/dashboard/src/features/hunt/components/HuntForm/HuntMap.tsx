@@ -219,9 +219,9 @@ const HuntMap = ({ handleRef }: HuntMapProps) => {
     <Card className="relative min-h-0 w-full flex-1 p-0">
       <div
         ref={mapContainerRef}
-        className="min-h-100 h-full w-full rounded-xl"
+        className="h-full min-h-100 w-full rounded-xl"
       />
-      <div className="absolute left-3 top-3 z-10 w-80 max-w-[calc(100%-1.5rem)]">
+      <div className="absolute top-3 left-3 z-10 w-80 max-w-[calc(100%-1.5rem)]">
         <SearchBox
           accessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
           map={mapInstance ?? undefined}

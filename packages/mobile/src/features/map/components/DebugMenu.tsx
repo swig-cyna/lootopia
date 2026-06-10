@@ -31,13 +31,13 @@ const DebugMenu = () => {
     <>
       <button
         onClick={() => setOpen((v) => !v)}
-        className="absolute right-4 top-16 z-20 rounded-full bg-white p-2 shadow-lg transition-transform hover:bg-gray-100 active:scale-95"
+        className="absolute top-16 right-4 z-20 rounded-full bg-white p-2 shadow-lg transition-transform hover:bg-gray-100 active:scale-95"
       >
         <Bug className="size-5 text-yellow-500" />
       </button>
 
       {open && (
-        <div className="absolute right-4 top-28 z-20 flex w-52 flex-col gap-2 rounded-xl bg-black/85 p-3 text-xs text-white shadow-xl">
+        <div className="absolute top-28 right-4 z-20 flex w-52 flex-col gap-2 rounded-xl bg-black/85 p-3 text-xs text-white shadow-xl">
           <div className="flex items-center justify-between">
             <span className="font-semibold text-yellow-400">Debug mode</span>
             <button onClick={() => setOpen(false)}>
@@ -65,7 +65,7 @@ const DebugMenu = () => {
               </button>
             </div>
           ) : (
-            <p className="italic text-white/40">No simulated position yet</p>
+            <p className="text-white/40 italic">No simulated position yet</p>
           )}
 
           {userPosition && (

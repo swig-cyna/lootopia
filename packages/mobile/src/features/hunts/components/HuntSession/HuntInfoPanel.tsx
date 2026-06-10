@@ -13,7 +13,7 @@ const HuntInfoPanel = () => {
   const handleLeaderboard = () => navigate(`/hunts/${huntId}/leaderboard`)
 
   return (
-    <div className="bg-background border-border flex flex-col gap-3 border-t px-4 pb-6 pt-4">
+    <div className="bg-background border-border flex flex-col gap-3 border-t px-4 pt-4 pb-6">
       {nextPoint ? (
         <HuntNextPointPanel />
       ) : (

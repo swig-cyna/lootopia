@@ -14,7 +14,7 @@ const SectionTitle = ({
 }) => (
   <div className="flex items-center gap-2">
     <Icon className="text-muted-foreground size-4" />
-    <h2 className="text-sm font-semibold uppercase tracking-wide">{label}</h2>
+    <h2 className="text-sm font-semibold tracking-wide uppercase">{label}</h2>
   </div>
 )
 
