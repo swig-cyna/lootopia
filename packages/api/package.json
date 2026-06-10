@@ -3,10 +3,6 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "lint": "tsc -b && eslint",
-    "lint:fix": "eslint --fix",
-    "format": "prettier --check . --log-level warn",
-    "format:fix": "prettier --write . --log-level warn",
     "build": "node esbuild.config.mjs",
     "start": "node dist/index.cjs"
   },
@@ -23,14 +19,10 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
     "@types/node": "^25.9.1",
     "esbuild": "^0.28.0",
-    "eslint": "^10.4.1",
-    "globals": "^17.6.0",
     "tsconfig-paths": "^4.2.0",
     "tsx": "^4.22.4",
-    "typescript": "^6.0.3",
-    "typescript-eslint": "^8.60.1"
+    "typescript": "^6.0.3"
   }
 }
