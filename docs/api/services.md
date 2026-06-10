@@ -48,9 +48,30 @@ export const $$item = {
 
 **Rules:**
 
-- One service file per resource: `item.service.ts`, `hunt.service.ts`
+- One service file per resource: `hunt.service.ts`, `hunt-stats.service.ts`
 - Private helpers (not exported) live in the same file
 - Repos imported from `@lootopia/db/repositories/*.repository`
+
+---
+
+## `$$huntStats` — `hunt-stats.service.ts`
+
+Analytics service used by the stats routes. Calls `$huntStats` and `$huntRewardClaim` repositories.
+
+```typescript
+import { $$huntStats } from "@lootopia/api/services/hunt-stats.service"
+
+// Aggregate stats across all hunts owned by an organizer
+await $$huntStats.getOrganizerStats(organizerId)
+// Returns: totalHunts, publishedHunts, draftHunts, totalParticipants,
+//          totalFinishers, completionRate, totalRewardsClaimed,
+//          registrations (by day), topHunts (top 5 by participants)
+
+// Stats for a single hunt
+await $$huntStats.getHuntStats(huntId)
+// Returns: participants, finishers, completionRate, averageScore,
+//          rewardsClaimed, rewardTopX, pointFunnel, registrations (by day)
+```
 
 ---
 

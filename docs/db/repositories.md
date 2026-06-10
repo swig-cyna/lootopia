@@ -53,6 +53,8 @@ export const $hunt = {
 | `@lootopia/db/repositories/quiz-question.repository`         | `$quizQuestion`        | Quiz questions + answers      |
 | `@lootopia/db/repositories/hunt-participation.repository`    | `$huntParticipation`   | User joining a hunt           |
 | `@lootopia/db/repositories/hunt-point-completion.repository` | `$huntPointCompletion` | Point validated by a user     |
+| `@lootopia/db/repositories/hunt-reward-claim.repository`     | `$huntRewardClaim`     | Reward claimed by a user      |
+| `@lootopia/db/repositories/hunt-stats.repository`            | `$huntStats`           | Analytics queries (counts, rankings, funnels) |
 
 ---
 

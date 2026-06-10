@@ -88,7 +88,6 @@ new QueryClient({
   defaultOptions: {
     queries: {
       retry: 0, // No automatic retries
-      staleTime: 60_000, // 1 minute freshness
       placeholderData: keepPreviousData, // Soft transition during refetch
     },
   },

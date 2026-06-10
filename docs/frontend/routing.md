@@ -19,6 +19,14 @@ createBrowserRouter([
               { path: "/hunt", element: <HuntPage /> },
               { path: "/hunt/create", element: <HuntCreatePage /> },
               { path: "/hunt/:id/edit", element: <HuntEditPage /> },
+              { path: "/hunt/:id/stats", element: <HuntStatsPage /> },
+              {
+                element: <AdminProtectedRoute />, // blocks non-admins
+                children: [
+                  { path: "/admin/users", element: <AdminUsersPage /> },
+                  { path: "/admin/hunts", element: <AdminHuntsPage /> },
+                ],
+              },
             ],
           },
         ],
@@ -52,9 +60,11 @@ createBrowserRouter([
           { path: "/explore/:huntId", element: <ExploreDetailPage /> },
           { path: "/hunts/:id", element: <HuntPage /> },
           { path: "/hunts/:id/ar/:pointId", element: <ARGamePage /> },
+          { path: "/hunts/:id/leaderboard", element: <LeaderboardPage /> },
         ],
       },
       { path: "/signin", element: <SigninPage /> },
+      { path: "/signup", element: <SignupPage /> },
       { path: "*", element: <NotFoundPage /> },
     ],
   },

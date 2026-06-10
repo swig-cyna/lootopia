@@ -40,4 +40,7 @@ hunt_participations        # User joins a hunt
 
 hunt_point_completions     # User validates a point
   id, huntParticipationId, huntPointId, score, completedAt
+
+hunt_reward_claims         # User claims the reward for a finished hunt
+  id, huntRewardId, userId, claimedAt
 ```
