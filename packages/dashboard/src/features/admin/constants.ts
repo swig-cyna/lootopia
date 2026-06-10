@@ -27,7 +27,7 @@ export const HUNT_STATUS_BADGE: Record<
   },
 }
 
-export const HUNT_SORT_OPTIONS: { value: HuntSort; label: string }[] = [
+export const HUNT_SORT_OPTIONS: Array<{ value: HuntSort; label: string }> = [
   { value: HUNT_SORT.RECENT, label: "Recent" },
   { value: HUNT_SORT.OLDEST, label: "Oldest" },
   { value: HUNT_SORT.TITLE, label: "Title (A-Z)" },
@@ -49,10 +49,10 @@ export const ROLE_BADGE_VARIANT: Record<Role, BadgeVariant> = {
 
 export const ALL_ROLES_TAB = "all"
 
-export const ROLE_FILTER_TABS: {
+export const ROLE_FILTER_TABS: Array<{
   value: Role | typeof ALL_ROLES_TAB
   label: string
-}[] = [
+}> = [
   { value: ALL_ROLES_TAB, label: "All" },
   { value: ROLES.PLAYER, label: "Players" },
   { value: ROLES.ORGANIZER, label: "Organizers" },

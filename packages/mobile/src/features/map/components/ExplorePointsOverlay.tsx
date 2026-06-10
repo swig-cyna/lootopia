@@ -30,6 +30,7 @@ const ExplorePointsOverlay = ({ points }: ExplorePointsOverlayProps) => {
       padding: 80,
       duration: 0,
     })
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [mapReady])
 
   if (!mapReady || !mapRef.current) {

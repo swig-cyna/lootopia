@@ -1,5 +1,6 @@
 import { randomBytes, randomUUID, scrypt } from "crypto"
 import type { Kysely } from "kysely"
+import type { Database } from "@lootopia/db/schema"
 
 const hashPassword = (password: string): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -27,7 +28,7 @@ type SeedUser = {
 }
 
 async function createUser(
-  db: Kysely<any>,
+  db: Kysely<Database>,
   { email, password, name, role }: SeedUser,
 ) {
   const userId = randomUUID()
@@ -73,7 +74,7 @@ async function createUser(
     .executeTakeFirstOrThrow()
 }
 
-export async function seed(db: Kysely<any>): Promise<void> {
+export async function seed(db: Kysely<Database>): Promise<void> {
   const users: SeedUser[] = [
     {
       email: "admin@example.com",

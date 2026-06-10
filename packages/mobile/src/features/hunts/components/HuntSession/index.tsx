@@ -27,6 +27,7 @@ const HuntSession = ({
 
   useEffect(() => {
     setHuntData({ points, completedPointIds, totalScore, huntId, reward })
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [
     huntId,
     completedPointIds.length,

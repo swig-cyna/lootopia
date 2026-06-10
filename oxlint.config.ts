@@ -205,10 +205,6 @@ export default defineConfig({
     "require-yield": "error",
     "symbol-description": "error",
     "typescript/adjacent-overload-signatures": "error",
-    "typescript/array-type": [
-      "error",
-      { default: "array-simple", readonly: "array-simple" },
-    ],
     "typescript/await-thenable": "error",
     "typescript/ban-ts-comment": ["error", { minimumDescriptionLength: 10 }],
     "typescript/ban-tslint-comment": "error",
@@ -216,7 +212,6 @@ export default defineConfig({
     "typescript/consistent-generic-constructors": "error",
     "typescript/consistent-indexed-object-style": "error",
     "typescript/consistent-type-assertions": "error",
-    "typescript/consistent-type-definitions": "error",
     "typescript/dot-notation": "error",
     "typescript/no-array-delete": "error",
     "typescript/no-base-to-string": "error",
@@ -246,7 +241,6 @@ export default defineConfig({
     "typescript/no-namespace": "error",
     "typescript/no-non-null-asserted-nullish-coalescing": "error",
     "typescript/no-non-null-asserted-optional-chain": "error",
-    "typescript/no-non-null-assertion": "error",
     "typescript/no-redundant-type-constituents": "error",
     "typescript/no-require-imports": "error",
     "typescript/no-this-alias": "error",
@@ -310,4 +304,13 @@ export default defineConfig({
     "valid-typeof": "error",
     yoda: "error",
   },
+  overrides: [
+    {
+      files: ["**/lib/hono.ts", "**/lib/api.ts"],
+      rules: {
+        "typescript/no-explicit-any": "off",
+        "typescript/no-empty-object-type": "off",
+      },
+    },
+  ],
 })

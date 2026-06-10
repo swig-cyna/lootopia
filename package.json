@@ -1,5 +1,6 @@
 {
   "name": "lootopia",
+  "type": "module",
   "scripts": {
     "dev": "dotenv -e .env -- pnpm -r --parallel dev",
     "dev:web": "dotenv -e .env -- pnpm --filter web dev",

@@ -20,7 +20,7 @@ export const HUNT_STATUS_BADGE: Record<
   },
 }
 
-export const HUNT_SORT_OPTIONS: { value: HuntSort; label: string }[] = [
+export const HUNT_SORT_OPTIONS: Array<{ value: HuntSort; label: string }> = [
   { value: HUNT_SORT.RECENT, label: "Recent" },
   { value: HUNT_SORT.OLDEST, label: "Oldest" },
   { value: HUNT_SORT.TITLE, label: "Title (A-Z)" },

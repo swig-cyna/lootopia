@@ -21,7 +21,9 @@ const HUNT_SORT_ORDER: Record<
 }
 
 export type Hunt = Selectable<HuntTable>
+
 export type NewHunt = Insertable<HuntTable>
+
 export type HuntUpdate = Updateable<HuntTable>
 
 export const $hunt = {

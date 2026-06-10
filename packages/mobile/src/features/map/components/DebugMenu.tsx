@@ -21,10 +21,11 @@ const DebugMenu = () => {
 
     map.on("click", onClick)
 
-    // eslint-disable-next-line consistent-return
+    // oxlint-disable-next-line consistent-return
     return () => {
       map.off("click", onClick)
     }
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [mapReady, open])
 
   return (

@@ -3,6 +3,7 @@ import { type HuntParticipationTable } from "@lootopia/db/models/hunt"
 import { type Insertable, type Selectable, sql } from "kysely"
 
 export type HuntParticipation = Selectable<HuntParticipationTable>
+
 export type NewHuntParticipation = Insertable<HuntParticipationTable>
 
 export const $huntParticipation = {

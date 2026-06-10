@@ -4,6 +4,7 @@ import type { $hunt } from "@lootopia/db/repositories/hunt.repository"
 export type HuntWithDetails = NonNullable<
   Awaited<ReturnType<typeof $hunt.byIdWithDetails>>
 >
+
 type DbPoint = HuntWithDetails["points"][number]
 type BasePoint = Pick<DbPoint, "id" | "latitude" | "longitude" | "position">
 
@@ -59,7 +60,7 @@ export const mapHuntDetail = (hunt: HuntWithDetails) => ({
 })
 
 export const mapHuntDetailPlayer = (hunt: HuntWithDetails) => {
-  // eslint-disable-next-line no-unused-vars
+  // oxlint-disable-next-line no-unused-vars
   const { reward: _reward, ...rest } = hunt
 
   return { ...rest, points: hunt.points.map(mapPointDetailPlayer) }

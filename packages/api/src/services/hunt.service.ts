@@ -1,4 +1,3 @@
-import { z } from "@hono/zod-openapi"
 import { mapAdminHunt } from "@lootopia/api/routes/admin/hunts/mappers"
 import {
   mapHuntDetail,
@@ -6,15 +5,15 @@ import {
   mapPointSummary,
 } from "@lootopia/api/routes/hunts/mappers"
 import {
+  type CreateHuntData,
   type CreateHuntPointInput,
+  type FinisherRanking,
+  type RewardState,
+  type UpdateHuntData,
   type UpdateHuntPointInput,
-  createHuntSchema,
-  finisherRankingSchema,
-  rewardStateSchema,
-  updateHuntSchema,
-  updateHuntStatusSchema,
+  type UpdateHuntStatusData,
 } from "@lootopia/api/routes/hunts/schema"
-import { paginate } from "@lootopia/api/utils/responses"
+import { paginate, type PaginationQuery } from "@lootopia/api/utils/responses"
 import { HUNT_GAME_TYPE, HUNT_STATUS } from "@lootopia/common/constants/hunt"
 import { $huntParticipation } from "@lootopia/db/repositories/hunt-participation.repository"
 import { $huntPointCompletion } from "@lootopia/db/repositories/hunt-point-completion.repository"
@@ -26,12 +25,6 @@ import { $hunt } from "@lootopia/db/repositories/hunt.repository"
 import { $quizQuestion } from "@lootopia/db/repositories/quiz-question.repository"
 import { paginateQuery } from "@lootopia/db/utils"
 
-type FinisherRanking = z.infer<typeof finisherRankingSchema>
-type RewardState = z.infer<typeof rewardStateSchema>
-type CreateHuntData = z.infer<typeof createHuntSchema>
-type UpdateHuntData = z.infer<typeof updateHuntSchema>
-type UpdateHuntStatusData = z.infer<typeof updateHuntStatusSchema>
-type PaginationQuery = { page: number; limit: number }
 type ListHuntsQuery = PaginationQuery & {
   status?: "draft" | "published"
   search?: string
@@ -181,7 +174,11 @@ const syncHuntPoints = async (
 }
 
 const resolveRewardState = async (
-  hunt: { id: string; reward: RewardState | null; points: { id: string }[] },
+  hunt: {
+    id: string
+    reward: RewardState | null
+    points: Array<{ id: string }>
+  },
   participation: { id: string; userId: string } | undefined,
   completedCount: number,
 ) => {

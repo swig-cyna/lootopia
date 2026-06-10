@@ -54,6 +54,7 @@ const MapCanvas = () => {
       observer.disconnect()
       map.remove()
     }
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return <div ref={containerRef} className="w-full flex-1" />

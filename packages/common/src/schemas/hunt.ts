@@ -36,5 +36,7 @@ export const rewardConfigSchema = z.object({
 })
 
 export type QuizConfigValues = z.infer<typeof quizConfigSchema>
+
 export type ArConfigValues = z.infer<typeof arConfigSchema>
+
 export type RewardConfigValues = z.infer<typeof rewardConfigSchema>

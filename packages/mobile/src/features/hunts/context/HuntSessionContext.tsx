@@ -16,8 +16,11 @@ type HuntApiResponse = InferResponseType<
   (typeof api.hunts.published)[":huntId"]["$get"],
   200
 >
+
 export type HuntPoint = HuntApiResponse["points"][number]
+
 export type HuntReward = HuntApiResponse["reward"]
+
 export type QuizQuestion = NonNullable<
   Extract<HuntPoint["game"], { type: "quiz" }>["quiz"]
 >
@@ -80,6 +83,7 @@ export const HuntSessionProvider = ({ children }: { children: ReactNode }) => {
     if (distance <= VALIDATION_RADIUS_M) {
       setActivePoint(nextPoint)
     }
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [userPosition, nextPoint?.id])
 
   const setHuntData = ({

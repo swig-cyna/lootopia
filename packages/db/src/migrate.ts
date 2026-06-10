@@ -3,7 +3,7 @@ import { Migrator, type MigrationProvider } from "kysely"
 import migrations from "migrations:all"
 
 const provider: MigrationProvider = {
-  // eslint-disable-next-line require-await
+  // oxlint-disable-next-line require-await
   getMigrations: async () => migrations,
 }
 

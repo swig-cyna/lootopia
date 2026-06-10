@@ -3,7 +3,9 @@ import { type HuntRewardTable } from "@lootopia/db/models/hunt"
 import { type Insertable, type Selectable, type Updateable } from "kysely"
 
 export type HuntReward = Selectable<HuntRewardTable>
+
 export type NewHuntReward = Insertable<HuntRewardTable>
+
 export type HuntRewardUpdate = Updateable<HuntRewardTable>
 
 export const $huntReward = {
