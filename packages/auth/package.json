@@ -10,7 +10,7 @@
   "dependencies": {
     "@lootopia/db": "workspace:*",
     "@t3-oss/env-core": "^0.13.11",
-    "better-auth": "^1.6.14",
+    "better-auth": "^1.6.15",
     "zod": "^4.4.3"
   },
   "devDependencies": {
