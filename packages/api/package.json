@@ -12,14 +12,14 @@
     "@lootopia/auth": "workspace:*",
     "@lootopia/common": "workspace:*",
     "@lootopia/db": "workspace:*",
-    "@scalar/hono-api-reference": "^0.10.20",
+    "@scalar/hono-api-reference": "^0.11.2",
     "@t3-oss/env-core": "^0.13.11",
-    "hono": "^4.12.23",
+    "hono": "^4.12.25",
     "stoker": "^2.0.1",
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@types/node": "^25.9.1",
+    "@types/node": "^25.9.2",
     "esbuild": "^0.28.0",
     "tsconfig-paths": "^4.2.0",
     "tsx": "^4.22.4",
