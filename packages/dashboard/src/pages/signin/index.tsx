@@ -1,3 +1,4 @@
+import { ROLES } from "@lootopia/auth/constants"
 import SigninForm from "@lootopia/dashboard/features/auth/components/SigninForm"
 import authClient from "@lootopia/dashboard/features/auth/utils/auth-client"
 import { Navigate } from "react-router"
@@ -9,7 +10,7 @@ const SigninPage = () => {
     return null
   }
 
-  if (session) {
+  if (session && session.user.role !== ROLES.PLAYER) {
     return <Navigate to="/" replace />
   }
 
