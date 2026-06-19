@@ -6,6 +6,7 @@
 packages/
 ├── api/        # Hono backend — @lootopia/api
 ├── auth/       # Better Auth — @lootopia/auth
+├── common/     # Shared constants & Zod schemas — @lootopia/common
 ├── db/         # Kysely + migrations — @lootopia/db
 ├── dashboard/  # React frontend (organizers) — @lootopia/dashboard
 └── mobile/     # React frontend (players) — @lootopia/mobile
@@ -16,14 +17,20 @@ packages/
 ```bash
 pnpm dev                        # Start everything in parallel
 pnpm dev:api                    # API only
+pnpm dev:web                    # Web (landing) only
 pnpm dev:dashboard              # Dashboard only
 pnpm dev:mobile                 # Mobile only
-pnpm lint                       # Lint all packages
+pnpm build                      # Build all packages
+pnpm start                      # Start all packages (prod)
+pnpm clean                      # Remove dist + node_modules everywhere
+pnpm lint                       # Lint all packages (oxlint)
 pnpm lint:fix                   # Lint + autofix all packages
 pnpm format                     # Check formatting (prettier)
 pnpm format:fix                 # Format all packages
 pnpm kysely migrate:make 'name' # Create a migration
 pnpm kysely migrate:latest      # Apply migrations
+pnpm prod:up                    # Build and start production Docker stack
+pnpm prod:down                  # Stop production Docker stack
 ```
 
 ## Coding Conventions
